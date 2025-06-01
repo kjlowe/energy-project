@@ -49,6 +49,17 @@ git config --global user.email "username@gmail.com"
 ssh -T git@github.com
 ```
 
+3 6. Turn on the web services and make sure they work
+
+```bash
+docker-compose up -d
+```
+
+Check that the following work:
+- http://domain
+- http://domain:5000
+- http://domain:8080
+
 # 6. Allow Github to deploy to the server
 
 ``` bash
