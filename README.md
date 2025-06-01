@@ -57,7 +57,7 @@ chown -R 1000:100 .
 ## 6. Start Web Services
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 * Check that the following work:
