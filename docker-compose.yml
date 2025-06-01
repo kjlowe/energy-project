@@ -34,11 +34,9 @@ services:
       - ./jupyter:/home/jovyan/work
     ports:
       - "8888:8888"
-    env_file:
-      - /root/secrets/jupyter.env
     environment:
       - JUPYTER_ENABLE_LAB=yes
-    command: start-notebook.sh --NotebookApp.token=${JUPYTER_TOKEN}
+    command: start-notebook.sh --NotebookApp.token=''
 
   nginx:
     image: nginx:stable
