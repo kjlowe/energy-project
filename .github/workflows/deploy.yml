@@ -22,6 +22,3 @@ jobs:
           script: |
             cd ~/web-projects/energy-project
             git pull origin main
-            docker-compose stop python
-            docker-compose rm -f python
-            docker-compose up -d --build python
