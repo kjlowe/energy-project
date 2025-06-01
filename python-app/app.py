@@ -8,6 +8,6 @@ def home():
     # calculate today's date
     # and return a greeting message
     today = datetime.now().strftime("%Y-%m-%d")
-    return f"Today's date is: {today}"
+    return f"Today's date is: {today} and I'm ready for it!"
 
 app.run(debug=True, host="0.0.0.0", port=5000)
