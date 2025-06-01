@@ -49,7 +49,7 @@ git config --global user.email "username@gmail.com"
 ssh -T git@github.com
 ```
 
-# 6. Start Web Services
+## 6. Start Web Services
 
 ```bash
 docker-compose up -d
@@ -60,7 +60,7 @@ docker-compose up -d
   * http://kevinlowe.net:5000
   * http://kevinlowe.net:8080
 
-# 7. Allow Github to deploy to the server
+## 7. Allow Github to deploy to the server
 * Add the public SSH key to authorized keys:
 ``` bash
 cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
@@ -77,7 +77,7 @@ cat ~/.ssh/id_ed25519
     * DO_USER: root
     * DO_SSH_KEY: your private SSH key (contents of ~/.ssh/id_ed25519)
 
-# 8. Deploy using Github Action
+## 8. Deploy using Github Action
 
 * Re-run the latest GitHub Action to deploy the project.
 
