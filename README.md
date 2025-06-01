@@ -39,7 +39,7 @@ cat ~/.ssh/id_ed25519.pub
   * Title it DigitalOcean
   * Paste your public key into the field
 
-Clone the repository on the server:
+* Clone the repository on the server:
 ```bash
 mkdir  ~/web-projects
 cd ~/web-projects
