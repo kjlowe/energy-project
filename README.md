@@ -1,43 +1,43 @@
 # New Server Setup
 
-This guide explains how to rebuild the server from scratch and fully restore your project using only your GitHub repo.
+This guide outlines the steps to rebuild a server from scratch and restore a project using a GitHub repository.
 
----
+## 1. Create a New Server
+- Provision a server with 1 vCPU and 1–2 GB RAM (approximately $5–6/month).
+- Select Ubuntu 22.04 as the base operating system.
 
-# 1. Create a new server
-Start with 1 vCPU, 1–2GB RAM server (~$5–6/month)
-Pick Ubuntu 22.04 as your base OS
-
-# 2. SSH into your new server
+## 2. SSH into the Server
 ```bash
-ssh root@your.server.ip
+ssh root@<your-server-ip>
 ```
 
-# 3. Install docker
+## 3. Install docker
 ```bash
-sudo apt update && sudo apt upgrade -y
-apt install docker.io -y
-systemctl enable docker
-apt install docker-compose -y
+sudo apt update
+sudo apt upgrade -y
+sudo apt install docker.io -y
+sudo systemctl enable docker
+sudo apt install docker-compose -y
 ```
 
-Don't overwrite any ssh files. Keep the ones on disk.
-You might need to restart to do a kernal update.
+* Don't overwrite any ssh files. Keep the ones on disk.
+* You might need to restart to do a kernal update.
 
-# 4. Generate SSH Keys
+## 4. Generate SSH Keys
 ```bash
 ssh-keygen -t ed25519 -C "digitalocean-server"
 ```
 
-# 5. Add them to Github and checkout the repo
+## 5. Add SSH Keys to GitHub and Clone the Repository
+
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-Go to Settings > SSH and GPG keys
-* Click New SSH key
-* Title it DigitalOcean
-* Paste your public key into the field
+* In GitHub, navigate to Settings > SSH and GPG Keys:
+ * Click New SSH key
+ * Title it DigitalOcean
+ * Paste your public key into the field
 
 Checkout the repo on the server
 ```bash
