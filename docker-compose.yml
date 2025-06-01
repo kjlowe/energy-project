@@ -23,7 +23,7 @@ services:
     volumes:
       - ./python-app:/app
     working_dir: /app
-    command: bash -c "pip install flask && python app.py"
+    command: bash -c "pip install flask pandas && python app.py"
     ports:
       - "5000:5000"
 
@@ -36,7 +36,9 @@ services:
       - "8888:8888"
     environment:
       - JUPYTER_ENABLE_LAB=yes
-    command: start-notebook.sh --NotebookApp.token=''
+      - JUPYTER_TOKEN=token
+      - GRANT_SUDO=yes
+    command: start-notebook.sh --NotebookApp.allow_origin='*' --NotebookApp.token='yourstrongtoken' --NotebookApp.allow_remote_access=True --NotebookApp.disable_check_xsrf=True --NotebookApp.ip='0.0.0.0' --NotebookApp.open_browser=False
 
   nginx:
     image: nginx:stable
