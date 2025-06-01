@@ -4,6 +4,7 @@ services:
   mysql:
     image: mysql:8
     container_name: mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example  # You can change this
     volumes:
@@ -12,6 +13,7 @@ services:
   php:
     image: php:apache
     container_name: php
+    restart: always
     volumes:
       - ./php-app:/var/www/html
     ports:
@@ -20,6 +22,7 @@ services:
   python:
     image: python:3.10-slim
     container_name: python
+    restart: always
     volumes:
       - ./python-app:/app
     working_dir: /app
@@ -30,6 +33,7 @@ services:
   jupyter:
     image: jupyter/scipy-notebook
     container_name: jupyter
+    restart: always
     volumes:
       - .:/home/jovyan/work
     ports:
@@ -43,6 +47,7 @@ services:
   nginx:
     image: nginx:stable
     container_name: nginx
+    restart: always
     ports:
       - "80:80"
     volumes:
