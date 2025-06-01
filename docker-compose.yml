@@ -31,7 +31,7 @@ services:
     image: jupyter/scipy-notebook
     container_name: jupyter
     volumes:
-      - ./jupyter:/home/jovyan/work
+      - ./python-notebooks:/home/jovyan/work
     ports:
       - "8888:8888"
     environment:
