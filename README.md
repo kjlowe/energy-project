@@ -5,6 +5,7 @@ This guide outlines the steps to rebuild a server from scratch and restore a pro
 ## 1. Create a New Server
 - Provision a server with 1 vCPU and 1–2 GB RAM (approximately $5–6/month).
 - Select Ubuntu 22.04 as the base operating system.
+- Check "add improved metrics monitoring and alerting free"
 
 ## 2. SSH into the Server
 ```bash
