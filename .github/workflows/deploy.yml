@@ -22,6 +22,6 @@ jobs:
           script: |
             cd ~/web-projects
             git pull origin main
-            docker-compose up -d --build
+            docker-compose stop python
             docker-compose rm -f python
             docker-compose up -d --build python
