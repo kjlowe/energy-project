@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            cd ~/web-projects
+            cd ~/web-projects/energy-project
             git pull origin main
             docker-compose stop python
             docker-compose rm -f python
