@@ -49,18 +49,18 @@ git config --global user.email "username@gmail.com"
 ssh -T git@github.com
 ```
 
-3 6. Turn on the web services and make sure they work
+# 6. Turn on the web services and make sure they work
 
 ```bash
 docker-compose up -d
 ```
 
 Check that the following work:
-- http://domain
-- http://domain:5000
-- http://domain:8080
+- http://kevinlowe.net
+- http://kevinlowe.net:5000
+- http://kevinlowe.net:8080
 
-# 6. Allow Github to deploy to the server
+# 7. Allow Github to deploy to the server
 
 ``` bash
 cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
@@ -76,7 +76,7 @@ Add these secrets:
 * DO_USER: root
 * DO_SSH_KEY: your private SSH key (contents of ~/.ssh/id_ed25519)
 
-# 7. Deploy using Github Action
+# 8. Deploy using Github Action
 
 Re-run last action and everything shohul deploy!
 
