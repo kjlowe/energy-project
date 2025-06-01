@@ -47,6 +47,11 @@ git clone git@github.com:kjlowe/energy-project.git
 git config --global user.name "Kevin Lowe"
 git config --global user.email "username@gmail.com"
 ssh -T git@github.com
+cd ~/web-projects/energy-project
+```
+* Fix permissions to ensure Jupyterlab can access everything it needs to.
+```bash
+chown -R 1000:100 .
 ```
 
 ## 6. Start Web Services
