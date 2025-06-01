@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example  # You can change this
+    volumes:
+      - /root/web-data/mysql:/var/lib/mysql
+
+  php:
+    image: php:apache
+    container_name: php
+    volumes:
+      - ./php-app:/var/www/html
+    ports:
+      - "8080:80"
+
+  python:
+    image: python:3.10-slim
+    container_name: python
+    volumes:
+      - ./python-app:/app
+    working_dir: /app
+    command: bash -c "pip install flask && python app.py"
+    ports:
+      - "5000:5000"
