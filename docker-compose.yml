@@ -26,3 +26,27 @@ services:
     command: bash -c "pip install flask && python app.py"
     ports:
       - "5000:5000"
+
+  jupyter:
+    image: jupyter/scipy-notebook
+    container_name: jupyter
+    volumes:
+      - ./jupyter:/home/jovyan/work
+    ports:
+      - "8888:8888"
+    env_file:
+      - /root/secrets/jupyter.env
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    command: start-notebook.sh --NotebookApp.token=${JUPYTER_TOKEN}
+
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/html:/usr/share/nginx/html
+    depends_on:
+      - jupyter
