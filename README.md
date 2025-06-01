@@ -24,6 +24,7 @@ sudo apt install docker-compose -y
 * You might need to restart to do a kernal update.
 
 ## 4. Generate SSH Keys
+* Display the public SSH key:
 ```bash
 ssh-keygen -t ed25519 -C "digitalocean-server"
 ```
@@ -33,13 +34,12 @@ ssh-keygen -t ed25519 -C "digitalocean-server"
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
-
 * In GitHub, navigate to Settings > SSH and GPG Keys:
- * Click New SSH key
- * Title it DigitalOcean
- * Paste your public key into the field
+  * Click New SSH key
+  * Title it DigitalOcean
+  * Paste your public key into the field
 
-Checkout the repo on the server
+Clone the repository on the server:
 ```bash
 mkdir  ~/web-projects
 cd ~/web-projects
@@ -49,36 +49,37 @@ git config --global user.email "username@gmail.com"
 ssh -T git@github.com
 ```
 
-# 6. Turn on the web services and make sure they work
+# 6. Start Web Services
 
 ```bash
 docker-compose up -d
 ```
 
-Check that the following work:
-- http://kevinlowe.net
-- http://kevinlowe.net:5000
-- http://kevinlowe.net:8080
+* Check that the following work:
+  * http://kevinlowe.net
+  * http://kevinlowe.net:5000
+  * http://kevinlowe.net:8080
 
 # 7. Allow Github to deploy to the server
-
+* Add the public SSH key to authorized keys:
 ``` bash
 cat ~/.ssh/id_ed25519.pub > ~/.ssh/authorized_keys
 ```
 
+* Display the private SSH key
 ```bash
 cat ~/.ssh/id_ed25519
 ```
 
-On GitHub, go to your repo → Settings > Secrets > Actions
-Add these secrets:
-* DO_HOST: the IP address of the server
-* DO_USER: root
-* DO_SSH_KEY: your private SSH key (contents of ~/.ssh/id_ed25519)
+* In GitHub, go to the repository → Settings > Secrets > Actions:
+  * Add these secrets:
+    * DO_HOST: the IP address of the server
+    * DO_USER: root
+    * DO_SSH_KEY: your private SSH key (contents of ~/.ssh/id_ed25519)
 
 # 8. Deploy using Github Action
 
-Re-run last action and everything shohul deploy!
+* Re-run the latest GitHub Action to deploy the project.
 
 
  
