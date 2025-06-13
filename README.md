@@ -25,13 +25,12 @@ sudo apt install docker-compose -y
 * You might need to restart to do a kernal update.
 
 ## 4. Generate SSH Keys
-* Display the public SSH key:
 ```bash
 ssh-keygen -t ed25519 -C "digitalocean-server"
 ```
 
 ## 5. Add SSH Keys to GitHub and Clone the Repository
-
+* Display the public SSH key:
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
@@ -50,10 +49,6 @@ git config --global user.email "username@gmail.com"
 ssh -T git@github.com
 cd ~/web-projects/energy-project
 ```
-* Fix permissions to ensure Jupyterlab can access everything it needs to.
-```bash
-chown -R 1000:100 .
-```
 
 ## 6. Start Web Services
 
@@ -62,9 +57,7 @@ docker-compose up -d --build
 ```
 
 * Check that the following work:
-  * http://kevinlowe.net
-  * http://kevinlowe.net:5000
-  * http://kevinlowe.net:8080
+  * http://<ip-address>:5000
 
 ## 7. Allow Github to deploy to the server
 * Add the public SSH key to authorized keys:
@@ -86,26 +79,3 @@ cat ~/.ssh/id_ed25519
 ## 8. Deploy using Github Action
 
 * Re-run the latest GitHub Action to deploy the project.
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
