@@ -79,3 +79,19 @@ cat ~/.ssh/id_ed25519
 ## 8. Deploy using Github Action
 
 * Re-run the latest GitHub Action to deploy the project.
+
+
+# New Laptop Setup
+
+Things I woud want to do are:
+- If it's a mac great, if it's windows install WSL2
+- install docker and docker compose.
+- Install VSCode, connect it to the unix enviornment. May need the WSL2 extension.
+- Check out the repo into the unix environment
+    - Set up git on the computer so that you can push to the repo.
+- Install the DevContainers extension.
+- Ctrl + Shift + P to and find the "something with Dev Containers" option.
+- Other extensions:
+    - Github copilot
+    - Python
+    - Jupyter
