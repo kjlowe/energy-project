@@ -5,9 +5,24 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    # calculate today's date
-    # and return a greeting message
     today = datetime.now().strftime("%Y-%m-%d")
-    return f"Today's date is: {today} and I'm ready for it! And it's up to date from my work computer again!"
+
+    # Use correct path if file is in parent directory
+    with open("./billing_data_table.html", "r", encoding="utf-8") as f:
+        billing_data_table = f.read()
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Year 2024</title>
+</head>
+<body>
+    <h1>Data</h1>
+    {billing_data_table}
+    <p>Today's date is: {today}</p>
+</body>
+</html>"""
 
 app.run(debug=True, host="0.0.0.0", port=5000)
