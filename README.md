@@ -95,3 +95,15 @@ Things I woud want to do are:
     - Github copilot
     - Python
     - Jupyter
+
+
+# Workflows
+
+## Running. Python on the server 
+
+After getting onto the command line of the already setup server.
+
+```bash
+docker exec -it python /bin/bash
+python data-explore.py
+```
