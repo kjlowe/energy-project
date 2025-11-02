@@ -17,22 +17,6 @@ const FlowChart = ({ data, width = 800, height = 500 }) => {
 
   return (
     <div>
-      {/* Legend */}
-      <div className="chart-legend">
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#4CAF50' }}></div>
-          <span>Start Node</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#2196F3' }}></div>
-          <span>Process Node</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ backgroundColor: '#FF5722' }}></div>
-          <span>End Node</span>
-        </div>
-      </div>
-
       {/* Data Info */}
       <div className="data-info">
         <strong>Flow Data:</strong> {nodes.length} nodes, {edges.length} connections
