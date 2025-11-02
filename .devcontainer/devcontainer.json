@@ -1,35 +1,13 @@
 {
-  "name": "Energy Project - Python + React + Visx",
+  "name": "Python in Docker",
   "image": "python:3.10",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "18"
-    }
-  },
-  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postCreateCommand": "pip install -r requirements.txt",
   "mounts": ["source=${localWorkspaceFolder},target=/workspace,type=bind"],
   "workspaceFolder": "/workspace",
-  "forwardPorts": [5000, 5173],
-  "portsAttributes": {
-    "5000": {
-      "label": "Flask API",
-      "onAutoForward": "notify"
-    },
-    "5173": {
-      "label": "React Dev Server",
-      "onAutoForward": "openBrowser"
-    }
+  "settings": {
+    "python.defaultInterpreterPath": "/usr/local/bin/python"
   },
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python"
-      },
-      "extensions": [
-        "ms-python.python",
-        "bradlc.vscode-tailwindcss",
-        "ms-vscode.vscode-json"
-      ]
-    }
-  }
+  "extensions": [
+    "ms-python.python"
+  ]
 }

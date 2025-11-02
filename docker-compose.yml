@@ -1,32 +1,15 @@
 version: '3.8'
 
 services:
+
   python:
     image: python:3.10-slim
-    container_name: energy-python-backend
+    container_name: python
     restart: always
     volumes:
       - ./python-app:/app
     working_dir: /app
-    command: bash -c "pip install flask flask-cors pandas && python app.py"
+    command: bash -c "pip install flask pandas && python app.py"
     ports:
       - "5000:5000"
-    environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
-
-  react-dev:
-    image: node:18-alpine
-    container_name: energy-react-frontend
-    working_dir: /app
-    volumes:
-      - ./energy-flowchart:/app
-      - /app/node_modules  # Anonymous volume for node_modules
-    ports:
-      - "5173:5173"
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-    depends_on:
-      - python
-    environment:
-      - VITE_API_URL=http://localhost:5000
 
