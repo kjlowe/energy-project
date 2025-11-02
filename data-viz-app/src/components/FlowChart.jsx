@@ -1,10 +1,13 @@
-import React from 'react';
+/* filepath: /workspace/data-viz-app/src/components/FlowChart.jsx */
+import React, { useState } from 'react';
 import { Group } from '@visx/group';
 import { Circle, Line } from '@visx/shape';
 import { scaleOrdinal } from '@visx/scale';
 
-const FlowChart = ({ data, width = 600, height = 400 }) => {
+const FlowChart = ({ data, width = 800, height = 500 }) => {
   const { nodes, edges } = data;
+  const [hoveredNode, setHoveredNode] = useState(null);
+  const [hoveredEdge, setHoveredEdge] = useState(null);
 
   // Color scale for different node types
   const colorScale = scaleOrdinal({
@@ -13,53 +16,153 @@ const FlowChart = ({ data, width = 600, height = 400 }) => {
   });
 
   return (
-    <svg width={width} height={height}>
-      <Group>
-        {/* Render edges first (so they appear behind nodes) */}
-        {edges.map((edge, i) => {
-          const sourceNode = nodes.find(n => n.id === edge.source);
-          const targetNode = nodes.find(n => n.id === edge.target);
-          
-          if (!sourceNode || !targetNode) return null;
-          
-          return (
-            <Line
-              key={`edge-${i}`}
-              from={{ x: sourceNode.x, y: sourceNode.y }}
-              to={{ x: targetNode.x, y: targetNode.y }}
-              stroke="#666"
-              strokeWidth={2}
-              style={{ cursor: 'pointer' }}
-            />
-          );
-        })}
+    <div>
+      {/* Legend */}
+      <div className="chart-legend">
+        <div className="legend-item">
+          <div className="legend-color" style={{ backgroundColor: '#4CAF50' }}></div>
+          <span>Start Node</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color" style={{ backgroundColor: '#2196F3' }}></div>
+          <span>Process Node</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color" style={{ backgroundColor: '#FF5722' }}></div>
+          <span>End Node</span>
+        </div>
+      </div>
+
+      {/* Data Info */}
+      <div className="data-info">
+        <strong>Flow Data:</strong> {nodes.length} nodes, {edges.length} connections
+        {hoveredNode && (
+          <div style={{ marginTop: '8px' }}>
+            <strong>Hovered:</strong> {hoveredNode.label} ({hoveredNode.type})
+          </div>
+        )}
+        {hoveredEdge && (
+          <div style={{ marginTop: '8px' }}>
+            <strong>Connection:</strong> Value {hoveredEdge.value}
+          </div>
+        )}
+      </div>
+
+      {/* SVG Chart */}
+      <svg width={width} height={height} style={{ border: '1px solid #ddd', borderRadius: '4px' }}>
+        {/* Background */}
+        <rect width={width} height={height} fill="#fafafa" />
         
-        {/* Render nodes */}
-        {nodes.map((node) => (
-          <Group key={node.id}>
-            <Circle
-              cx={node.x}
-              cy={node.y}
-              r={30}
-              fill={colorScale(node.type)}
-              stroke="#333"
-              strokeWidth={2}
-              style={{ cursor: 'pointer' }}
-            />
-            <text
-              x={node.x}
-              y={node.y + 5}
-              textAnchor="middle"
-              fontSize={12}
-              fill="white"
-              fontWeight="bold"
-            >
-              {node.label}
-            </text>
-          </Group>
-        ))}
-      </Group>
-    </svg>
+        {/* Grid lines for better readability */}
+        <defs>
+          <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e0e0e0" strokeWidth="1"/>
+          </pattern>
+        </defs>
+        <rect width={width} height={height} fill="url(#grid)" />
+        
+        <Group>
+          {/* Render edges first (so they appear behind nodes) */}
+          {edges.map((edge, i) => {
+            const sourceNode = nodes.find(n => n.id === edge.source);
+            const targetNode = nodes.find(n => n.id === edge.target);
+            
+            if (!sourceNode || !targetNode) return null;
+            
+            const isHovered = hoveredEdge?.source === edge.source && hoveredEdge?.target === edge.target;
+            
+            return (
+              <g key={`edge-${i}`}>
+                {/* Arrow line */}
+                <Line
+                  from={{ x: sourceNode.x, y: sourceNode.y }}
+                  to={{ x: targetNode.x, y: targetNode.y }}
+                  stroke={isHovered ? "#FF6B35" : "#666"}
+                  strokeWidth={isHovered ? 4 : 3}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredEdge(edge)}
+                  onMouseLeave={() => setHoveredEdge(null)}
+                />
+                
+                {/* Edge label showing value */}
+                <text
+                  x={(sourceNode.x + targetNode.x) / 2}
+                  y={(sourceNode.y + targetNode.y) / 2 - 10}
+                  textAnchor="middle"
+                  fontSize={14}
+                  fill={isHovered ? "#FF6B35" : "#333"}
+                  fontWeight="bold"
+                  style={{ 
+                    pointerEvents: 'none',
+                    textShadow: '1px 1px 2px white'
+                  }}
+                >
+                  {edge.value}
+                </text>
+              </g>
+            );
+          })}
+          
+          {/* Render nodes */}
+          {nodes.map((node) => {
+            const isHovered = hoveredNode?.id === node.id;
+            const radius = isHovered ? 40 : 35;
+            
+            return (
+              <Group 
+                key={node.id}
+                onMouseEnter={() => setHoveredNode(node)}
+                onMouseLeave={() => setHoveredNode(null)}
+              >
+                {/* Node shadow */}
+                <Circle
+                  cx={node.x + 3}
+                  cy={node.y + 3}
+                  r={radius}
+                  fill="rgba(0,0,0,0.2)"
+                />
+                
+                {/* Main node circle */}
+                <Circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={radius}
+                  fill={colorScale(node.type)}
+                  stroke={isHovered ? "#333" : "#555"}
+                  strokeWidth={isHovered ? 4 : 2}
+                  style={{ cursor: 'pointer' }}
+                />
+                
+                {/* Node label */}
+                <text
+                  x={node.x}
+                  y={node.y + 5}
+                  textAnchor="middle"
+                  fontSize={14}
+                  fill="white"
+                  fontWeight="bold"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  {node.label}
+                </text>
+                
+                {/* Node ID below */}
+                <text
+                  x={node.x}
+                  y={node.y + radius + 20}
+                  textAnchor="middle"
+                  fontSize={12}
+                  fill="#666"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  ID: {node.id}
+                </text>
+              </Group>
+            );
+          })}
+        </Group>
+      </svg>
+    </div>
   );
 };
 
