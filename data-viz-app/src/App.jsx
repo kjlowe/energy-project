@@ -16,7 +16,7 @@ function App() {
           {filters.categories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
-        </select>s
+        </select>
       </div>
 
       <div className="chart-container">
