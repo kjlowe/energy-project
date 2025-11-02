@@ -2,7 +2,6 @@
 import React from 'react';
 import { useDataFetch } from './hooks/useDataFetch';
 import FlowChart from './components/FlowChart';
-import './App.css';
 
 function App() {
   const { data, filters, loading, error } = useDataFetch();
@@ -15,13 +14,13 @@ function App() {
       <div className="filters">
         <label style={{ fontWeight: 'bold', marginRight: '10px' }}>Filters:</label>
         <select>
-          <option value="">📂 Select Category</option>
+          <option value="">Select Category</option>
           {filters.categories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
       </div>
-      
+
       <div className="chart-container">
         <h2>Process Flow Diagram</h2>
         <FlowChart data={data} width={800} height={500} />
