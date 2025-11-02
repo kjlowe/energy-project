@@ -14,7 +14,7 @@ services:
       - "5000:5000"
 
   data-viz-app:
-    image: node:18-alpine
+    image: node:20-alpine
     container_name: data-viz-app
     restart: always
     volumes:
