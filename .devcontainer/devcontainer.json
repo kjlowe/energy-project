@@ -1,13 +1,17 @@
 {
   "name": "Python in Docker",
   "image": "python:3.10",
-  "postCreateCommand": "pip install -r requirements.txt",
+  "postCreateCommand": "bash .devcontainer/setup.sh",
   "mounts": ["source=${localWorkspaceFolder},target=/workspace,type=bind"],
   "workspaceFolder": "/workspace",
-  "settings": {
-    "python.defaultInterpreterPath": "/usr/local/bin/python"
-  },
-  "extensions": [
-    "ms-python.python"
-  ]
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      },
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  }
 }
