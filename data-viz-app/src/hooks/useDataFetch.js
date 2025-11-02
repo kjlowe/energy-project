@@ -11,10 +11,10 @@ export const useDataFetch = () => {
       try {
         setLoading(true);
         
-        // Fetch both data and filters
+        // Fetch both data and filters using external IP
         const [dataResponse, filtersResponse] = await Promise.all([
-          fetch('http://localhost:5000/api/data'),
-          fetch('http://localhost:5000/api/filters')
+          fetch('http://137.184.124.65:5000/api/data'),
+          fetch('http://137.184.124.65:5000/api/filters')
         ]);
 
         if (!dataResponse.ok || !filtersResponse.ok) {
