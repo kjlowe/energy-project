@@ -12,17 +12,15 @@ function App() {
   return (
     <div className="App">     
       <div className="filters">
-        <h2>Filters</h2>
         <select>
           <option value="">Select Category</option>
           {filters.categories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
-        </select>
+        </select>s
       </div>
 
       <div className="chart-container">
-        <h2>Process Flow Diagram</h2>
         <FlowChart data={data} width={800} height={500} />
       </div>
     </div>
