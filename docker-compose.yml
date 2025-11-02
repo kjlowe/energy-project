@@ -9,7 +9,7 @@ services:
     volumes:
       - ./python-app:/app
     working_dir: /app
-    command: bash -c "pip install flask pandas && python app.py"
+    command: bash -c "pip install flask pandas flask-cors && python app.py"
     ports:
       - "5000:5000"
 
@@ -26,4 +26,3 @@ services:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-

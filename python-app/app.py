@@ -1,28 +1,32 @@
-from flask import Flask
-from datetime import datetime
+from flask import Flask, jsonify
+from flask_cors import CORS
+import pandas as pd
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for React app
 
-@app.route("/")
-def home():
-    today = datetime.now().strftime("%Y-%m-%d")
+@app.route('/api/data')
+def get_data():
+    # Sample flowchart data - replace with your actual data
+    nodes = [
+        {"id": "1", "label": "Start", "x": 100, "y": 100, "type": "start"},
+        {"id": "2", "label": "Process", "x": 300, "y": 100, "type": "process"},
+        {"id": "3", "label": "End", "x": 500, "y": 100, "type": "end"}
+    ]
+    
+    edges = [
+        {"source": "1", "target": "2", "value": 25},
+        {"source": "2", "target": "3", "value": 15}
+    ]
+    
+    return jsonify({"nodes": nodes, "edges": edges})
 
-    # Use correct path if file is in parent directory
-    with open("./billing_data_table.html", "r", encoding="utf-8") as f:
-        billing_data_table = f.read()
+@app.route('/api/filters')
+def get_filters():
+    return jsonify({
+        "categories": ["All", "Energy", "Billing", "Usage"],
+        "timeframes": ["Daily", "Weekly", "Monthly"]
+    })
 
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Billing Year 2024</title>
-</head>
-<body>
-    <h1>Data</h1>
-    {billing_data_table}
-    <p>Today's date is: {today}</p>
-</body>
-</html>"""
-
-app.run(debug=True, host="0.0.0.0", port=5000)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
