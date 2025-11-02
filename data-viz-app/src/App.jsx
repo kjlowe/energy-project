@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="App">     
       <div className="filters">
-        <label style={{ fontWeight: 'bold', marginRight: '10px' }}>Filters:</label>
+        <h2>Filters</h2>
         <select>
           <option value="">Select Category</option>
           {filters.categories.map(cat => (
