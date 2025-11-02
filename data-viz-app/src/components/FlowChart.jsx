@@ -18,21 +18,23 @@ const FlowChart = ({ data, width = 800, height = 500 }) => {
   return (
     <div>
       {/* Data Info */}
-      <div className="data-info">
-        <strong>Flow Data:</strong> {nodes.length} nodes, {edges.length} connections
-        {hoveredNode && (
-          <div style={{ marginTop: '8px' }}>
-            <strong>Hovered:</strong> {hoveredNode.label} ({hoveredNode.type})
+        <div className="data-info" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div>
+            <strong>Flow Data:</strong> {nodes.length} nodes, {edges.length} connections
           </div>
-        )}
-        {hoveredEdge && (
-          <div style={{ marginTop: '8px' }}>
-            <strong>Connection:</strong> Value {hoveredEdge.value}
-          </div>
-        )}
-      </div>
+          {hoveredNode && (
+            <div>
+          <strong>Hovered:</strong> {hoveredNode.label} ({hoveredNode.type})
+            </div>
+          )}
+          {hoveredEdge && (
+            <div>
+          <strong>Connection:</strong> Value {hoveredEdge.value}
+            </div>
+          )}
+        </div>
 
-      {/* SVG Chart */}
+        {/* SVG Chart */}
       <svg width={width} height={height} style={{ border: '1px solid #ddd', borderRadius: '4px' }}>
         {/* Background */}
         <rect width={width} height={height} fill="#fafafa" />
