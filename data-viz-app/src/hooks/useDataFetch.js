@@ -1,40 +1,62 @@
+// Import React hooks for state management and side effects
 import { useState, useEffect } from 'react';
 
+// Custom hook for fetching data and filters from an external API
 export const useDataFetch = () => {
+  
+  // State management for data fetching: data/filters storage, loading status, and error handling
   const [data, setData] = useState({ nodes: [], edges: [] });
   const [filters, setFilters] = useState({ categories: [], timeframes: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // useEffect hook runs once when component mounts (empty dependency array)
   useEffect(() => {
+
+    // Async function to handle the data fetching process
     const fetchData = async () => {
+
       try {
+        // Set loading to true at the start of fetch operation. This helps show 
+        // loading indicators in the UI.
         setLoading(true);
         
-        // Fetch both data and filters using external IP
+        // Make concurrent API calls to fetch both data and filters
+        // Using Promise.all for better performance than sequential calls
         const [dataResponse, filtersResponse] = await Promise.all([
-          fetch('http://137.184.124.65:5000/api/data'),
-          fetch('http://137.184.124.65:5000/api/filters')
+          fetch('http://137.184.124.65:5000/api/data'),    // Fetch main data
+          fetch('http://137.184.124.65:5000/api/filters')  // Fetch filter options
         ]);
 
+        // Check if both HTTP responses are successful (status 200-299)
         if (!dataResponse.ok || !filtersResponse.ok) {
           throw new Error('Failed to fetch data');
         }
 
+        // Parse JSON data from both responses
         const dataResult = await dataResponse.json();
         const filtersResult = await filtersResponse.json();
         
+        // Update state with the fetched data
         setData(dataResult);
         setFilters(filtersResult);
+
       } catch (err) {
+        // If any error occurs, store the error message in state
         setError(err.message);
+
       } finally {
+        // Always set loading to false when fetch operation completes
+        // (whether successful or failed)
         setLoading(false);
       }
     };
 
+    // Call the fetchData function immediately when component mounts
     fetchData();
-  }, []);
 
+  }, []); // Empty dependency array means this effect runs only once on mount
+
+  // Return all state values for consuming components
   return { data, filters, loading, error };
 };
