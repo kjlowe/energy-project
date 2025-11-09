@@ -11,7 +11,7 @@ const Solar = ({ data, width = 800, height = 500 }) => {
       <svg width={width} height={height}>
         <Line
           from={{ x: 50, y: 50 }}
-          to={{ x: 50, y: 150 }}
+          to={{ x: 150, y: 50 }}
           stroke="#333"
           strokeWidth={2}
         />
