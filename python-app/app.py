@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import pandas as pd
 
@@ -28,5 +28,11 @@ def get_filters():
         "timeframes": ["Daily", "Weekly", "Monthly"]
     })
 
+@app.route('/billing-table')
+def billing_table():
+    return render_template('billing_data_table.html')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+

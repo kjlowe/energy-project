@@ -4,13 +4,30 @@
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "mounts": ["source=${localWorkspaceFolder},target=/workspace,type=bind"],
   "workspaceFolder": "/workspace",
+  "forwardPorts": [3000, 5000, 5173],
+  "portsAttributes": {
+    "5173": {
+      "label": "React Dev Server (Vite)",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "Flask API Server",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Additional Dev Server",
+      "onAutoForward": "silent"
+    }
+  },
   "customizations": {
     "vscode": {
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python"
       },
       "extensions": [
-        "ms-python.python"
+        "ms-python.python",
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss"
       ]
     }
   }
