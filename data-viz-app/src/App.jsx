@@ -1,6 +1,7 @@
 /* filepath: /workspace/data-viz-app/src/App.jsx */
 import { useDataFetch } from './hooks/useDataFetch';
 import FlowChart from './components/FlowChart';
+import Solar from './components/Solar';
 
 function App() {
   const { data, filters, loading, error } = useDataFetch();
@@ -22,6 +23,11 @@ function App() {
       <div className="chart-container">
         <FlowChart data={data} width={800} height={500} />
       </div>
+
+      <div>
+        <Solar data={data} width={800} height={500} />
+      </div>
+
     </div>
   );
 }

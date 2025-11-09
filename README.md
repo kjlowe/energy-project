@@ -107,3 +107,10 @@ After getting onto the command line of the already setup server.
 docker exec -it python /bin/bash
 python data-explore.py
 ```
+
+
+# Next Steps
+
+ - Want get the billing data showing up in the visualization.
+ - I want to make sure the data structures move across parts of the application easily. Seems like using proto is a good way of doing that.
+ - I think I should get a proof of concept up and running first, but unofortunately I never go back to this stuff.
