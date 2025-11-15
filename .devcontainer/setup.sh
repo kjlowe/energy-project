@@ -14,3 +14,10 @@ pip install -r requirements.txt
 echo "Node.js version: $(node --version)"
 echo "npm version: $(npm --version)"
 echo "Python packages installed successfully"
+
+echo "--------------------------------------"
+echo "Next steps. Remove extensions that may cause conflicts with Copilot."
+echo "1. CONTROL + \` (top left key) to open the terminal."
+echo "2. Run the script: ./remove-extentions-causing-copilot-conflict.sh"
+
+
