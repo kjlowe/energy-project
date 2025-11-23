@@ -7,6 +7,7 @@ export const useDataFetch = () => {
   // State management for data fetching: data/filters storage, loading status, and error handling
   const [data, setData] = useState({ nodes: [], edges: [] });
   const [filters, setFilters] = useState({ categories: [], timeframes: [] });
+  const [billingData, setBillingData] = useState({ records: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,23 +24,26 @@ export const useDataFetch = () => {
         
         // Make concurrent API calls to fetch both data and filters
         // Using Promise.all for better performance than sequential calls
-        const [dataResponse, filtersResponse] = await Promise.all([
+        const [dataResponse, filtersResponse, billingDataResponse] = await Promise.all([
           fetch('http://137.184.124.65:5000/api/data'),    // Fetch main data
-          fetch('http://137.184.124.65:5000/api/filters')  // Fetch filter options
+          fetch('http://137.184.124.65:5000/api/filters'),  // Fetch filter options
+          fetch('http://137.184.124.65:5000/api/billing-data')  // Fetch billing data
         ]);
 
         // Check if both HTTP responses are successful (status 200-299)
-        if (!dataResponse.ok || !filtersResponse.ok) {
+        if (!dataResponse.ok || !filtersResponse.ok || !billingDataResponse.ok) {
           throw new Error('Failed to fetch data');
         }
 
         // Parse JSON data from both responses
         const dataResult = await dataResponse.json();
         const filtersResult = await filtersResponse.json();
+        const billingDataResult = await billingDataResponse.json();
         
         // Update state with the fetched data
         setData(dataResult);
         setFilters(filtersResult);
+        setBillingData(billingDataResult);
 
       } catch (err) {
         // If any error occurs, store the error message in state
@@ -58,5 +62,5 @@ export const useDataFetch = () => {
   }, []); // Empty dependency array means this effect runs only once on mount
 
   // Return all state values for consuming components
-  return { data, filters, loading, error };
+  return { data, filters, billingData, loading, error };
 };

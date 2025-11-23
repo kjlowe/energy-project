@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import pandas as pd
+import json
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React app
@@ -33,7 +34,9 @@ def api_billing_table():
     path = 'billing_data.json'
     try:
         df = pd.read_json(path)
-        return jsonify({"records": df.to_dict(orient="records")})
+        with open(path, 'r') as f:
+            data = json.load(f)
+        return jsonify(data)
     except Exception:
         sample = [
             {"account_id": "A001", "period": "2025-11", "usage_kwh": 1200, "amount": 180.50, "status": "Paid"},

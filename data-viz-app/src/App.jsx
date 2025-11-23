@@ -4,7 +4,7 @@ import FlowChart from './components/FlowChart';
 import Solar from './components/Solar';
 
 function App() {
-  const { data, filters, loading, error } = useDataFetch();
+  const { data, filters, billingData, loading, error } = useDataFetch();
 
   if (loading) return <div className="loading">🔄 Loading data visualization...</div>;
   if (error) return <div className="error">❌ Error loading data: {error}</div>;
@@ -25,7 +25,7 @@ function App() {
       </div>
 
       <div>
-        <Solar data={data} width={100} height={100} />
+        <Solar data={billingData} width={100} height={100} />
       </div>
 
     </div>

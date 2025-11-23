@@ -28,6 +28,9 @@ const Solar = ({ data, width = 100, height = 100 }) => {
     sinePoints.push(`${x},${y}`);
   }
 
+  // Print out the data structure to verify
+  console.log('Solar component data prop:', data.records);
+
   return (
     <div>
       <svg width={width} height={height}>
