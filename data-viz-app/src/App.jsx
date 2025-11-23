@@ -1,6 +1,6 @@
 /* filepath: /workspace/data-viz-app/src/App.jsx */
 import { useDataFetch } from './hooks/useDataFetch';
-import FlowChart from './components/FlowChart';
+//import FlowChart from './components/FlowChart';
 import Solar from './components/Solar';
 
 function App() {
@@ -11,7 +11,17 @@ function App() {
 
   return (
     <div className="App">     
-      <div className="filters">
+
+      <div>
+        <Solar data={billingData} width={400} height={400} />
+      </div>
+
+    </div>
+  );
+
+  /* 
+
+        <div className="filters">
         <select>
           <option value="">Select Category</option>
           {filters.categories.map(cat => (
@@ -24,12 +34,7 @@ function App() {
         <FlowChart data={data} width={800} height={500} />
       </div>
 
-      <div>
-        <Solar data={billingData} width={100} height={100} />
-      </div>
-
-    </div>
-  );
+  */
 }
 
 export default App;
