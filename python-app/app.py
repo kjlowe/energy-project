@@ -28,9 +28,18 @@ def get_filters():
         "timeframes": ["Daily", "Weekly", "Monthly"]
     })
 
-@app.route('/billing-table')
-def billing_table():
-    return render_template('billing_data_table.html')
+@app.route('/api/billing-data')
+def api_billing_table():
+    path = 'billing_data.json'
+    try:
+        df = pd.read_json(path)
+        return jsonify({"records": df.to_dict(orient="records")})
+    except Exception:
+        sample = [
+            {"account_id": "A001", "period": "2025-11", "usage_kwh": 1200, "amount": 180.50, "status": "Paid"},
+            {"account_id": "A002", "period": "2025-11", "usage_kwh": 950, "amount": 142.75, "status": "Pending"}
+        ]
+        return jsonify({"records": sample})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

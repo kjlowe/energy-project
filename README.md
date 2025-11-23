@@ -84,17 +84,16 @@ cat ~/.ssh/id_ed25519
 # New Laptop Setup
 
 Things I woud want to do are:
-- If it's a mac great, if it's windows install WSL2
+- If it's a mac install colima. Be sure to start with with lots of memeory (2GB by default is too little for copilot) 
+  - colima start --memory 24
+- If it's windows install docker desktop (is there a free lightweight version like colima?)
 - install docker and docker compose.
-- Install VSCode, connect it to the unix enviornment. May need the WSL2 extension.
-- Check out the repo into the unix environment
-    - Set up git on the computer so that you can push to the repo.
+- Install VSCode.
+- Check out the repo onto the base operating system.
+- Set up git on the computer so that you can push to the repo. The github CLI is helpful for that.
 - Install the DevContainers extension.
 - Ctrl + Shift + P to and find the "something with Dev Containers" option.
-- Other extensions:
-    - Github copilot
-    - Python
-    - Jupyter
+- After installation follow the instructions to remove the Python extensions that conlict with Co-Pilot
 
 
 # Workflows
@@ -111,6 +110,17 @@ python data-explore.py
 
 # Next Steps
 
- - Want get the billing data showing up in the visualization.
- - I want to make sure the data structures move across parts of the application easily. Seems like using proto is a good way of doing that.
- - I think I should get a proof of concept up and running first, but unofortunately I never go back to this stuff.
+Get the PROOF of Concept Running first.
+
+1. Get Node running locally again and connecting to the webserver and showing the basic visualization. 
+
+2. Draw what I want the display to be on paper.
+
+3. Figure out what data I need for that and pipe it through the API.
+
+4. Try and make the visual.
+
+
+Improve data structures.
+
+1.  I want to make sure the data structures move across parts of the application easily. Seems like using proto is a good way of doing that.
