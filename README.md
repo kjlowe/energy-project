@@ -56,6 +56,14 @@ cd ~/web-projects/energy-project
 docker-compose up -d --build
 ```
 
+Note: everytime the docker compose file is changed this will need to be run manually. 
+
+Use the following command to watch the terminal as the docker containers come online.
+
+```bash
+docker-compose logs -f
+```
+
 * Check that the following work:
   * http://<ip-address>:5000
 
@@ -110,17 +118,10 @@ python data-explore.py
 
 # Next Steps
 
-Get the PROOF of Concept Running first.
+- I have a proof of concept of using proto to define a python data structure and load information into a DB. 
 
-1. Get Node running locally again and connecting to the webserver and showing the basic visualization. 
+- NOW: start defining the billing data structures in proto. 
 
-2. Draw what I want the display to be on paper.
+- THEN: See if you can load the jupyter notebook data into that Python/Proto structure instead and have it automatically store in sqlite.
 
-3. Figure out what data I need for that and pipe it through the API.
-
-4. Try and make the visual.
-
-
-Improve data structures.
-
-1.  I want to make sure the data structures move across parts of the application easily. Seems like using proto is a good way of doing that.
+- The awesome result will be the full set of data being returned from the Flash API in a format defined by the proto.
