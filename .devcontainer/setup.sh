@@ -16,6 +16,25 @@ apt-get install -y sqlite3
 # Install Python requirements
 pip install -r requirements.txt
 
+# Setup Python app virtual environment
+echo "Setting up Python app virtual environment..."
+cd /workspace/python-app
+
+# Create virtual environment if it doesn't exist
+if [ ! -d ".venv" ]; then
+    python -m venv .venv
+    echo "✅ Virtual environment created"
+fi
+
+# Install Python app dependencies from requirements.txt
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install -r requirements.txt
+
+echo "✅ Python app dependencies installed"
+
+# Return to workspace root
+cd /workspace
+
 # Verify installations
 echo "Node.js version: $(node --version)"
 echo "npm version: $(npm --version)"
