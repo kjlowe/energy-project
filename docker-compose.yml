@@ -9,7 +9,7 @@ services:
     volumes:
       - ./python-app:/app
     working_dir: /app
-    command: bash -c "pip install flask pandas flask-cors && python app.py"
+    command: bash -c "pip install -r requirements.txt && python app.py"
     ports:
       - "5000:5000"
 
