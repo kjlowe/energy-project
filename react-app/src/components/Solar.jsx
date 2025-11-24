@@ -1,4 +1,4 @@
-/* filepath: /workspace/data-viz-app/src/components/Solar.jsx */
+/* filepath: /workspace/react-app/src/components/Solar.jsx */
 import React, { useState } from 'react';
 import { Group } from '@visx/group';
 import { Circle, Line } from '@visx/shape';

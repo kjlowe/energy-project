@@ -1,4 +1,4 @@
-/* filepath: /workspace/data-viz-app/src/App.jsx */
+/* filepath: /workspace/react-app/src/App.jsx */
 import { useDataFetch } from './hooks/useDataFetch';
 //import FlowChart from './components/FlowChart';
 import Solar from './components/Solar';

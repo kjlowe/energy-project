@@ -1,4 +1,4 @@
-/* filepath: /workspace/data-viz-app/src/components/FlowChart.jsx */
+/* filepath: /workspace/react-app/src/components/FlowChart.jsx */
 import React, { useState } from 'react';
 import { Group } from '@visx/group';
 import { Circle, Line } from '@visx/shape';
