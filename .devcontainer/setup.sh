@@ -7,6 +7,12 @@ apt-get update
 curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
 apt-get install -y nodejs
 
+# Install protobuf
+apt-get install -y protobuf-compiler
+
+# Install sqllite3
+apt-get install -y sqlite3
+
 # Install Python requirements
 pip install -r requirements.txt
 
