@@ -3,18 +3,19 @@
 # Update package list
 apt-get update
 
-# Install Node.js and npm
+# Instead some command line tools in addition to the base python image
 curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
 apt-get install -y nodejs
-
-# Install protobuf
 apt-get install -y protobuf-compiler
-
-# Install sqllite3
 apt-get install -y sqlite3
 
-# Install Python requirements
-pip install -r requirements.txt
+# Verify installations
+echo "Node.js version: $(node --version)"
+echo "npm version: $(npm --version)"
+echo "protobuf version: $(protoc --version)"
+echo "SQLite version: $(sqlite3 --version)"
+
+###### PYTHON APP VENV #########################################
 
 # Setup Python app virtual environment
 echo "Setting up Python app virtual environment..."
@@ -32,17 +33,23 @@ fi
 
 echo "✅ Python app dependencies installed"
 
+###### PYTHON APP VENV #########################################
+
+# Setup Python notebooks virtual environment
+echo "Setting up Python notebooks virtual environment..."
+cd /workspace/python-notebooks
+
+# Create virtual environment if it doesn't exist
+if [ ! -d ".venv" ]; then
+    python -m venv .venv
+    echo "✅ Notebooks virtual environment created"
+fi
+
+# Install Python notebook dependencies
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install -r requirements.txt
+
+echo "✅ Python notebook dependencies installed"
+
 # Return to workspace root
 cd /workspace
-
-# Verify installations
-echo "Node.js version: $(node --version)"
-echo "npm version: $(npm --version)"
-echo "Python packages installed successfully"
-
-echo "--------------------------------------"
-echo "Next steps. Remove extensions that may cause conflicts with Copilot."
-echo "1. CONTROL + \` (top left key) to open the terminal."
-echo "2. Run the script: ./remove-extentions-causing-copilot-conflict.sh"
-
-

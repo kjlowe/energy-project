@@ -3,5 +3,3 @@ ipykernel
 pandas
 openpyxl
 matplotlib
-protobuf
-sqlalchemy
