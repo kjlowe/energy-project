@@ -1,16 +1,10 @@
-from config import *
-from models import DatabaseManager
-
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import pandas as pd
 import json
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React app
-
-# Initialize database
-db = DatabaseManager()
 
 @app.route('/api/data')
 def get_data():
@@ -37,7 +31,7 @@ def get_filters():
 
 @app.route('/api/billing-data')
 def api_billing_table():
-    path = str(DATA_DIR / "billing_data.json")
+    path = 'billing_data.json'
     try:
         df = pd.read_json(path)
         with open(path, 'r') as f:
@@ -49,13 +43,6 @@ def api_billing_table():
             {"account_id": "A002", "period": "2025-11", "usage_kwh": 950, "amount": 142.75, "status": "Pending"}
         ]
         return jsonify({"records": sample})
-
-# Person API endpoints
-@app.route('/api/people', methods=['GET'])
-def get_people():
-    """Get all people from database."""
-    people = db.get_all_people()
-    return jsonify({"people": people, "count": len(people)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
