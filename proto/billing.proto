@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+message Person {
+  string name = 1;
+  int32 age = 2;
+  string email = 3;
+}
+
+enum WhereFrom {
+  NOT_PROVIDED = 0;
+  PDF_BILL = 1;
+  PDF_DETAIL_OF_BILL = 2;
+  CALCULATED = 3;
+  FIXED_VALUE = 4;
+}
+
+enum NEM2AMeterType {
+  NEM2A_METER_TYPE_UNSPECIFIED = 0;
+  GENERATION_METER = 1;
+  BENEFIT_METER = 2;
+}
+
+message WhereFound {
+  // tells the person where to find this on the bill
+  optional WhereFrom where_from = 1;
+
+  // tells the person where to find this on the bill
+  optional string where_on_pdf = 2;
+
+  // a number that Kevin can use to identify this metric by looking at the november 2024 sample bill
+  optional int32 kevins_number_code = 3;
+}
+
+message EnergyDate {
+  optional string value = 1;  // ISO 8601 date format (YYYY-MM-DD)
+  repeated WhereFound where_found = 2;
+}
+
+message EnergyMetric {
+
+  // Sometimes each metric comes from multiple values summed up.
+  // This can happen when the rates change half way through the month (due to summer/winter transitions or rate hikes)
+  repeated double subcomponent_values = 1;
+  
+  // The unit of the metric, such as kWh or $
+  optional string unit = 2;
+  
+  // Where this metric was found in the PG&E billing system.
+  repeated WhereFound where_found = 3;
+}
+
+// Some energy metrics are time-of-use (TOU) based, meaning they have different values for peak and off-peak times.
+message EnergyMetricTOU {
+  EnergyMetric peak = 1;
+  EnergyMetric off_peak = 2;
+  EnergyMetric total = 3;
+}
+
+// Represents a monthly bill for a single meter within the NEM2A system.
+message MeterBillingMonth {
+
+  // The type of meter, either GenerationMeter or BenefitMeter
+  NEM2AMeterType nem2a_meter_type = 1;
+  
+  // key dates
+  EnergyDate billing_date = 2;
+  EnergyDate service_end_date = 3;
+  
+  // Meter values (kWh) are always mapped to time of use.
+  EnergyMetricTOU energy_export_meter_channel_2 = 4;
+  EnergyMetricTOU energy_import_meter_channel_1 = 5;
+  EnergyMetricTOU allocated_export_energy_credits = 6;
+  EnergyMetricTOU net_energy_usage_after_credits = 7;
+  
+  // PCE values
+  EnergyMetricTOU pce_energy_cost = 8;  // cost is always TOU based
+  EnergyMetric pce_net_generation_bonus = 9;
+  EnergyMetric pce_energy_commission_surcharge = 10;
+  EnergyMetric pce_total_energy_charges = 11;
+  EnergyMetric pce_nem_credit = 12;
+  EnergyMetric pce_generation_charges_due_cash = 13;
+  
+  // PG&E
+  EnergyMetric pge_res_energy_charges = 14;
+  EnergyMetric pge_baseline_credit = 15;
+  EnergyMetric pge_da_cca_charges = 16;
+  EnergyMetric pge_total_energy_charges = 17;
+  EnergyMetric pge_nem_billing = 18;
+  EnergyMetric pge_minimum_delivery_charge = 19;
+  EnergyMetric pge_nem_true_up_adjustment = 20;
+  EnergyMetric pge_electric_delivery_charges = 21;
+  
+  // Totals
+  EnergyMetric california_climate_credit = 22;
+  EnergyMetric total_bill_in_mail = 23;
+}
+
+message MonthLabel {
+  string month_name = 1;  // e.g., "January"
+  int32 year = 2;         // e.g., 2024
+}
+
+// Represents a monthly bill for a single meter within the NEM2A system.
+message NEM2AAggregationBillingMonth {
+  int32 year = 1;
+  int32 month = 2;
+  MonthLabel month_label = 3;  // (month_name, year) e.g., ("January", 2024)
+  
+  MeterBillingMonth main = 4;
+  MeterBillingMonth adu = 5;
+}
+
+// Represents a billing year, which consists of multiple billing months.
+message BillingYear {
+  int32 start_month = 1;
+  int32 start_year = 2;
+  int32 num_months = 3;
+  repeated MonthLabel months = 4;  // List of tuples (month_name, year)
+  repeated NEM2AAggregationBillingMonth billing_months = 5;
+}
+

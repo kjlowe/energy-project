@@ -4,8 +4,8 @@ Run: python demo.py
 """
 
 from config import *
-import person_pb2
-from models import PersonDB, DatabaseManager
+from proto import billing_pb2
+from models import DatabaseManager
 import random
 
 # Initialize database manager
@@ -19,7 +19,7 @@ print("🎲 Generating random people...\n")
 
 for i in range(3):
     # Create protobuf message
-    person = person_pb2.Person()
+    person = billing_pb2.Person()
     person.name = f"{random.choice(first_names)} {random.choice(last_names)}"
     person.age = random.randint(20, 60)
     person.email = f"{person.name.lower().replace(' ', '.')}@example.com"

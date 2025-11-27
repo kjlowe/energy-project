@@ -115,6 +115,10 @@ docker exec -it python /bin/bash
 python data-explore.py
 ```
 
+const I love you
+you let me sleep on you
+and u made the stewardess turn the ac for me 
+
 
 # Next Steps
 

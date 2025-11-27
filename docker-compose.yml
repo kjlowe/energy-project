@@ -8,7 +8,6 @@ services:
     restart: always
     volumes:
       - ./python-app:/app
-      - ./generated/python:/generated/python
     working_dir: /app
     command: bash -c "pip install -r requirements.txt && python app.py"
     ports:

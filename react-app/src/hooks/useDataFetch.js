@@ -21,13 +21,16 @@ export const useDataFetch = () => {
         // Set loading to true at the start of fetch operation. This helps show 
         // loading indicators in the UI.
         setLoading(true);
+
+        const useLocalhost = false; // set to false to use remote IP
+        const ip_address = useLocalhost ? 'localhost' : '137.184.124.65';
         
         // Make concurrent API calls to fetch both data and filters
         // Using Promise.all for better performance than sequential calls
         const [dataResponse, filtersResponse, billingDataResponse] = await Promise.all([
-          fetch('http://137.184.124.65:5000/api/data'),    // Fetch main data
-          fetch('http://137.184.124.65:5000/api/filters'),  // Fetch filter options
-          fetch('http://137.184.124.65:5000/api/billing-data')  // Fetch billing data
+          fetch(`http://${ip_address}:5000/api/data`),
+          fetch(`http://${ip_address}:5000/api/filters`),
+          fetch(`http://${ip_address}:5000/api/billing-data`)
         ]);
 
         // Check if both HTTP responses are successful (status 200-299)

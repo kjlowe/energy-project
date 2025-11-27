@@ -1,0 +1,1 @@
+protoc -I proto --python_out=python-app/proto proto/billing.proto
