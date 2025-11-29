@@ -1,11 +1,5 @@
 syntax = "proto3";
 
-message Person {
-  string name = 1;
-  int32 age = 2;
-  string email = 3;
-}
-
 enum WhereFrom {
   NOT_PROVIDED = 0;
   PDF_BILL = 1;
@@ -20,33 +14,14 @@ enum NEM2AMeterType {
   BENEFIT_METER = 2;
 }
 
-message WhereFound {
-  // tells the person where to find this on the bill
-  optional WhereFrom where_from = 1;
-
-  // tells the person where to find this on the bill
-  optional string where_on_pdf = 2;
-
-  // a number that Kevin can use to identify this metric by looking at the november 2024 sample bill
-  optional int32 kevins_number_code = 3;
-}
-
 message EnergyDate {
   optional string value = 1;  // ISO 8601 date format (YYYY-MM-DD)
-  repeated WhereFound where_found = 2;
 }
 
 message EnergyMetric {
-
   // Sometimes each metric comes from multiple values summed up.
   // This can happen when the rates change half way through the month (due to summer/winter transitions or rate hikes)
   repeated double subcomponent_values = 1;
-  
-  // The unit of the metric, such as kWh or $
-  optional string unit = 2;
-  
-  // Where this metric was found in the PG&E billing system.
-  repeated WhereFound where_found = 3;
 }
 
 // Some energy metrics are time-of-use (TOU) based, meaning they have different values for peak and off-peak times.

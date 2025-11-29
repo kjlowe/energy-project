@@ -12,52 +12,51 @@ Base = declarative_base()
 
 
 class BillingDB(Base):
-    """SQLAlchemy model for Person data with protobuf conversion."""
+    """SQLAlchemy model for BillingYear data with protobuf conversion."""
     
-    __tablename__ = 'persons'
+    __tablename__ = 'billing_years'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    age = Column(Integer, nullable=False)
-    email = Column(String, nullable=False)
-    
+    proto_data = Column(String, nullable=False)  # Serialized protobuf
+    start_month = Column(Integer, nullable=False)
+    start_year = Column(Integer, nullable=False)
+    num_months = Column(Integer, nullable=False)
+
     def to_proto(self):
         """Convert SQLAlchemy model to protobuf message."""
-        person = billing_pb2.Person()
-        person.name = self.name
-        person.age = self.age
-        person.email = self.email
-        return person
-    
+        billing_year = billing_pb2.BillingYear()
+        billing_year.ParseFromString(bytes.fromhex(self.proto_data))
+        return billing_year
+
     def to_dict(self):
         """Convert to dictionary for JSON serialization."""
+        proto = self.to_proto()
         return {
             'id': self.id,
-            'name': self.name,
-            'age': self.age,
-            'email': self.email
+            'start_month': proto.start_month,
+            'start_year': proto.start_year,
+            'num_months': proto.num_months,
+            'months': [{'month_name': m.month_name, 'year': m.year} for m in proto.months],
+            'billing_months_count': len(proto.billing_months),
+            'test': proto.billing_months[1].main.total_bill_in_mail.subcomponent_values[0]
+            # now I need to figure out how to get this to transmit over the REST API for 2 use cases
+            # 1. so that I can see the reponse on REST. 
+            # 2. so that the JSON can be put into a typescript structure that is easily used.
+            # Also, want to figrue out why billing_pb2 does not work with intellisense.
         }
     
     @staticmethod
-    def from_proto(proto_person):
+    def from_proto(proto_billing_year):
         """Create SQLAlchemy model from protobuf message."""
         return BillingDB(
-            name=proto_person.name,
-            age=proto_person.age,
-            email=proto_person.email
-        )
-    
-    @staticmethod
-    def from_dict(data):
-        """Create SQLAlchemy model from dictionary."""
-        return BillingDB(
-            name=data.get('name'),
-            age=data.get('age'),
-            email=data.get('email')
+            proto_data=proto_billing_year.SerializeToString().hex(),
+            start_month=proto_billing_year.start_month,
+            start_year=proto_billing_year.start_year,
+            num_months=proto_billing_year.num_months
         )
     
     def __repr__(self):
-        return f"<Person(id={self.id}, name='{self.name}', age={self.age})>"
+        return f"<BillingYear(id={self.id}, start={self.start_year}-{self.start_month}, months={self.num_months})>"
 
 
 class DatabaseManager:
@@ -78,99 +77,70 @@ class DatabaseManager:
         """Get a new database session."""
         return self.Session()
     
-    def get_all_people(self):
-        """Get all people from database as list of dicts."""
+    def get_all_billing_years(self):
+        """Get all billing years from database as list of dicts."""
         session = self.get_session()
         try:
-            people = session.query(BillingDB).all()
-            return [person.to_dict() for person in people]
+            billing_years = session.query(BillingDB).all()
+            return [by.to_dict() for by in billing_years]
         finally:
             session.close()
     
-    def get_person_by_id(self, person_id):
-        """Get a specific person by ID.
+    def get_billing_year_by_id(self, billing_year_id):
+        """Get a specific billing year by ID.
         
         Args:
-            person_id: The person's ID
+            billing_year_id: The billing year's ID
             
         Returns:
-            Dictionary representation of person or None if not found
+            Dictionary representation of billing year or None if not found
         """
         session = self.get_session()
         try:
-            person = session.query(BillingDB).filter_by(id=person_id).first()
-            return person.to_dict() if person else None
+            billing_year = session.query(BillingDB).filter_by(id=billing_year_id).first()
+            return billing_year.to_dict() if billing_year else None
         finally:
             session.close()
     
-    def add_person(self, person_data):
-        """Add a new person to the database.
+    def add_billing_year(self, billing_year_data):
+        """Add a new billing year to the database.
         
         Args:
-            person_data: Dictionary with person data or protobuf Person message
+            billing_year_data: Protobuf BillingYear message
             
         Returns:
-            Dictionary representation of created person
+            Dictionary representation of created billing year
         """
         session = self.get_session()
         try:
-            if isinstance(person_data, billing_pb2.Person):
-                person = BillingDB.from_proto(person_data)
+            if isinstance(billing_year_data, billing_pb2.BillingYear):
+                billing_year = BillingDB.from_proto(billing_year_data)
             else:
-                person = BillingDB.from_dict(person_data)
+                raise ValueError("billing_year_data must be a BillingYear protobuf message")
             
-            session.add(person)
+            session.add(billing_year)
             session.commit()
-            session.refresh(person)
-            return person.to_dict()
+            session.refresh(billing_year)
+            return billing_year.to_dict()
         finally:
             session.close()
     
-    def update_person(self, person_id, person_data):
-        """Update an existing person.
+    def delete_billing_year(self, billing_year_id):
+        """Delete a billing year from the database.
         
         Args:
-            person_id: The person's ID
-            person_data: Dictionary with updated data
-            
-        Returns:
-            Dictionary representation of updated person or None if not found
-        """
-        session = self.get_session()
-        try:
-            person = session.query(BillingDB).filter_by(id=person_id).first()
-            if not person:
-                return None
-            
-            if 'name' in person_data:
-                person.name = person_data['name']
-            if 'age' in person_data:
-                person.age = person_data['age']
-            if 'email' in person_data:
-                person.email = person_data['email']
-            
-            session.commit()
-            session.refresh(person)
-            return person.to_dict()
-        finally:
-            session.close()
-    
-    def delete_person(self, person_id):
-        """Delete a person from the database.
-        
-        Args:
-            person_id: The person's ID
+            billing_year_id: The billing year's ID
             
         Returns:
             True if deleted, False if not found
         """
         session = self.get_session()
         try:
-            person = session.query(BillingDB).filter_by(id=person_id).first()
-            if not person:
+            billing_year = session.query(BillingDB).filter_by(id=billing_year_id).first()
+            if not billing_year:
                 return False
             
-            session.delete(person)
+            session.delete(billing_year)
             session.commit()
             return True
         finally:

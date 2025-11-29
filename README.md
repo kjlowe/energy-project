@@ -122,6 +122,13 @@ and u made the stewardess turn the ac for me
 
 # Next Steps
 
+From create records
+            # now I need to figure out how to get this to transmit over the REST API for 2 use cases
+            # 1. so that I can see the reponse on REST. 
+            # 2. so that the JSON can be put into a typescript structure that is easily used.
+            # Also, want to figrue out why billing_pb2 does not work with intellisense.
+
+
 - I have a proof of concept of using proto to define a python data structure and load information into a DB. 
 
 - NOW: start defining the billing data structures in proto. 
@@ -129,3 +136,9 @@ and u made the stewardess turn the ac for me
 - THEN: See if you can load the jupyter notebook data into that Python/Proto structure instead and have it automatically store in sqlite.
 
 - The awesome result will be the full set of data being returned from the Flash API in a format defined by the proto.
+
+
+Next things to do:
+- Go to Tara & Pirouz house to look at September 2025 to see why the numbers on the Detail of Bill and Main Unit bill don't line up.
+- print out information on subcomponent kWh values. Make sure the function is clearly importing the subcomponents and is not double counting the total
+- See if we have enough equations to solve for the unknown subcomponent kWh ADU allocated export kWhs. (red cells)

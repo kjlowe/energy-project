@@ -50,12 +50,12 @@ def api_billing_table():
         ]
         return jsonify({"records": sample})
 
-# People endpoints
-@app.route('/api/people', methods=['GET'])
-def get_people():
-    """Get all people from database."""
-    people = db.get_all_people()
-    return jsonify({"people": people, "count": len(people)})
+# Billing year endpoints
+@app.route('/api/billing-years', methods=['GET'])
+def get_billing_years():
+    """Get all billing years from database."""
+    billing_years = db.get_all_billing_years()
+    return jsonify({"billing_years": billing_years, "count": len(billing_years)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

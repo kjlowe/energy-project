@@ -528,7 +528,7 @@
           }
         },
         "total_bill_in_mail": {
-          "value": 21.36,
+          "value": 89.57,
           "unit": "$"
         }
       },
@@ -583,7 +583,7 @@
           }
         },
         "total_bill_in_mail": {
-          "value": 21.82,
+          "value": 62.77,
           "unit": "$"
         }
       },
@@ -638,7 +638,7 @@
           }
         },
         "total_bill_in_mail": {
-          "value": 201.22,
+          "value": 207.22,
           "unit": "$"
         }
       },
