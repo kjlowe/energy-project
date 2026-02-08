@@ -16,12 +16,12 @@ const Solar = ({ data, width = 100, height = 100 }) => {
   const hourWidth = width / 24; // Each hour takes 1/24 of the width
   const hour4pm = 16 * hourWidth; // 4pm is hour 16 (0-based: 0=midnight, 16=4pm)
 
-  const offPeakExport = data.months[monthIdx]?.main?.energy_export_meter_channel_2?.off_peak?.value;
-  const peakExport = data.months[monthIdx]?.main?.energy_export_meter_channel_2?.peak?.value;
-  const offPeakImport = data.months[monthIdx]?.main?.energy_import_meter_channel_1?.off_peak?.value;
-  const peakImport = data.months[monthIdx]?.main?.energy_import_meter_channel_1?.peak?.value;
-  const monthName = data.months[monthIdx]?.month_label || 'N/A';
-  const monthData = data.months[monthIdx] || {};
+  const offPeakExport = data.billing_months?.[monthIdx]?.main?.energy_export_meter_channel_2?.off_peak?.value;
+  const peakExport = data.billing_months?.[monthIdx]?.main?.energy_export_meter_channel_2?.peak?.value;
+  const offPeakImport = data.billing_months?.[monthIdx]?.main?.energy_import_meter_channel_1?.off_peak?.value;
+  const peakImport = data.billing_months?.[monthIdx]?.main?.energy_import_meter_channel_1?.peak?.value;
+  const monthName = data.billing_months?.[monthIdx]?.month_label || 'N/A';
+  const monthData = data.billing_months?.[monthIdx] || {};
 
   const renderDataValue = (value) => {
     if (value === null || value === undefined) return 'N/A';
