@@ -1,9 +1,8 @@
 import useDataFetch from '@hooks/useDataFetch';
-// import FlowChart from '@components/FlowChart';
 import Solar from '@components/Solar';
 
 const App: React.FC = () => {
-  const { data, filters, billingData, loading, error } = useDataFetch();
+  const { billingData, loading, error } = useDataFetch();
 
   if (loading) {
     return <div className="loading">🔄 Loading data visualization...</div>;
@@ -20,24 +19,6 @@ const App: React.FC = () => {
       </div>
     </div>
   );
-
-  /*
-  // Commented out for now - uncomment when needed
-  <div className="filters">
-    <select>
-      <option value="">Select Category</option>
-      {filters?.categories.map((cat) => (
-        <option key={cat} value={cat}>
-          {cat}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div className="chart-container">
-    <FlowChart data={data} width={800} height={500} />
-  </div>
-  */
 };
 
 export default App;

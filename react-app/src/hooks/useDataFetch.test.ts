@@ -6,13 +6,11 @@ import useDataFetch from './useDataFetch';
 
 describe('useDataFetch Hook', () => {
   describe('Successful Data Fetching', () => {
-    it('should fetch and return all data successfully', async () => {
+    it('should fetch and return billing data successfully', async () => {
       const { result } = renderHook(() => useDataFetch());
 
       // Initially loading
       expect(result.current.loading).toBe(true);
-      expect(result.current.data).toBeNull();
-      expect(result.current.filters).toBeNull();
       expect(result.current.billingData).toBeNull();
 
       // Wait for data to load
@@ -20,10 +18,8 @@ describe('useDataFetch Hook', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      // Check all data loaded
+      // Check billing data loaded
       expect(result.current.error).toBeNull();
-      expect(result.current.data).not.toBeNull();
-      expect(result.current.filters).not.toBeNull();
       expect(result.current.billingData).not.toBeNull();
     });
 
@@ -36,34 +32,7 @@ describe('useDataFetch Hook', () => {
 
       // Check billingData properties
       expect(result.current.billingData).not.toBeNull();
-      // Note: API returns snake_case, but hook should handle it
       expect(result.current.billingData).toHaveProperty('id');
-    });
-
-    it('should fetch flow chart data', async () => {
-      const { result } = renderHook(() => useDataFetch());
-
-      await waitFor(() => {
-        expect(result.current.loading).toBe(false);
-      });
-
-      expect(result.current.data).not.toBeNull();
-      expect(result.current.data?.nodes).toBeDefined();
-      expect(result.current.data?.edges).toBeDefined();
-      expect(result.current.data?.nodes.length).toBeGreaterThan(0);
-    });
-
-    it('should fetch filters data', async () => {
-      const { result } = renderHook(() => useDataFetch());
-
-      await waitFor(() => {
-        expect(result.current.loading).toBe(false);
-      });
-
-      expect(result.current.filters).not.toBeNull();
-      expect(result.current.filters?.categories).toBeDefined();
-      expect(result.current.filters?.timeframes).toBeDefined();
-      expect(result.current.filters?.categories.length).toBeGreaterThan(0);
     });
   });
 
@@ -87,30 +56,6 @@ describe('useDataFetch Hook', () => {
       expect(result.current.error).toBeNull();
       expect(result.current.billingData).toBeNull(); // No data to set
     });
-
-    it('should handle null response fields gracefully', async () => {
-      server.use(
-        http.get('http://localhost:5000/api/data', () => {
-          return HttpResponse.json({ nodes: [], edges: [] });
-        }),
-        http.get('http://localhost:5000/api/filters', () => {
-          return HttpResponse.json({ categories: [], timeframes: [] });
-        }),
-        http.get('http://localhost:5000/api/billing-years', () => {
-          return HttpResponse.json({ billing_years: [], count: 0 });
-        })
-      );
-
-      const { result } = renderHook(() => useDataFetch());
-
-      await waitFor(() => {
-        expect(result.current.loading).toBe(false);
-      });
-
-      expect(result.current.error).toBeNull();
-      expect(result.current.data).toEqual({ nodes: [], edges: [] });
-      expect(result.current.filters).toEqual({ categories: [], timeframes: [] });
-    });
   });
 
   describe('Error Handling', () => {
@@ -131,7 +76,7 @@ describe('useDataFetch Hook', () => {
       });
 
       expect(result.current.error).toBeTruthy();
-      expect(result.current.error).toContain('Failed to fetch data');
+      expect(result.current.error).toContain('Failed to fetch billing data');
       expect(result.current.billingData).toBeNull();
     });
 
@@ -149,10 +94,10 @@ describe('useDataFetch Hook', () => {
       });
 
       expect(result.current.error).not.toBeNull();
+      expect(result.current.billingData).toBeNull();
     });
 
-    it('should handle partial API failures', async () => {
-      // Only billing-years endpoint fails
+    it('should handle API failure', async () => {
       server.use(
         http.get('http://localhost:5000/api/billing-years', () => {
           return HttpResponse.json({}, { status: 500 });
@@ -167,9 +112,6 @@ describe('useDataFetch Hook', () => {
 
       // Should have error
       expect(result.current.error).toBeTruthy();
-      // All data should be null due to Promise.all
-      expect(result.current.data).toBeNull();
-      expect(result.current.filters).toBeNull();
       expect(result.current.billingData).toBeNull();
     });
   });
