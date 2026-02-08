@@ -130,7 +130,9 @@ npm run dev
 # Running all Python API tests
 
 cd /workspace/python-app
+.venv/bin/activate
 pytest tests/ -v
+python app.py
 
 # Next Steps
 
