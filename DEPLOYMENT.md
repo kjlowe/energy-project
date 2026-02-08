@@ -68,9 +68,13 @@ See [react-app/API_CONFIGURATION.md](react-app/API_CONFIGURATION.md) for full de
 
 ## Files Overview
 
-- **`docker-compose.yml`** - Staging/cloud development server (current setup)
-- **`react-app/.env.development`** - Local development (localhost)
-- **`react-app/.env.staging`** - Staging server (137.184.124.65)
+**Current Setup: Staging/Development Only**
+
+- **`docker-compose.yml`** - Staging/cloud development server configuration
+- **`react-app/.env.development`** - Local development environment (localhost:5000)
+- **`react-app/.env.staging`** - Staging server environment (137.184.124.65:5000)
+
+> **Note:** This setup is currently configured for development/staging only. Production deployment files are not yet created.
 
 ---
 
@@ -100,15 +104,3 @@ docker-compose up -d
 docker-compose logs react-app
 docker-compose logs python
 ```
-
----
-
-## Production Deployment (Future)
-
-When ready for production:
-
-1. Create `.env.production` with production API URL
-2. Use `docker-compose.prod.yml` which builds static files with nginx
-3. Run: `docker-compose -f docker-compose.prod.yml up -d --build`
-
-See [DOCKER_SETUP.md](DOCKER_SETUP.md) for more details.
