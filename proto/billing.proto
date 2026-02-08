@@ -15,7 +15,7 @@ enum NEM2AMeterType {
 }
 
 message EnergyDate {
-  optional string value = 1;  // ISO 8601 date format (YYYY-MM-DD)
+  string value = 1;  // ISO 8601 date format (YYYY-MM-DD)
 }
 
 message EnergyMetric {

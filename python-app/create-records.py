@@ -4,7 +4,7 @@ Run: python create-records.py
 """
 
 from config import *
-from proto import billing_pb2
+from proto.billing import *
 from models import DatabaseManager
 import json
 import os
@@ -20,88 +20,88 @@ def load_billing_year_from_json(json_path):
     with open(json_path, 'r') as f:
         data = json.load(f)
     
-    billing_year = billing_pb2.BillingYear()
-    
-    # Set basic fields
-    billing_year.start_month = data['start_month']
-    billing_year.start_year = data['start_year']
-    billing_year.num_months = data['num_months']
-    
-    # Add month labels
-    for i in range(billing_year.num_months):
-        month_idx = (billing_year.start_month - 1 + i) % 12
-        year_offset = (billing_year.start_month - 1 + i) // 12
+    # Create month labels
+    month_labels = []
+    for i in range(data['num_months']):
+        month_idx = (data['start_month'] - 1 + i) % 12
+        year_offset = (data['start_month'] - 1 + i) // 12
         
-        month_label = billing_year.months.add()
-        month_label.month_name = MONTHS[month_idx]
-        month_label.year = billing_year.start_year + year_offset
+        month_labels.append(MonthLabel(
+            month_name=MONTHS[month_idx],
+            year=data['start_year'] + year_offset
+        ))
     
     # Process billing months
+    billing_months = []
     for month_data in data['billing_months']:
-        billing_month = billing_year.billing_months.add()
-        billing_month.year = month_data['year']
-        billing_month.month = month_data['month']
-        billing_month.month_label.month_name = month_data['month_label']['month_name']
-        billing_month.month_label.year = month_data['month_label']['year']
-        
-        # Process main meter
-        populate_meter(billing_month.main, month_data['main'])
-        
-        # Process ADU meter
-        populate_meter(billing_month.adu, month_data['adu'])
+        billing_month = NEM2AAggregationBillingMonth(
+            year=month_data['year'],
+            month=month_data['month'],
+            month_label=MonthLabel(
+                month_name=month_data['month_label']['month_name'],
+                year=month_data['month_label']['year']
+            ),
+            main=create_meter(month_data['main']),
+            adu=create_meter(month_data['adu'])
+        )
+        billing_months.append(billing_month)
+    
+    # Create BillingYear
+    billing_year = BillingYear(
+        start_month=data['start_month'],
+        start_year=data['start_year'],
+        num_months=data['num_months'],
+        months=month_labels,
+        billing_months=billing_months
+    )
     
     return billing_year
 
-def populate_meter(meter, meter_data):
-    """Populate a MeterBillingMonth protobuf from JSON data."""
+def create_meter(meter_data):
+    """Create a MeterBillingMonth protobuf from JSON data."""
     
     # Set meter type
-    if meter_data['nem2a_meter_type'] == 'GenerationMeter':
-        meter.nem2a_meter_type = billing_pb2.GENERATION_METER
-    else:
-        meter.nem2a_meter_type = billing_pb2.BENEFIT_METER
+    meter_type = NEM2AMeterType.GENERATION_METER if meter_data['nem2a_meter_type'] == 'GenerationMeter' else NEM2AMeterType.BENEFIT_METER
     
-    # Set dates
-    if meter_data['billing_date']['value']:
-        meter.billing_date.value = meter_data['billing_date']['value']
-    if meter_data['service_end_date']['value']:
-        meter.service_end_date.value = meter_data['service_end_date']['value']
-    
-    # Populate TOU metrics
-    populate_tou_metric(meter.energy_export_meter_channel_2, meter_data['energy_export_meter_channel_2'])
-    populate_tou_metric(meter.energy_import_meter_channel_1, meter_data['energy_import_meter_channel_1'])
-    populate_tou_metric(meter.allocated_export_energy_credits, meter_data['allocated_export_energy_credits'])
-    populate_tou_metric(meter.net_energy_usage_after_credits, meter_data['net_energy_usage_after_credits'])
-    populate_tou_metric(meter.pce_energy_cost, meter_data['pce_energy_cost'])
-    
-    # Populate regular metrics
-    populate_metric(meter.pce_net_generation_bonus, meter_data['pce_net_generation_bonus'])
-    populate_metric(meter.pce_energy_commission_surcharge, meter_data['pce_energy_commission_surcharge'])
-    populate_metric(meter.pce_total_energy_charges, meter_data['pce_total_energy_charges'])
-    populate_metric(meter.pce_nem_credit, meter_data['pce_nem_credit'])
-    populate_metric(meter.pce_generation_charges_due_cash, meter_data['pce_generation_charges_due_cash'])
-    populate_metric(meter.pge_res_energy_charges, meter_data['pge_res_energy_charges'])
-    populate_metric(meter.pge_baseline_credit, meter_data['pge_baseline_credit'])
-    populate_metric(meter.pge_da_cca_charges, meter_data['pge_da_cca_charges'])
-    populate_metric(meter.pge_total_energy_charges, meter_data['pge_total_energy_charges'])
-    populate_metric(meter.pge_nem_billing, meter_data['pge_nem_billing'])
-    populate_metric(meter.pge_minimum_delivery_charge, meter_data['pge_minimum_delivery_charge'])
-    populate_metric(meter.pge_nem_true_up_adjustment, meter_data['pge_nem_true_up_adjustment'])
-    populate_metric(meter.pge_electric_delivery_charges, meter_data['pge_electric_delivery_charges'])
-    populate_metric(meter.california_climate_credit, meter_data['california_climate_credit'])
-    populate_metric(meter.total_bill_in_mail, meter_data['total_bill_in_mail'])
+    return MeterBillingMonth(
+        nem2a_meter_type=meter_type,
+        billing_date=EnergyDate(value=meter_data['billing_date']['value'] or ''),
+        service_end_date=EnergyDate(value=meter_data['service_end_date']['value'] or ''),
+        energy_export_meter_channel_2=create_tou_metric(meter_data['energy_export_meter_channel_2']),
+        energy_import_meter_channel_1=create_tou_metric(meter_data['energy_import_meter_channel_1']),
+        allocated_export_energy_credits=create_tou_metric(meter_data['allocated_export_energy_credits']),
+        net_energy_usage_after_credits=create_tou_metric(meter_data['net_energy_usage_after_credits']),
+        pce_energy_cost=create_tou_metric(meter_data['pce_energy_cost']),
+        pce_net_generation_bonus=create_metric(meter_data['pce_net_generation_bonus']),
+        pce_energy_commission_surcharge=create_metric(meter_data['pce_energy_commission_surcharge']),
+        pce_total_energy_charges=create_metric(meter_data['pce_total_energy_charges']),
+        pce_nem_credit=create_metric(meter_data['pce_nem_credit']),
+        pce_generation_charges_due_cash=create_metric(meter_data['pce_generation_charges_due_cash']),
+        pge_res_energy_charges=create_metric(meter_data['pge_res_energy_charges']),
+        pge_baseline_credit=create_metric(meter_data['pge_baseline_credit']),
+        pge_da_cca_charges=create_metric(meter_data['pge_da_cca_charges']),
+        pge_total_energy_charges=create_metric(meter_data['pge_total_energy_charges']),
+        pge_nem_billing=create_metric(meter_data['pge_nem_billing']),
+        pge_minimum_delivery_charge=create_metric(meter_data['pge_minimum_delivery_charge']),
+        pge_nem_true_up_adjustment=create_metric(meter_data['pge_nem_true_up_adjustment']),
+        pge_electric_delivery_charges=create_metric(meter_data['pge_electric_delivery_charges']),
+        california_climate_credit=create_metric(meter_data['california_climate_credit']),
+        total_bill_in_mail=create_metric(meter_data['total_bill_in_mail'])
+    )
 
-def populate_tou_metric(tou_metric, tou_data):
-    """Populate an EnergyMetricTOU from JSON data."""
-    populate_metric(tou_metric.peak, tou_data['peak'])
-    populate_metric(tou_metric.off_peak, tou_data['off_peak'])
-    populate_metric(tou_metric.total, tou_data['total'])
+def create_tou_metric(tou_data):
+    """Create an EnergyMetricTOU from JSON data."""
+    return EnergyMetricTOU(
+        peak=create_metric(tou_data['peak']),
+        off_peak=create_metric(tou_data['off_peak']),
+        total=create_metric(tou_data['total'])
+    )
 
-def populate_metric(metric, metric_data):
-    """Populate an EnergyMetric from JSON data."""
-    if metric_data['subcomponent_values']:
-        for value in metric_data['subcomponent_values']:
-            metric.subcomponent_values.append(value)
+def create_metric(metric_data):
+    """Create an EnergyMetric from JSON data."""
+    return EnergyMetric(
+        subcomponent_values=metric_data['subcomponent_values'] if metric_data['subcomponent_values'] else []
+    )
 
 # Initialize database manager
 print("🗑️  Deleting existing database...\n")

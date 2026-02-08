@@ -1,7 +1,7 @@
 """Database models and utilities."""
 
 from config import *
-from proto import billing_pb2
+from proto.billing import *
 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -24,32 +24,24 @@ class BillingDB(Base):
 
     def to_proto(self):
         """Convert SQLAlchemy model to protobuf message."""
-        billing_year = billing_pb2.BillingYear()
-        billing_year.ParseFromString(bytes.fromhex(self.proto_data))
-        return billing_year
+        return BillingYear().parse(bytes.fromhex(self.proto_data))
 
     def to_dict(self):
         """Convert to dictionary for JSON serialization."""
+        from proto_utils import proto_to_dict
+
         proto = self.to_proto()
-        return {
+        result = {
             'id': self.id,
-            'start_month': proto.start_month,
-            'start_year': proto.start_year,
-            'num_months': proto.num_months,
-            'months': [{'month_name': m.month_name, 'year': m.year} for m in proto.months],
-            'billing_months_count': len(proto.billing_months),
-            'test': proto.billing_months[1].main.total_bill_in_mail.subcomponent_values[0]
-            # now I need to figure out how to get this to transmit over the REST API for 2 use cases
-            # 1. so that I can see the reponse on REST. 
-            # 2. so that the JSON can be put into a typescript structure that is easily used.
-            # Also, want to figrue out why billing_pb2 does not work with intellisense.
+            **proto_to_dict(proto)  # Complete serialization with all nested fields
         }
+        return result
     
     @staticmethod
     def from_proto(proto_billing_year):
         """Create SQLAlchemy model from protobuf message."""
         return BillingDB(
-            proto_data=proto_billing_year.SerializeToString().hex(),
+            proto_data=bytes(proto_billing_year).hex(),
             start_month=proto_billing_year.start_month,
             start_year=proto_billing_year.start_year,
             num_months=proto_billing_year.num_months
@@ -113,7 +105,7 @@ class DatabaseManager:
         """
         session = self.get_session()
         try:
-            if isinstance(billing_year_data, billing_pb2.BillingYear):
+            if isinstance(billing_year_data, BillingYear):
                 billing_year = BillingDB.from_proto(billing_year_data)
             else:
                 raise ValueError("billing_year_data must be a BillingYear protobuf message")

@@ -120,6 +120,18 @@ you let me sleep on you
 and u made the stewardess turn the ac for me 
 
 
+## Running. The UI locally.
+
+cd react-app
+npm install
+npm run dev
+
+
+# Running all Python API tests
+
+cd /workspace/python-app
+pytest tests/ -v
+
 # Next Steps
 
 From create records
