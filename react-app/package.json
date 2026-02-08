@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "generate-types": "bash ../generate_proto_ts.sh",
+    "generate-types": "bash ../generate_proto.sh",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage"

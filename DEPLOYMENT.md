@@ -69,8 +69,6 @@ See [react-app/API_CONFIGURATION.md](react-app/API_CONFIGURATION.md) for full de
 ## Files Overview
 
 - **`docker-compose.yml`** - Staging/cloud development server (current setup)
-- **`docker-compose.stg.yml`** - Alternative staging config
-- **`docker-compose.prod.yml`** - Production build with nginx (for future use)
 - **`react-app/.env.development`** - Local development (localhost)
 - **`react-app/.env.staging`** - Staging server (137.184.124.65)
 
