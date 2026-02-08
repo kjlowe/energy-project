@@ -31,14 +31,16 @@ const useDataFetch = (): UseDataFetchResult => {
         setLoading(true);
         setError(null);
 
-        const useLocalhost = true; // set to false to use remote IP
-        const ip_address = useLocalhost ? 'localhost' : '137.184.124.65';
+        // Use environment-based API URL
+        // Development: http://localhost:5000
+        // Production: http://137.184.124.65:5000
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
         // Make concurrent API calls for better performance
         const [dataResponse, filtersResponse, billingYearsResponse] = await Promise.all([
-          fetch(`http://${ip_address}:5000/api/data`),
-          fetch(`http://${ip_address}:5000/api/filters`),
-          fetch(`http://${ip_address}:5000/api/billing-years`),
+          fetch(`${apiUrl}/api/data`),
+          fetch(`${apiUrl}/api/filters`),
+          fetch(`${apiUrl}/api/billing-years`),
         ]);
 
         // Check if all HTTP responses are successful
