@@ -21,7 +21,7 @@ services:
       - ./react-app:/app
       - /app/node_modules
     working_dir: /app
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --mode staging"
     ports:
       - "5173:5173"
     environment:

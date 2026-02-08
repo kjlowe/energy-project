@@ -9,7 +9,8 @@
       "Bash(./generate_proto.sh:*)",
       "Bash(npm run type-check:*)",
       "Bash(npm test:*)",
-      "Bash(npx protoc-gen-ts_proto --help)"
+      "Bash(npx protoc-gen-ts_proto --help)",
+      "Bash(ls:*)"
     ]
   }
 }

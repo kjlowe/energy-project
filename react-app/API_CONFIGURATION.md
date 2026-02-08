@@ -10,8 +10,8 @@ Used when running `npm run dev` (local development server)
 VITE_API_URL=http://localhost:5000
 ```
 
-### `.env.production`
-Used when running `npm run build` (production build)
+### `.env.staging`
+Used when running `npm run dev -- --mode staging` (staging/cloud server)
 ```
 VITE_API_URL=http://137.184.124.65:5000
 ```
@@ -45,10 +45,10 @@ fetch(`${apiUrl}/api/data`);
    - API calls go to `http://localhost:5000`
    - You can run the Flask API locally
 
-2. **Production build** (`npm run build`):
-   - Vite loads `.env.production`
+2. **Staging server** (`npm run dev -- --mode staging`):
+   - Vite loads `.env.staging`
    - API calls go to `http://137.184.124.65:5000`
-   - The built app connects to the remote server
+   - Used by `docker-compose.yml` for cloud development server
 
 3. **Local override** (optional):
    - Create `.env.local` to override for your machine
@@ -61,7 +61,17 @@ The test environment uses mock data (MSW), so the API URL doesn't affect tests.
 
 ## Deployment
 
-When deploying to production:
-1. Build the app: `npm run build`
-2. The built files in `dist/` will have the production API URL baked in
-3. Serve the `dist/` folder with a web server (nginx, etc.)
+### Staging/Cloud Development Server
+Used by `docker-compose.yml`:
+```bash
+docker-compose up -d
+# Runs: npm run dev -- --mode staging
+# Loads: .env.staging
+```
+
+### Production Build (Future)
+When you're ready for production:
+1. Create `.env.production` with your production API URL
+2. Build the app: `npm run build`
+3. The built files in `dist/` will have the production API URL baked in
+4. Serve the `dist/` folder with a web server (nginx, etc.)
