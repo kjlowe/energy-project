@@ -23,7 +23,8 @@
       "extensions": [
         "GitHub.copilot",
         "ms-toolsai.jupyter",
-        "ms-python.python"
+        "ms-python.python",
+        "anthropic.claude-code"
       ]
     }
   }

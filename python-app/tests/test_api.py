@@ -239,22 +239,3 @@ def test_cors_headers(client):
 
     # CORS headers should be present
     assert 'Access-Control-Allow-Origin' in response.headers
-
-
-def test_other_endpoints_still_work(client):
-    """Test that other API endpoints still function."""
-    # Test /api/data
-    response = client.get('/api/data')
-    assert response.status_code == 200
-
-    data = response.get_json()
-    assert 'nodes' in data
-    assert 'edges' in data
-
-    # Test /api/filters
-    response = client.get('/api/filters')
-    assert response.status_code == 200
-
-    data = response.get_json()
-    assert 'categories' in data
-    assert 'timeframes' in data

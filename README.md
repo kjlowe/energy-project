@@ -127,7 +127,7 @@ npm install
 npm run dev
 
 
-# Running all Python API tests
+# Running all Python API tests and App locally. 
 
 cd /workspace/python-app
 .venv/bin/activate
