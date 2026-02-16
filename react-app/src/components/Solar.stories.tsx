@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within, userEvent } from 'storybook/test';
+import { expect, within, userEvent, fireEvent } from 'storybook/test';
 import Solar from './Solar';
 import { mockBillingYear } from '../test/mocks/mockData/billingData';
 import type { BillingYearWithId } from '@/types/api';
@@ -277,8 +277,7 @@ export const SliderNavigation: Story = {
 
     // Use slider to navigate to June (index 1)
     const slider = canvas.getByRole('slider');
-    await user.clear(slider);
-    await user.type(slider, '1');
+    fireEvent.change(slider, { target: { value: '1' } });
 
     // Should show June
     await expect(canvas.getByText(/Month: June/i)).toBeInTheDocument();
