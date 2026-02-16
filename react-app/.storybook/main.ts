@@ -16,7 +16,8 @@ const config: StorybookConfig = {
   addons: [
     '@storybook/addon-a11y',
     'msw-storybook-addon',
-    '@storybook/addon-docs'
+    '@storybook/addon-docs',
+    '@storybook/addon-vitest'
   ],
 
   framework: {
