@@ -133,7 +133,7 @@ npm test
 npm run dev
 http://localhost:5173/
 
-# Storybook 
+# Storybook UI For exploring components
 
 npm run storybook
 http://localhost:6006/
