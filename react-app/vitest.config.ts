@@ -34,10 +34,10 @@ export default defineConfig({
 
     // Projects configuration for multi-environment testing
     projects: [
-      // Project 1: jsdom tests
+      // Project 1: unit tests
       {
         test: {
-          name: 'jsdom',
+          name: 'unit',
           environment: 'jsdom',
           include: ['src/**/*.test.{ts,tsx}'],
           setupFiles: './src/test/setup.ts',
