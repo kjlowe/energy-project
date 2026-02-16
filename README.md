@@ -118,6 +118,12 @@ const I love you
 you let me sleep on you
 and u made the stewardess turn the ac for me 
 
+# AP: Running Tests + App Locally
+
+cd /workspace/python-app
+.venv/bin/activate
+pytest tests/ -v
+python app.py
 
 ## UI: Running Tests + App Locally
 
@@ -127,14 +133,12 @@ npm test
 npm run test:ui
 npm run test:coverage
 npm run dev
+http://localhost:5173/
 
+# Storybook 
 
-# AP: Running Tests + App Locally
-
-cd /workspace/python-app
-.venv/bin/activate
-pytest tests/ -v
-python app.py
+npm run storybook
+http://localhost:6006/
 
 # Next Steps
 
