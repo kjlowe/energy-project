@@ -147,6 +147,7 @@ function getColumnStyle(group: string, isUnitBoundary: boolean): CSSProperties {
 
 const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [isDenseView, setIsDenseView] = useState<boolean>(true);
 
   if (!data || !data.billing_months || data.billing_months.length === 0) {
     return (
@@ -156,8 +157,59 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
     );
   }
 
-  // Combine columns from both units
-  const allColumns = [...tableConfig.main, ...tableConfig.adu];
+  // Dense view column categories to include
+  const denseViewCategories = {
+    main: new Set([
+      'dates',
+      'energy_export_meter_channel_2',
+      'energy_import_meter_channel_1',
+      'pce_energy_cost',
+      'pce', // for pce_nem_credit
+      'pge', // for pge_electric_delivery_charges
+      'totals', // for total_bill_in_mail
+    ]),
+    adu: new Set([
+      'energy_import_meter_channel_1',
+      'pce_energy_cost',
+      'pce', // for pce_nem_credit
+      'pge', // for pge_electric_delivery_charges
+      'totals', // for total_bill_in_mail
+    ]),
+  };
+
+  // Dense view specific column IDs to include (for columns in pce/pge/totals groups)
+  const denseViewColumnIds = new Set([
+    'main_pce_nem_credit',
+    'main_pge_electric_delivery_charges',
+    'main_total_bill_in_mail',
+    'adu_pce_nem_credit',
+    'adu_pge_electric_delivery_charges',
+    'adu_total_bill_in_mail',
+  ]);
+
+  // Filter columns based on dense view
+  const filterColumns = (columns: ColumnConfig[], unit: 'main' | 'adu'): ColumnConfig[] => {
+    if (!isDenseView) return columns;
+
+    return columns.filter((col) => {
+      const category = col.headers.category || '';
+
+      // If it's in the allowed categories for this unit
+      if (denseViewCategories[unit].has(category)) {
+        // For pce, pge, and totals groups, only include specific columns
+        if (category === 'pce' || category === 'pge' || category === 'totals') {
+          return denseViewColumnIds.has(col.id);
+        }
+        return true;
+      }
+      return false;
+    });
+  };
+
+  // Combine columns from both units (filtered if dense view)
+  const mainColumns = filterColumns(tableConfig.main, 'main');
+  const aduColumns = filterColumns(tableConfig.adu, 'adu');
+  const allColumns = [...mainColumns, ...aduColumns];
 
   // Get subheaders
   const subheaders = allColumns.map((col) => col.headers.subheader);
@@ -192,9 +244,28 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 'bold' }}>
-        {generateYearLabel(data)}
-      </h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
+          {generateYearLabel(data)}
+        </h2>
+        <button
+          onClick={() => setIsDenseView(!isDenseView)}
+          style={{
+            padding: '8px 16px',
+            fontSize: '14px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontWeight: '500',
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+        >
+          {isDenseView ? 'Show All Columns' : 'Show Fewer Columns'}
+        </button>
+      </div>
 
       <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
         <table

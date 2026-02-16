@@ -34,8 +34,12 @@ export const Default: Story = {
     await expect(canvas.getByText('adu')).toBeInTheDocument();
 
     // Verify NO expand buttons since all metrics have single subcomponents
-    const buttons = canvas.queryAllByRole('button', { name: /Expand/i });
-    await expect(buttons).toHaveLength(0);
+    const expandButtons = canvas.queryAllByRole('button', { name: /Expand/i });
+    await expect(expandButtons).toHaveLength(0);
+
+    // Verify toggle button exists (starts in dense view)
+    const toggleButton = canvas.getByRole('button', { name: /Show All Columns/i });
+    await expect(toggleButton).toBeInTheDocument();
   },
 };
 
@@ -112,6 +116,55 @@ export const WithMultipleSubcomponents: Story = {
     // Verify expand button IS present (month has metrics with 2+ subcomponents)
     const buttons = canvas.getAllByRole('button', { name: /Expand/i });
     await expect(buttons).toHaveLength(1);
+  },
+};
+
+export const DenseViewToggle: Story = {
+  args: {
+    data: mockBillingYear,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    // Start in dense view - should have fewer columns
+    const toggleButton = canvas.getByRole('button', { name: /Show All Columns/i });
+    await expect(toggleButton).toBeInTheDocument();
+
+    // Dense view should have dates, energy_export_meter_channel_2, energy_import_meter_channel_1,
+    // pce_energy_cost, pce_nem_credit, pge_electric_delivery_charges, total_bill_in_mail for main
+    await expect(canvas.getByText('energy_export_meter_channel_2')).toBeInTheDocument();
+
+    // energy_import_meter_channel_1 appears in both main and adu in dense view
+    const energyImportHeaders = canvas.getAllByText('energy_import_meter_channel_1');
+    await expect(energyImportHeaders.length).toBeGreaterThanOrEqual(2);
+
+    // Dense view should NOT have allocated_export_energy_credits (not in dense list)
+    await expect(canvas.queryByText('allocated_export_energy_credits')).not.toBeInTheDocument();
+
+    // Click to expand to full view
+    await user.click(toggleButton);
+
+    // Wait for full view to appear
+    await waitFor(() => {
+      expect(canvas.getByRole('button', { name: /Show Fewer Columns/i })).toBeInTheDocument();
+    });
+
+    // Full view should now show allocated_export_energy_credits (appears in both main and adu)
+    await waitFor(() => {
+      const allocatedHeaders = canvas.queryAllByText('allocated_export_energy_credits');
+      expect(allocatedHeaders.length).toBeGreaterThan(0);
+    });
+
+    // Click again to go back to dense view
+    const showFewerButton = canvas.getByRole('button', { name: /Show Fewer Columns/i });
+    await user.click(showFewerButton);
+
+    // Dense view again - allocated_export_energy_credits should be gone
+    await waitFor(() => {
+      const allocatedHeaders = canvas.queryAllByText('allocated_export_energy_credits');
+      expect(allocatedHeaders).toHaveLength(0);
+    });
   },
 };
 
