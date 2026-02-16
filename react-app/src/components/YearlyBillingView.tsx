@@ -179,6 +179,17 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
     setExpandedRows(newExpanded);
   };
 
+  // Check if a month has any metric with 2+ subcomponents
+  const hasMultipleSubcomponents = (
+    month: BillingYearWithId['billing_months'][number]
+  ): boolean => {
+    return allColumns.some((col) => {
+      const cellData = col.accessor(month);
+      const subValues = (cellData as EnergyMetricWithValue)?.subcomponent_values;
+      return subValues && subValues.length > 1;
+    });
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h2 style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 'bold' }}>
@@ -261,20 +272,22 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
                       zIndex: 1,
                     }}
                   >
-                    <button
-                      onClick={() => toggleRow(rowIdx)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        marginRight: '8px',
-                        fontSize: '12px',
-                        padding: 0,
-                      }}
-                      aria-label={expandedRows.has(rowIdx) ? 'Collapse' : 'Expand'}
-                    >
-                      {expandedRows.has(rowIdx) ? '▼' : '▶'}
-                    </button>
+                    {hasMultipleSubcomponents(month) && (
+                      <button
+                        onClick={() => toggleRow(rowIdx)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          marginRight: '8px',
+                          fontSize: '12px',
+                          padding: 0,
+                        }}
+                        aria-label={expandedRows.has(rowIdx) ? 'Collapse' : 'Expand'}
+                      >
+                        {expandedRows.has(rowIdx) ? '▼' : '▶'}
+                      </button>
+                    )}
                     {month.month_label?.month_name} {month.month_label?.year}
                   </td>
 
@@ -292,8 +305,8 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
                   })}
                 </tr>
 
-                {/* Subcomponent rows (if expanded) */}
-                {expandedRows.has(rowIdx) && renderSubcomponentRows(month, rowIdx, allColumns, unitBoundaries)}
+                {/* Subcomponent rows (if expanded and has multiple subcomponents) */}
+                {expandedRows.has(rowIdx) && hasMultipleSubcomponents(month) && renderSubcomponentRows(month, rowIdx, allColumns, unitBoundaries)}
               </React.Fragment>
             ))}
           </tbody>
