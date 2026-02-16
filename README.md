@@ -150,7 +150,7 @@ http://localhost:6006/
 
 4. UI: Make a tool to show how much the ADU would pay if they did not have solar.
 
-5. Jupyter Notebook: See if you can load the jupyter notebook data into that Python/Proto structure instead and have it automatically store in sqlite.
+5. Jupyter Notebook: See if you can pull the data from the sqlite database into Jupyter notebook to make the data explorable and create custom anlytics. 
 
 Some things to understand about the bills:
 - Go to Tara & Pirouz house to look at September 2025 to see why the numbers on the Detail of Bill and Main Unit bill don't line up.
