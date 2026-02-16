@@ -105,20 +105,7 @@ Things I woud want to do are:
 
 # Workflows
 
-## Running. Python on the server 
-
-After getting onto the command line of the already setup server.
-
-```bash
-docker exec -it python /bin/bash
-python data-explore.py
-```
-
-const I love you
-you let me sleep on you
-and u made the stewardess turn the ac for me 
-
-# AP: Running Tests + App Locally
+# API: Running Tests + App Locally
 
 cd /workspace/python-app
 .venv/bin/activate
