@@ -129,22 +129,7 @@ python app.py
 
 cd /workspace/react-app
 npm install
-
-# just the default tests (jsdom)
 npm test
-# or
-npx vitest
-
-# Run Storybook tests only
-npx vitest --project=storybook --run
-
-# all tests
-npm run test:workspace
-# or
-npx vitest --workspace=vitest.workspace.ts
-
-npm run test:ui
-npm run test:coverage
 npm run dev
 http://localhost:5173/
 
