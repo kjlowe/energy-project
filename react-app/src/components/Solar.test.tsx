@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Solar from './Solar';
 import { mockBillingYear } from '../test/mocks/mockData/billingData';
@@ -130,15 +130,24 @@ describe('Solar Component', () => {
 
       // Navigate to next month first (June)
       const nextButton = screen.getAllByRole('button')[1]!; // Second button is next
-      await user.click(nextButton);
-      expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
+      await waitFor(async () => {
+        await user.click(nextButton);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
+      });
 
       // Now click previous button to go back to May
       const prevButton = screen.getAllByRole('button')[0]!; // First button is prev
-      await user.click(prevButton);
+      await waitFor(async () => {
+        await user.click(prevButton);
+      });
 
       // Should now show May again
-      expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
+      });
     });
 
     it('should navigate to next month when clicking next button', async () => {
@@ -150,9 +159,13 @@ describe('Solar Component', () => {
 
       // Click next to go to June
       const nextButton = screen.getAllByRole('button')[1]!;
-      await user.click(nextButton);
+      await waitFor(async () => {
+        await user.click(nextButton);
+      });
 
-      expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
+      });
     });
 
     it('should render slider with correct range', () => {
@@ -184,7 +197,14 @@ describe('Solar Component', () => {
 
       // Component starts at monthIdx=0 (May), navigate to last month (June)
       const nextButton = screen.getAllByRole('button')[1]!;
-      await user.click(nextButton);
+      await waitFor(async () => {
+        await user.click(nextButton);
+      });
+
+      // Wait for state update to complete
+      await waitFor(() => {
+        expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
+      });
 
       // Next button should now be disabled at last month
       expect(nextButton).toBeDisabled();
@@ -199,12 +219,15 @@ describe('Solar Component', () => {
 
       // Navigate to June (monthIdx=1)
       const nextButton = screen.getAllByRole('button')[1]!;
-      await user.click(nextButton);
+      await waitFor(async () => {
+        await user.click(nextButton);
+      });
 
-      // June should show -900
-      expect(screen.getByText('-900')).toBeInTheDocument();
-      // May value should no longer be visible
-      expect(screen.queryByText('-884')).not.toBeInTheDocument();
+      // Wait for state update and verify June values appear
+      await waitFor(() => {
+        expect(screen.getByText('-900')).toBeInTheDocument();
+        expect(screen.queryByText('-884')).not.toBeInTheDocument();
+      });
     });
   });
 

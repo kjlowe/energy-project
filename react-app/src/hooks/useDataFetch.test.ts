@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from '../test/mocks/server';
@@ -59,6 +59,17 @@ describe('useDataFetch Hook', () => {
   });
 
   describe('Error Handling', () => {
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      // Suppress console.error during error handling tests
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      consoleErrorSpy.mockRestore();
+    });
+
     it('should handle API error responses', async () => {
       server.use(
         http.get('http://localhost:5000/api/billing-years', () => {
@@ -132,6 +143,9 @@ describe('useDataFetch Hook', () => {
     });
 
     it('should set loading=false even on error', async () => {
+      // Suppress console.error for this error test
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       server.use(
         http.get('http://localhost:5000/api/billing-years', () => {
           return HttpResponse.error();
@@ -146,6 +160,8 @@ describe('useDataFetch Hook', () => {
 
       expect(result.current.loading).toBe(false);
       expect(result.current.error).not.toBeNull();
+
+      consoleErrorSpy.mockRestore();
     });
   });
 });
