@@ -140,8 +140,8 @@ export const YearToYearNavigation: Story = {
     const yearTab = canvas.getByRole('tab', { name: /Full Year Data/i });
     await user.click(yearTab);
 
-    // Verify year view is active
-    await expect(canvas.getByText(/Full Year Data:/i)).toBeInTheDocument();
+    // Verify year view is active - shows Excel-style table
+    await expect(canvas.getByText('month_label')).toBeInTheDocument();
 
     // Navigate to next year
     const buttons = canvas.getAllByRole('button');
@@ -189,11 +189,9 @@ export const MonthAndYearToggle: Story = {
 
     // Verify year view is displayed
     await expect(yearTab).toHaveAttribute('aria-selected', 'true');
-    await expect(canvas.getByText(/Full Year Data:/i)).toBeInTheDocument();
-
-    // Verify multiple months are displayed in year view (h3 headers)
-    await expect(canvas.getByRole('heading', { name: /May 2023/i, level: 3 })).toBeInTheDocument();
-    await expect(canvas.getByRole('heading', { name: /June 2023/i, level: 3 })).toBeInTheDocument();
+    // Year view shows Excel-style table with multi-level headers
+    await expect(canvas.getByText('month_label')).toBeInTheDocument();
+    await expect(canvas.getByText('main')).toBeInTheDocument();
 
     // Switch back to month view
     await user.click(monthTab);

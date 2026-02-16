@@ -55,7 +55,7 @@ def _serialize_billing_month(billing_month: NEM2AAggregationBillingMonth) -> dic
     return {
         'year': billing_month.year,
         'month': billing_month.month,
-        'month_label': billing_month.month_label.month_name if billing_month.month_label else 'N/A',
+        'month_label': _serialize_month_label(billing_month.month_label) if billing_month.month_label else None,
         'main': _serialize_meter(billing_month.main) if billing_month.main else None,
         'adu': _serialize_meter(billing_month.adu) if billing_month.adu else None
     }
@@ -110,9 +110,9 @@ def _serialize_meter(meter: MeterBillingMonth) -> dict:
     }
 
 
-def _serialize_date(date: EnergyDate) -> str:
-    """Serialize EnergyDate to string."""
-    return date.value if date and date.value else ''
+def _serialize_date(date: EnergyDate) -> dict:
+    """Serialize EnergyDate to dict."""
+    return {'value': date.value} if date and date.value else {'value': ''}
 
 
 def _serialize_tou_metric(tou: EnergyMetricTOU) -> dict:

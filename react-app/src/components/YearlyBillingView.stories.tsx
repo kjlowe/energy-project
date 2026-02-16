@@ -9,7 +9,7 @@ const meta = {
   title: 'Components/YearlyBillingView',
   component: YearlyBillingView,
   parameters: {
-    layout: 'padded',
+    layout: 'fullscreen',
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof YearlyBillingView>;
@@ -24,18 +24,18 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify year header is displayed
-    await expect(canvas.getByText(/Full Year Data:/i)).toBeInTheDocument();
-
-    // Verify May month is displayed (within an h3)
-    await expect(canvas.getByRole('heading', { name: /May 2024/i, level: 3 })).toBeInTheDocument();
-
-    // Verify June month is displayed (within an h3)
-    await expect(canvas.getByRole('heading', { name: /June 2024/i, level: 3 })).toBeInTheDocument();
-
-    // Verify tables are rendered (one per month)
+    // Verify single table is rendered (Excel-style)
     const tables = canvas.getAllByRole('table');
-    await expect(tables).toHaveLength(2); // 2 months
+    await expect(tables).toHaveLength(1);
+
+    // Verify multi-level headers
+    await expect(canvas.getByText('month_label')).toBeInTheDocument();
+    await expect(canvas.getByText('main')).toBeInTheDocument();
+    await expect(canvas.getByText('adu')).toBeInTheDocument();
+
+    // Verify expand buttons are present
+    const buttons = canvas.getAllByRole('button', { name: /Expand/i });
+    await expect(buttons.length).toBeGreaterThan(0);
   },
 };
 
@@ -46,20 +46,13 @@ export const FullYear: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify year header spans full year
-    await expect(
-      canvas.getByText(/May 2023 - April 2024/i)
-    ).toBeInTheDocument();
-
-    // Verify first month (within an h3)
-    await expect(canvas.getByRole('heading', { name: /May 2023/i, level: 3 })).toBeInTheDocument();
-
-    // Verify last month (within an h3)
-    await expect(canvas.getByRole('heading', { name: /April 2024/i, level: 3 })).toBeInTheDocument();
-
-    // Verify tables are rendered (one per month)
+    // Verify single table is rendered
     const tables = canvas.getAllByRole('table');
-    await expect(tables).toHaveLength(12); // 12 months
+    await expect(tables).toHaveLength(1);
+
+    // Verify multi-level headers
+    await expect(canvas.getByText('month_label')).toBeInTheDocument();
+    await expect(canvas.getByText('main')).toBeInTheDocument();
   },
 };
 
@@ -71,18 +64,18 @@ export const SingleMonth: Story = {
       start_year: 2024,
       num_months: 1,
       months: [{ month_name: 'May', year: 2024 }],
-      billing_months: [mockBillingYear.billing_months[0]],
+      billing_months: [mockBillingYear.billing_months[0]!],
     } as BillingYearWithId,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify single month is displayed (within an h3)
-    await expect(canvas.getByRole('heading', { name: /May 2024/i, level: 3 })).toBeInTheDocument();
-
-    // Verify only one table is rendered
+    // Verify single table is rendered
     const tables = canvas.getAllByRole('table');
     await expect(tables).toHaveLength(1);
+
+    // Verify table has headers
+    await expect(canvas.getByText('month_label')).toBeInTheDocument();
   },
 };
 
