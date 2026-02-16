@@ -5,6 +5,7 @@ import { handlers } from '../src/test/mocks/handlers';
 // Initialize MSW for Storybook
 initialize({
   onUnhandledRequest: 'warn',
+  quiet: true, // Suppress MSW startup messages in test output
 });
 
 const preview: Preview = {

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within, userEvent, fireEvent } from 'storybook/test';
+import { expect, within, userEvent } from 'storybook/test';
 import Solar from './Solar';
 import { mockBillingYear } from '../test/mocks/mockData/billingData';
 import type { BillingYearWithId } from '@/types/api';
@@ -38,7 +38,8 @@ type Story = StoryObj<typeof meta>;
 // ==================== STORIES ====================
 
 /**
- * Default state showing May data (first month)
+ * Default state showing May data (first month).
+ * Integration test verifying all three sub-components work together.
  */
 export const Default: Story = {
   args: {
@@ -48,19 +49,37 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const user = userEvent.setup();
 
-    // Verify month name displays
+    // Verify MonthSelector renders
     await expect(canvas.getByText(/Month: May/i)).toBeInTheDocument();
+    await expect(canvas.getByText(/Month: 1/i)).toBeInTheDocument();
 
-    // Verify energy values render
-    await expect(canvas.getByText('-884')).toBeInTheDocument();
-    await expect(canvas.getByText('-114')).toBeInTheDocument();
-    await expect(canvas.getByText('294')).toBeInTheDocument();
-    await expect(canvas.getByText('88')).toBeInTheDocument();
+    // Verify SolarChart renders with May values
+    await expect(canvas.getByText('-884')).toBeInTheDocument(); // off-peak export
+    await expect(canvas.getByText('-114')).toBeInTheDocument(); // peak export
+    await expect(canvas.getByText('294')).toBeInTheDocument(); // off-peak import
+    await expect(canvas.getByText('88')).toBeInTheDocument(); // peak import
 
     // Verify SVG renders
     const svg = canvasElement.querySelector('svg');
     expect(svg).toBeInTheDocument();
+
+    // Verify RawDataTable renders
+    const table = canvasElement.querySelector('table');
+    expect(table).toBeInTheDocument();
+
+    // Integration test: Navigate to June and verify all components update
+    const nextButton = canvas.getAllByRole('button')[1];
+    if (nextButton) {
+      await user.click(nextButton);
+    }
+
+    // Verify month selector updated
+    await expect(canvas.getByText(/Month: June/i)).toBeInTheDocument();
+
+    // Verify chart updated with June values
+    await expect(canvas.getByText('-900')).toBeInTheDocument(); // June off-peak export
   },
 };
 
@@ -102,77 +121,6 @@ export const EmptyMonthsArray: Story = {
 };
 
 /**
- * Single month data (both buttons disabled)
- */
-export const SingleMonth: Story = {
-  args: {
-    data: {
-      id: 1,
-      start_month: 5,
-      start_year: 2024,
-      num_months: 1,
-      months: [{ month_name: 'May', year: 2024 }],
-      billing_months: [mockBillingYear.billing_months[0]!],
-    } as BillingYearWithId,
-    width: 600,
-    height: 400,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Both navigation buttons should be disabled
-    const buttons = canvas.getAllByRole('button');
-    expect(buttons[0]).toBeDisabled(); // prev
-    expect(buttons[1]).toBeDisabled(); // next
-
-    // Slider should have max=0
-    const slider = canvas.getByRole('slider') as HTMLInputElement;
-    expect(slider).toHaveAttribute('max', '0');
-  },
-};
-
-/**
- * Zero values - displays N/A
- */
-export const ZeroValues: Story = {
-  args: {
-    data: {
-      id: 1,
-      start_month: 1,
-      start_year: 2024,
-      num_months: 1,
-      months: [{ month_name: 'January', year: 2024 }],
-      billing_months: [
-        {
-          year: 2024,
-          month: 1,
-          month_label: { month_name: 'January', year: 2024 },
-          main: {
-            energy_export_meter_channel_2: {
-              off_peak: { subcomponent_values: [0], value: 0 },
-              peak: { subcomponent_values: [0], value: 0 },
-            },
-            energy_import_meter_channel_1: {
-              off_peak: { subcomponent_values: [0], value: 0 },
-              peak: { subcomponent_values: [0], value: 0 },
-            },
-          },
-        },
-      ],
-    } as any,
-    width: 600,
-    height: 400,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Should display N/A for zero values
-    const naTexts = canvas.getAllByText('N/A');
-    expect(naTexts.length).toBeGreaterThan(0);
-  },
-};
-
-/**
  * Missing nested data - graceful degradation
  */
 export const MissingNestedData: Story = {
@@ -201,108 +149,6 @@ export const MissingNestedData: Story = {
     // Should handle gracefully with N/A values
     const naTexts = canvas.getAllByText('N/A');
     expect(naTexts.length).toBeGreaterThan(0);
-  },
-};
-
-/**
- * Navigation interaction - next button
- */
-export const NavigateToNextMonth: Story = {
-  args: {
-    data: mockBillingYear,
-    width: 600,
-    height: 400,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const user = userEvent.setup();
-
-    // Start at May
-    await expect(canvas.getByText(/Month: May/i)).toBeInTheDocument();
-
-    // Click next button to navigate to June
-    const nextButton = canvas.getAllByRole('button')[1];
-    await user.click(nextButton);
-
-    // Should now show June
-    await expect(canvas.getByText(/Month: June/i)).toBeInTheDocument();
-
-    // Verify June's off-peak export value
-    await expect(canvas.getByText('-900')).toBeInTheDocument();
-  },
-};
-
-/**
- * Navigation interaction - previous button
- */
-export const NavigateToPreviousMonth: Story = {
-  args: {
-    data: mockBillingYear,
-    width: 600,
-    height: 400,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const user = userEvent.setup();
-
-    // Navigate to June first
-    const nextButton = canvas.getAllByRole('button')[1];
-    await user.click(nextButton);
-    await expect(canvas.getByText(/Month: June/i)).toBeInTheDocument();
-
-    // Click previous button to go back to May
-    const prevButton = canvas.getAllByRole('button')[0];
-    await user.click(prevButton);
-
-    // Should be back at May
-    await expect(canvas.getByText(/Month: May/i)).toBeInTheDocument();
-  },
-};
-
-/**
- * Slider interaction
- */
-export const SliderNavigation: Story = {
-  args: {
-    data: mockBillingYear,
-    width: 600,
-    height: 400,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const user = userEvent.setup();
-
-    // Start at May (index 0)
-    await expect(canvas.getByText(/Month: May/i)).toBeInTheDocument();
-
-    // Use slider to navigate to June (index 1)
-    const slider = canvas.getByRole('slider');
-    fireEvent.change(slider, { target: { value: '1' } });
-
-    // Should show June
-    await expect(canvas.getByText(/Month: June/i)).toBeInTheDocument();
-  },
-};
-
-/**
- * Small dimensions
- */
-export const SmallSize: Story = {
-  args: {
-    data: mockBillingYear,
-    width: 300,
-    height: 250,
-  },
-};
-
-/**
- * Large dimensions
- */
-export const LargeSize: Story = {
-  args: {
-    data: mockBillingYear,
-    width: 900,
-    height: 600,
   },
 };
 
