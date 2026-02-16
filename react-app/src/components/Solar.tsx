@@ -45,7 +45,7 @@ const Solar: React.FC<SolarProps> = ({ data, width = 100, height = 100 }) => {
   const peakExport = getPeakValue(currentMonth.main?.energy_export_meter_channel_2);
   const offPeakImport = getOffPeakValue(currentMonth.main?.energy_import_meter_channel_1);
   const peakImport = getPeakValue(currentMonth.main?.energy_import_meter_channel_1);
-  const monthName = currentMonth.month_label ?? 'N/A';
+  const monthName = currentMonth.month_label?.month_name ?? 'N/A';
 
   const renderDataValue = (value: unknown): string => {
     if (value === null || value === undefined) return 'N/A';

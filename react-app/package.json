@@ -11,7 +11,7 @@
     "type-check": "tsc --noEmit",
     "generate-types": "bash ../generate_proto.sh",
     "test": "vitest",
-    "test:ui": "vitest --ui",
+    "test:ui": "vitest --ui --api.host 0.0.0.0 --api.port 51204",
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {

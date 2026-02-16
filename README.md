@@ -101,7 +101,6 @@ Things I woud want to do are:
 - Set up git on the computer so that you can push to the repo. The github CLI is helpful for that.
 - Install the DevContainers extension.
 - Ctrl + Shift + P to and find the "something with Dev Containers" option.
-- After installation follow the instructions to remove the Python extensions that conlict with Co-Pilot
 
 
 # Workflows
@@ -120,14 +119,17 @@ you let me sleep on you
 and u made the stewardess turn the ac for me 
 
 
-## Running. The UI locally.
+## UI: Running Tests + App Locally
 
-cd react-app
+cd /workspace/react-app
 npm install
+npm test
+npm run test:ui
+npm run test:coverage
 npm run dev
 
 
-# Running all Python API tests and App locally. 
+# AP: Running Tests + App Locally
 
 cd /workspace/python-app
 .venv/bin/activate
@@ -136,23 +138,17 @@ python app.py
 
 # Next Steps
 
-From create records
-            # now I need to figure out how to get this to transmit over the REST API for 2 use cases
-            # 1. so that I can see the reponse on REST. 
-            # 2. so that the JSON can be put into a typescript structure that is easily used.
-            # Also, want to figrue out why billing_pb2 does not work with intellisense.
+1. UI get it to display the same table I have in excel to give confidence that everything matches.
 
+2. UI: then make the per month view show what I have on the paper to make it really clear how allocation is being done. 
 
-- I have a proof of concept of using proto to define a python data structure and load information into a DB. 
+3. UI: update the per month view to show costs as well. 
 
-- NOW: start defining the billing data structures in proto. 
+4. UI: Make a tool to show how much the ADU would pay if they did not have solar.
 
-- THEN: See if you can load the jupyter notebook data into that Python/Proto structure instead and have it automatically store in sqlite.
+5. Jupyter Notebook: See if you can load the jupyter notebook data into that Python/Proto structure instead and have it automatically store in sqlite.
 
-- The awesome result will be the full set of data being returned from the Flash API in a format defined by the proto.
-
-
-Next things to do:
+Some things to understand about the bills:
 - Go to Tara & Pirouz house to look at September 2025 to see why the numbers on the Detail of Bill and Main Unit bill don't line up.
 - print out information on subcomponent kWh values. Make sure the function is clearly importing the subcomponents and is not double counting the total
 - See if we have enough equations to solve for the unknown subcomponent kWh ADU allocated export kWhs. (red cells)

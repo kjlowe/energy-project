@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Solar from './Solar';
 import { mockBillingYear } from '../test/mocks/mockData/billingData';
@@ -28,26 +28,20 @@ describe('Solar Component', () => {
       expect(screen.getByText(/No billing data available/i)).toBeInTheDocument();
     });
 
-    it('should display "Invalid month index" when month index is out of bounds', () => {
-      const dataWithOnlyOneMonth: BillingYearWithId = {
+    it('should display "No billing data available" when billing_months is empty', () => {
+      const dataWithNoMonths: BillingYearWithId = {
         id: 1,
         start_month: 5,
         start_year: 2024,
-        num_months: 1,
-        months: [{ month_name: 'May', year: 2024 }],
-        billing_months: [
-          {
-            year: 2024,
-            month: 5,
-            month_label: { month_name: 'May', year: 2024 },
-          },
-        ],
+        num_months: 0,
+        months: [],
+        billing_months: [],
       };
 
-      // Component starts at monthIdx=1, but only has 1 month (index 0)
-      render(<Solar data={dataWithOnlyOneMonth} width={400} height={400} />);
+      // Component starts at monthIdx=0, but has no months (empty array)
+      render(<Solar data={dataWithNoMonths} width={400} height={400} />);
 
-      expect(screen.getByText(/Invalid month index/i)).toBeInTheDocument();
+      expect(screen.getByText(/No billing data available/i)).toBeInTheDocument();
     });
   });
 
@@ -55,18 +49,18 @@ describe('Solar Component', () => {
     it('should render month name in the document', () => {
       render(<Solar data={mockBillingYear} width={400} height={400} />);
 
-      // Component starts at monthIdx=1 (June)
-      expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
+      // Component starts at monthIdx=0 (May)
+      expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
     });
 
     it('should render energy values as text in SVG', () => {
       render(<Solar data={mockBillingYear} width={400} height={400} />);
 
-      // Check June (monthIdx=1) values - rounded to 0 decimals
-      expect(screen.getByText('-900')).toBeInTheDocument(); // off-peak export
-      expect(screen.getByText('-150')).toBeInTheDocument(); // peak export
-      expect(screen.getByText('250')).toBeInTheDocument();  // off-peak import
-      expect(screen.getByText('75')).toBeInTheDocument();   // peak import
+      // Check May (monthIdx=0) values - rounded to 0 decimals
+      expect(screen.getByText('-884')).toBeInTheDocument(); // off-peak export
+      expect(screen.getByText('-114')).toBeInTheDocument(); // peak export (rounded from -113.825)
+      expect(screen.getByText('294')).toBeInTheDocument();  // off-peak import
+      expect(screen.getByText('88')).toBeInTheDocument();   // peak import
     });
 
     it('should render SVG elements with correct dimensions', () => {
@@ -131,14 +125,19 @@ describe('Solar Component', () => {
       const user = userEvent.setup();
       render(<Solar data={mockBillingYear} width={400} height={400} />);
 
-      // Component starts at monthIdx=1 (June)
+      // Component starts at monthIdx=0 (May)
+      expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
+
+      // Navigate to next month first (June)
+      const nextButton = screen.getAllByRole('button')[1]!; // Second button is next
+      await user.click(nextButton);
       expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
 
-      // Click previous button
+      // Now click previous button to go back to May
       const prevButton = screen.getAllByRole('button')[0]!; // First button is prev
       await user.click(prevButton);
 
-      // Should now show May
+      // Should now show May again
       expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
     });
 
@@ -146,12 +145,10 @@ describe('Solar Component', () => {
       const user = userEvent.setup();
       render(<Solar data={mockBillingYear} width={400} height={400} />);
 
-      // Start at June (monthIdx=1), navigate back to May
-      const prevButton = screen.getAllByRole('button')[0]!;
-      await user.click(prevButton);
+      // Start at May (monthIdx=0)
       expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
 
-      // Click next to go back to June
+      // Click next to go to June
       const nextButton = screen.getAllByRole('button')[1]!;
       await user.click(nextButton);
 
@@ -167,29 +164,29 @@ describe('Solar Component', () => {
       expect(slider).toHaveAttribute('min', '0');
       expect(slider).toHaveAttribute('max', '1'); // 2 months, max index = 1
       expect(slider).toHaveAttribute('step', '1');
-      // Starts at month index 1 (June)
-      expect(slider.value).toBe('1');
+      // Starts at month index 0 (May)
+      expect(slider.value).toBe('0');
     });
 
-    it('should disable prev button at first month', async () => {
-      const user = userEvent.setup();
+    it('should disable prev button at first month', () => {
       render(<Solar data={mockBillingYear} width={400} height={400} />);
 
-      // Navigate to first month (May)
+      // Component starts at first month (May, index 0)
       const prevButton = screen.getAllByRole('button')[0]!;
-      await user.click(prevButton);
 
       // Prev button should be disabled
       expect(prevButton).toBeDisabled();
     });
 
-    it('should disable next button at last month', () => {
+    it('should disable next button at last month', async () => {
+      const user = userEvent.setup();
       render(<Solar data={mockBillingYear} width={400} height={400} />);
 
-      // Component starts at monthIdx=1 (last month in 2-month data)
+      // Component starts at monthIdx=0 (May), navigate to last month (June)
       const nextButton = screen.getAllByRole('button')[1]!;
+      await user.click(nextButton);
 
-      // Next button should be disabled
+      // Next button should now be disabled at last month
       expect(nextButton).toBeDisabled();
     });
 
@@ -197,17 +194,17 @@ describe('Solar Component', () => {
       const user = userEvent.setup();
       render(<Solar data={mockBillingYear} width={400} height={400} />);
 
-      // June (monthIdx=1) should show -900
-      expect(screen.getByText('-900')).toBeInTheDocument();
-
-      // Navigate to May (monthIdx=0)
-      const prevButton = screen.getAllByRole('button')[0]!;
-      await user.click(prevButton);
-
-      // May should show -884
+      // May (monthIdx=0) should show -884
       expect(screen.getByText('-884')).toBeInTheDocument();
-      // June value should no longer be visible
-      expect(screen.queryByText('-900')).not.toBeInTheDocument();
+
+      // Navigate to June (monthIdx=1)
+      const nextButton = screen.getAllByRole('button')[1]!;
+      await user.click(nextButton);
+
+      // June should show -900
+      expect(screen.getByText('-900')).toBeInTheDocument();
+      // May value should no longer be visible
+      expect(screen.queryByText('-884')).not.toBeInTheDocument();
     });
   });
 
@@ -294,6 +291,68 @@ describe('Solar Component', () => {
       // Should display N/A for missing values
       const naTexts = screen.getAllByText('N/A');
       expect(naTexts.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Enhanced Coverage', () => {
+    it('should handle single month data correctly', () => {
+      const singleMonthData: BillingYearWithId = {
+        id: 1,
+        start_month: 5,
+        start_year: 2024,
+        num_months: 1,
+        months: [{ month_name: 'May', year: 2024 }],
+        billing_months: [mockBillingYear.billing_months[0]!], // Just May
+      };
+
+      render(<Solar data={singleMonthData} width={400} height={400} />);
+
+      // Should render May successfully
+      expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
+
+      // Both nav buttons should be disabled
+      const buttons = screen.getAllByRole('button');
+      expect(buttons[0]).toBeDisabled(); // prev
+      expect(buttons[1]).toBeDisabled(); // next
+
+      // Slider should have max=0
+      const slider = screen.getByRole('slider');
+      expect(slider).toHaveAttribute('max', '0');
+    });
+
+    it('should render month_name from month_label object correctly', () => {
+      render(<Solar data={mockBillingYear} width={400} height={400} />);
+
+      // Verify month name is rendered as a string (not the object)
+      expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
+
+      // Verify no object rendering error (would show "[object Object]")
+      expect(screen.queryByText(/\[object Object\]/i)).not.toBeInTheDocument();
+    });
+
+    it('should format negative export values correctly', () => {
+      render(<Solar data={mockBillingYear} width={400} height={400} />);
+
+      // Export values should be negative (with minus sign)
+      // May has offPeakExport=-884 and peakExport=-114 (rounded)
+      expect(screen.getByText('-884')).toBeInTheDocument();
+      expect(screen.getByText('-114')).toBeInTheDocument();
+    });
+
+    it('should change month using slider', () => {
+      render(<Solar data={mockBillingYear} width={400} height={400} />);
+
+      const slider = screen.getByRole('slider') as HTMLInputElement;
+
+      // Start at May (index 0)
+      expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
+      expect(slider.value).toBe('0');
+
+      // Change slider to June (index 1)
+      fireEvent.change(slider, { target: { value: '1' } });
+
+      // Should now show June
+      expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
     });
   });
 });

@@ -4,7 +4,7 @@
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "mounts": ["source=${localWorkspaceFolder},target=/workspace,type=bind"],
   "workspaceFolder": "/workspace",
-  "forwardPorts": [5000, 5173],
+  "forwardPorts": [5000, 5173, 51204],
   "portsAttributes": {
     "5000": {
       "label": "Flask API Server",
@@ -12,6 +12,10 @@
     },
     "5173": {
       "label": "React Dev Server (Vite)",
+      "onAutoForward": "notify"
+    },
+    "51204": {
+      "label": "React Testing UI (Vite)",
       "onAutoForward": "notify"
     }
   },

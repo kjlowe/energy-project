@@ -133,8 +133,8 @@ describe('API Compatibility - Consistent snake_case Everywhere', () => {
 
       // Should render values, not "No billing data available"
       expect(container.textContent).not.toContain('No billing data available');
-      // Component starts at monthIdx=1 (June)
-      expect(screen.getByText(/Month: June/i)).toBeInTheDocument();
+      // Component starts at monthIdx=0 (May)
+      expect(screen.getByText(/Month: May/i)).toBeInTheDocument();
     });
   });
 
