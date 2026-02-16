@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Testing
+coverage
+*.lcov
+
+# Storybook
+storybook-static
+.storybook/cache
+
+# Vite/Vitest build artifacts
+*.timestamp-*.mjs
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

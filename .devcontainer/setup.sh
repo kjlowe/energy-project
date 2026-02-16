@@ -55,6 +55,26 @@ echo "✅ Python notebook dependencies installed"
 cd /workspace
 
 
+###### REACT APP SETUP #########################################
+
+echo "Setting up React app dependencies..."
+cd /workspace/react-app
+
+# Install all Node.js dependencies (including Storybook packages)
+if [ -f "package.json" ]; then
+    npm install
+    echo "✅ React app dependencies installed"
+fi
+
+# Install Playwright browsers for Vitest browser mode
+echo "Installing Playwright browsers..."
+npx playwright install chromium --with-deps
+echo "✅ Playwright chromium browser installed"
+
+# Return to workspace root
+cd /workspace
+
+
 ###### ADD CLAUDE CODE #######################################
 
 npm install -g @anthropic-ai/claude-code

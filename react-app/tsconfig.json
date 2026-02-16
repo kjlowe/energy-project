@@ -28,8 +28,11 @@
       "@types/*": ["./src/types/*"],
       "@components/*": ["./src/components/*"],
       "@hooks/*": ["./src/hooks/*"]
-    }
+    },
+
+    // Types
+    "types": ["vitest/globals", "@testing-library/jest-dom", "node"]
   },
-  "include": ["src"],
+  "include": ["src", ".storybook"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
