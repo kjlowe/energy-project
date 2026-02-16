@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { render, screen } from '@testing-library/react';
 import useDataFetch from '@/hooks/useDataFetch';
-import Solar from '@/components/Solar';
+import MonthlyBillingView from '@/components/MonthlyBillingView';
 
 describe('API Compatibility - Consistent snake_case Everywhere', () => {
   describe('Python API Format', () => {
@@ -74,7 +74,7 @@ describe('API Compatibility - Consistent snake_case Everywhere', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const data = result.current.billingData;
+      const data = result.current.billingYears[0];
 
       if (data) {
         // Check that fields are snake_case
@@ -85,7 +85,7 @@ describe('API Compatibility - Consistent snake_case Everywhere', () => {
       }
     });
 
-    it('should verify Solar component works with snake_case data', () => {
+    it('should verify MonthlyBillingView component works with snake_case data', () => {
       const snakeCaseData = {
         id: 1,
         start_month: 5,
@@ -129,7 +129,7 @@ describe('API Compatibility - Consistent snake_case Everywhere', () => {
         ]
       };
 
-      const { container } = render(<Solar data={snakeCaseData as any} width={400} height={400} />);
+      const { container } = render(<MonthlyBillingView data={snakeCaseData as any} width={400} height={400} />);
 
       // Should render values, not "No billing data available"
       expect(container.textContent).not.toContain('No billing data available');

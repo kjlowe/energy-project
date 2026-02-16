@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within, userEvent } from 'storybook/test';
-import Solar from './Solar';
+import MonthlyBillingView from './MonthlyBillingView';
 import { mockBillingYear } from '../test/mocks/mockData/billingData';
 import type { BillingYearWithId } from '@/types/api';
 
 const meta = {
-  title: 'Components/Solar',
-  component: Solar,
+  title: 'Components/MonthlyBillingView',
+  component: MonthlyBillingView,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Solar energy visualization component displaying billing data with peak/off-peak breakdown.',
+        component: 'Monthly billing data visualization component displaying energy data with peak/off-peak breakdown.',
       },
     },
   },
@@ -30,7 +30,7 @@ const meta = {
       description: 'Billing year data with months',
     },
   },
-} satisfies Meta<typeof Solar>;
+} satisfies Meta<typeof MonthlyBillingView>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

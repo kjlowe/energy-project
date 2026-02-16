@@ -6,33 +6,35 @@ import useDataFetch from './useDataFetch';
 
 describe('useDataFetch Hook', () => {
   describe('Successful Data Fetching', () => {
-    it('should fetch and return billing data successfully', async () => {
+    it('should fetch and return billing years array successfully', async () => {
       const { result } = renderHook(() => useDataFetch());
 
       // Initially loading
       expect(result.current.loading).toBe(true);
-      expect(result.current.billingData).toBeNull();
+      expect(result.current.billingYears).toEqual([]);
 
       // Wait for data to load
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
       });
 
-      // Check billing data loaded
+      // Check billing years array loaded
       expect(result.current.error).toBeNull();
-      expect(result.current.billingData).not.toBeNull();
+      expect(result.current.billingYears).toBeInstanceOf(Array);
+      expect(result.current.billingYears.length).toBeGreaterThan(0);
     });
 
-    it('should set first billing year as billingData', async () => {
+    it('should set all billing years in array', async () => {
       const { result } = renderHook(() => useDataFetch());
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
       });
 
-      // Check billingData properties
-      expect(result.current.billingData).not.toBeNull();
-      expect(result.current.billingData).toHaveProperty('id');
+      // Check billingYears properties
+      expect(result.current.billingYears).toBeInstanceOf(Array);
+      expect(result.current.billingYears[0]).toHaveProperty('id');
+      expect(result.current.billingYears[0]).toHaveProperty('billing_months');
     });
   });
 
@@ -54,7 +56,7 @@ describe('useDataFetch Hook', () => {
       });
 
       expect(result.current.error).toBeNull();
-      expect(result.current.billingData).toBeNull(); // No data to set
+      expect(result.current.billingYears).toEqual([]); // Empty array
     });
   });
 
@@ -88,7 +90,7 @@ describe('useDataFetch Hook', () => {
 
       expect(result.current.error).toBeTruthy();
       expect(result.current.error).toContain('Failed to fetch billing data');
-      expect(result.current.billingData).toBeNull();
+      expect(result.current.billingYears).toEqual([]);
     });
 
     it('should handle network errors', async () => {
@@ -105,7 +107,7 @@ describe('useDataFetch Hook', () => {
       });
 
       expect(result.current.error).not.toBeNull();
-      expect(result.current.billingData).toBeNull();
+      expect(result.current.billingYears).toEqual([]);
     });
 
     it('should handle API failure', async () => {
@@ -123,7 +125,7 @@ describe('useDataFetch Hook', () => {
 
       // Should have error
       expect(result.current.error).toBeTruthy();
-      expect(result.current.billingData).toBeNull();
+      expect(result.current.billingYears).toEqual([]);
     });
   });
 

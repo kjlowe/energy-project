@@ -5,7 +5,7 @@ import type {
 } from '@/types/api';
 
 interface UseDataFetchResult {
-  billingData: BillingYearWithId | null;
+  billingYears: BillingYearWithId[];
   loading: boolean;
   error: string | null;
 }
@@ -14,7 +14,7 @@ interface UseDataFetchResult {
  * Custom hook for fetching billing data from the Flask API.
  */
 const useDataFetch = (): UseDataFetchResult => {
-  const [billingData, setBillingData] = useState<BillingYearWithId | null>(null);
+  const [billingYears, setBillingYears] = useState<BillingYearWithId[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,9 +40,9 @@ const useDataFetch = (): UseDataFetchResult => {
         // Parse JSON data (snake_case from Python API matches TypeScript types)
         const billingYearsResult = await billingYearsResponse.json() as BillingYearsResponse;
 
-        // Use first billing year if available
-        if (billingYearsResult.billing_years && billingYearsResult.billing_years.length > 0) {
-          setBillingData(billingYearsResult.billing_years[0] ?? null);
+        // Set all billing years
+        if (billingYearsResult.billing_years) {
+          setBillingYears(billingYearsResult.billing_years);
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
@@ -56,7 +56,7 @@ const useDataFetch = (): UseDataFetchResult => {
     void fetchData();
   }, []); // Empty dependency array - runs once on mount
 
-  return { billingData, loading, error };
+  return { billingYears, loading, error };
 };
 
 export default useDataFetch;
