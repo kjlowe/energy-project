@@ -15,7 +15,6 @@ const config: StorybookConfig = {
 
   addons: [
     '@storybook/addon-a11y',
-    '@storybook/addon-coverage',
     'msw-storybook-addon',
     '@storybook/addon-docs'
   ],

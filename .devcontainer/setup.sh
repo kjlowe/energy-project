@@ -62,14 +62,17 @@ cd /workspace/react-app
 
 # Install all Node.js dependencies (including Storybook packages)
 if [ -f "package.json" ]; then
+    echo "Installing React app dependencies..."
     npm install
     echo "✅ React app dependencies installed"
-fi
 
-# Install Playwright browsers for Vitest browser mode
-echo "Installing Playwright browsers..."
-npx playwright install chromium --with-deps
-echo "✅ Playwright chromium browser installed"
+    # Install Playwright browsers for Vitest browser mode (after npm install)
+    echo "Installing Playwright browsers..."
+    DEBIAN_FRONTEND=noninteractive npx playwright install chromium --with-deps
+    echo "✅ Playwright chromium browser installed"
+else
+    echo "⚠️  Warning: package.json not found in react-app directory"
+fi
 
 # Return to workspace root
 cd /workspace
