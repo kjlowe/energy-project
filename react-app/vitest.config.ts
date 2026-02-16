@@ -40,24 +40,19 @@ export default defineConfig({
           name: 'jsdom',
           environment: 'jsdom',
           include: ['src/**/*.test.{ts,tsx}'],
-          exclude: ['src/**/*.browser.test.{ts,tsx}']
-        }
-      },
-      // Project 2: browser tests
-      {
-        test: {
-          name: 'browser',
-          browser: {
-            enabled: true,
-            name: 'chromium',
-            provider: playwright(),
-            headless: true
+          setupFiles: './src/test/setup.ts',
+          globals: true,
+        },
+        resolve: {
+          alias: {
+            '@': path.resolve(__dirname, './src'),
+            '@types': path.resolve(__dirname, './src/types'),
+            '@components': path.resolve(__dirname, './src/components'),
+            '@hooks': path.resolve(__dirname, './src/hooks'),
           },
-          include: ['src/**/*.browser.test.{ts,tsx}'],
-          setupFiles: ['.storybook/vitest.setup.ts']
-        }
+        },
       },
-      // Project 3: storybook tests
+      // Project 2: storybook tests
       {
         plugins: [
           storybookTest({
