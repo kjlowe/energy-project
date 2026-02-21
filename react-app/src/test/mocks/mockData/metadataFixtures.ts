@@ -21,9 +21,7 @@ export function createFieldSource(
   return {
     where_from: WhereFrom[where_from] as unknown as WhereFrom, // Convert enum to string name
     where_on_pdf,
-    kevins_number_code: kevins_number_code !== undefined
-      ? { value: kevins_number_code }
-      : undefined,
+    kevins_number_code: kevins_number_code !== undefined ? kevins_number_code : null,
   };
 }
 

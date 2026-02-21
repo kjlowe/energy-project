@@ -127,11 +127,7 @@ http://localhost:6006/
 
 # Next Steps
 
-1. (DONE) UI get it to display the same table I have in excel to give confidence that everything matches.
-
-1.5. Get the meta data to show up in a dedicated API. Overlay it with the month view and table view.
-
-1.6 Remove units from the data in sqlite. It now in the metadata file.
+1. UI: Overlay the metadata on top of the month view and table view.
 
 2. UI: then make the per month view show what I have on the paper to make it really clear how allocation is being done. 
 

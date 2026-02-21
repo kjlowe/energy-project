@@ -12,7 +12,10 @@ import {
   mockLongMetadata,
   createBillingStructureMetadata,
   createMeterMetadata,
+  createSimpleField,
+  createFieldSource,
 } from '@/test/mocks/mockData/metadataFixtures';
+import { Unit, WhereFrom } from '@/types/generated/metadata';
 
 const meta = {
   title: 'Components/MetadataModal',
@@ -60,15 +63,14 @@ export const Default: Story = {
     const tables = canvas.getAllByRole('table');
     await expect(tables.length).toBeGreaterThanOrEqual(1);
 
-    // Verify table headers (multiple tables means multiple headers)
-    const fieldNameHeaders = canvas.getAllByText('Field Name');
-    await expect(fieldNameHeaders.length).toBeGreaterThanOrEqual(1);
-    const typeHeaders = canvas.getAllByText('Type');
-    await expect(typeHeaders.length).toBeGreaterThanOrEqual(1);
-    const unitHeaders = canvas.getAllByText('Unit');
-    await expect(unitHeaders.length).toBeGreaterThanOrEqual(1);
-    const dataSourceHeaders = canvas.getAllByText('Data Sources');
-    await expect(dataSourceHeaders.length).toBeGreaterThanOrEqual(1);
+    // Verify new table headers (using regex to match headers with sort indicators)
+    await expect(canvas.getAllByText(/Field Name/i).length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText(/Type/i).length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText(/TOU/i).length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText(/Unit/i).length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText(/Where From/i).length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText(/Page/i).length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText(/Number Code/i).length).toBeGreaterThanOrEqual(1);
 
     // Verify close button exists
     await expect(canvas.getByRole('button', { name: /Close/i })).toBeInTheDocument();
@@ -108,7 +110,7 @@ export const EmptyMeters: Story = {
     const tables = canvas.queryAllByRole('table');
     await expect(tables.length).toBe(0);
 
-    // Meter headings should not appear for empty meters
+    // Meter headings should not appear for empty meters (no rows means no sections)
     await expect(canvas.queryByText('Generation Meter')).not.toBeInTheDocument();
     await expect(canvas.queryByText('Benefit Meter')).not.toBeInTheDocument();
   },
@@ -126,9 +128,13 @@ export const DateFieldsOnly: Story = {
     // Verify table exists
     await expect(canvas.getByRole('table')).toBeInTheDocument();
 
-    // Verify date field badges are displayed (may be multiple)
-    const dateFieldBadges = canvas.getAllByText('Date Field');
+    // Verify date field badges are displayed (uppercase badges)
+    const dateFieldBadges = canvas.getAllByText(/DATE FIELD/i);
     await expect(dateFieldBadges.length).toBeGreaterThanOrEqual(1);
+
+    // Verify TOU column shows '—' for date fields
+    const dashElements = canvas.getAllByText('—');
+    await expect(dashElements.length).toBeGreaterThanOrEqual(1);
 
     // Verify WhereFrom enum values appear (PDF_BILL, may be multiple)
     const pdfBillElements = canvas.getAllByText(/PDF_BILL/);
@@ -151,9 +157,13 @@ export const SimpleFieldsOnly: Story = {
     // Verify table exists
     await expect(canvas.getByRole('table')).toBeInTheDocument();
 
-    // Verify simple field badges are displayed (may be multiple)
-    const simpleFieldBadges = canvas.getAllByText('Simple Field');
+    // Verify simple field badges are displayed (uppercase badges)
+    const simpleFieldBadges = canvas.getAllByText(/SIMPLE FIELD/i);
     await expect(simpleFieldBadges.length).toBeGreaterThanOrEqual(1);
+
+    // Verify TOU column shows '—' for simple fields
+    const dashElements = canvas.getAllByText('—');
+    await expect(dashElements.length).toBeGreaterThanOrEqual(1);
 
     // Verify Unit is displayed in table (may be multiple)
     const dollarUnits = canvas.getAllByText('DOLLARS');
@@ -176,16 +186,16 @@ export const TOUFieldsOnly: Story = {
     // Verify table exists
     await expect(canvas.getByRole('table')).toBeInTheDocument();
 
-    // Verify TOU field badges are displayed (may be multiple)
-    const touFieldBadges = canvas.getAllByText('TOU Field');
+    // Verify TOU field badges are displayed (uppercase badges)
+    const touFieldBadges = canvas.getAllByText(/TOU FIELD/i);
     await expect(touFieldBadges.length).toBeGreaterThanOrEqual(1);
 
-    // Verify all three TOU components (may be multiple of each)
-    const peakElements = canvas.getAllByText(/Peak:/);
+    // Verify all three TOU components in TOU column (Peak, Off-Peak, Total)
+    const peakElements = canvas.getAllByText('Peak');
     await expect(peakElements.length).toBeGreaterThanOrEqual(1);
-    const offPeakElements = canvas.getAllByText(/Off-Peak:/);
+    const offPeakElements = canvas.getAllByText('Off-Peak');
     await expect(offPeakElements.length).toBeGreaterThanOrEqual(1);
-    const totalElements = canvas.getAllByText(/Total:/);
+    const totalElements = canvas.getAllByText('Total');
     await expect(totalElements.length).toBeGreaterThanOrEqual(1);
 
     // Verify units for TOU fields (may be multiple)
@@ -249,19 +259,23 @@ export const MixedFieldTypes: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify all three field type badges coexist in table (may be multiple of each)
-    const dateFieldBadges = canvas.getAllByText('Date Field');
+    // Verify all three field type badges coexist in table (uppercase badges)
+    const dateFieldBadges = canvas.getAllByText(/DATE FIELD/i);
     await expect(dateFieldBadges.length).toBeGreaterThanOrEqual(1);
 
-    const simpleFieldBadges = canvas.getAllByText('Simple Field');
+    const simpleFieldBadges = canvas.getAllByText(/SIMPLE FIELD/i);
     await expect(simpleFieldBadges.length).toBeGreaterThanOrEqual(1);
 
-    const touFieldBadges = canvas.getAllByText('TOU Field');
+    const touFieldBadges = canvas.getAllByText(/TOU FIELD/i);
     await expect(touFieldBadges.length).toBeGreaterThanOrEqual(1);
 
     // Verify different units appear (may be multiple)
     const dollarUnits = canvas.getAllByText('DOLLARS');
     await expect(dollarUnits.length).toBeGreaterThanOrEqual(1);
+
+    // Verify TOU components appear
+    const peakElements = canvas.getAllByText('Peak');
+    await expect(peakElements.length).toBeGreaterThanOrEqual(1);
 
     // Verify tables exist
     const tables = canvas.getAllByRole('table');
@@ -341,5 +355,142 @@ export const LongContentScroll: Story = {
     // Verify many rows are rendered (multiple fields in table)
     const rows = canvas.getAllByRole('row');
     await expect(rows.length).toBeGreaterThan(10);
+  },
+};
+
+// ===== Story 13: SortingInteraction - Test table sorting =====
+export const SortingInteraction: Story = {
+  args: {
+    metadata: mockFullMetadata,
+    onClose: () => {},
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    // Verify modal is open
+    await expect(canvas.getByText('Billing Metadata')).toBeInTheDocument();
+
+    // Get the Field Name header (first table) - default sort is Field Name ascending
+    const fieldNameHeaders = canvas.getAllByText(/Field Name/);
+    await expect(fieldNameHeaders.length).toBeGreaterThanOrEqual(1);
+
+    // Initial state should show ascending (▲)
+    await expect(fieldNameHeaders[0].textContent).toContain('▲');
+
+    // Click to toggle to descending
+    await user.click(fieldNameHeaders[0]);
+
+    // Verify sort indicator changes to ▼
+    await expect(fieldNameHeaders[0].textContent).toContain('▼');
+
+    // Click again to toggle back to ascending
+    await user.click(fieldNameHeaders[0]);
+
+    // Verify sort indicator back to ▲
+    await expect(fieldNameHeaders[0].textContent).toContain('▲');
+
+    // Click Type header to change sort column
+    const typeHeaders = canvas.getAllByText(/^Type/);
+    await user.click(typeHeaders[0]);
+
+    // Verify Type header now has sort indicator (ascending by default when changing columns)
+    await expect(typeHeaders[0].textContent).toContain('▲');
+
+    // Field Name should no longer have indicator
+    await expect(fieldNameHeaders[0].textContent).not.toContain('▲');
+    await expect(fieldNameHeaders[0].textContent).not.toContain('▼');
+  },
+};
+
+// ===== Story 14: NumericSorting - Test numeric sorting of number codes =====
+export const NumericSorting: Story = {
+  args: {
+    metadata: createBillingStructureMetadata(
+      createMeterMetadata({
+        field_with_2: createSimpleField(Unit.DOLLARS, [
+          createFieldSource(WhereFrom.PDF_BILL, 'Page 1', 2),
+        ]),
+        field_with_10: createSimpleField(Unit.DOLLARS, [
+          createFieldSource(WhereFrom.PDF_BILL, 'Page 2', 10),
+        ]),
+        field_with_25: createSimpleField(Unit.DOLLARS, [
+          createFieldSource(WhereFrom.PDF_BILL, 'Page 3', 25),
+        ]),
+        field_with_3: createSimpleField(Unit.DOLLARS, [
+          createFieldSource(WhereFrom.PDF_BILL, 'Page 4', 3),
+        ]),
+        field_with_100: createSimpleField(Unit.DOLLARS, [
+          createFieldSource(WhereFrom.PDF_BILL, 'Page 5', 100),
+        ]),
+        field_with_empty: createSimpleField(Unit.DOLLARS, [
+          createFieldSource(WhereFrom.CALCULATED, ''), // No number code (will be '—')
+        ]),
+      }),
+      undefined
+    ),
+    onClose: () => {},
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    // Verify modal is open
+    await expect(canvas.getByText('Billing Metadata')).toBeInTheDocument();
+
+    // Click Number Code header to sort by number code
+    const numberCodeHeaders = canvas.getAllByText(/Number Code/);
+    await user.click(numberCodeHeaders[0]);
+
+    // Verify sort indicator shows ascending
+    await expect(numberCodeHeaders[0].textContent).toContain('▲');
+
+    // Get all table rows (excluding header row)
+    const table = canvas.getByRole('table');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Extract number codes from the table in display order
+    const numberCodes: string[] = [];
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      // Last cell is the number code
+      const numberCodeCell = cells[cells.length - 1];
+      if (numberCodeCell) {
+        numberCodes.push(numberCodeCell.textContent || '');
+      }
+    });
+
+    // Verify numeric ascending order: 2, 3, 10, 25, 100, then empty ('—') last
+    await expect(numberCodes[0]).toBe('2');
+    await expect(numberCodes[1]).toBe('3');
+    await expect(numberCodes[2]).toBe('10');
+    await expect(numberCodes[3]).toBe('25');
+    await expect(numberCodes[4]).toBe('100');
+    await expect(numberCodes[5]).toBe('—'); // Empty values always last
+
+    // Click again to sort descending
+    await user.click(numberCodeHeaders[0]);
+
+    // Verify sort indicator shows descending
+    await expect(numberCodeHeaders[0].textContent).toContain('▼');
+
+    // Get rows again after re-sort
+    const rowsDesc = table.querySelectorAll('tbody tr');
+    const numberCodesDesc: string[] = [];
+    rowsDesc.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      const numberCodeCell = cells[cells.length - 1];
+      if (numberCodeCell) {
+        numberCodesDesc.push(numberCodeCell.textContent || '');
+      }
+    });
+
+    // Verify numeric descending order: 100, 25, 10, 3, 2, then empty ('—') last
+    await expect(numberCodesDesc[0]).toBe('100');
+    await expect(numberCodesDesc[1]).toBe('25');
+    await expect(numberCodesDesc[2]).toBe('10');
+    await expect(numberCodesDesc[3]).toBe('3');
+    await expect(numberCodesDesc[4]).toBe('2');
+    await expect(numberCodesDesc[5]).toBe('—'); // Empty values always last
   },
 };
