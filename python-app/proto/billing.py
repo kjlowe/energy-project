@@ -7,14 +7,6 @@ from typing import List
 import betterproto
 
 
-class WhereFrom(betterproto.Enum):
-    NOT_PROVIDED = 0
-    PDF_BILL = 1
-    PDF_DETAIL_OF_BILL = 2
-    CALCULATED = 3
-    FIXED_VALUE = 4
-
-
 class NEM2AMeterType(betterproto.Enum):
     NEM2A_METER_TYPE_UNSPECIFIED = 0
     GENERATION_METER = 1
