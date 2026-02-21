@@ -1,0 +1,687 @@
+{
+  "GENERATION_METER": {
+    "billing_date": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Header",
+          "kevins_number_code": 43
+        }
+      ]
+    },
+    "service_end_date": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": null
+        },
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 1",
+          "kevins_number_code": 44
+        }
+      ]
+    },
+    "energy_export_meter_channel_2": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 3",
+            "kevins_number_code": 15
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "energy_import_meter_channel_1": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 5",
+            "kevins_number_code": 4
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 5",
+            "kevins_number_code": 3
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 3",
+            "kevins_number_code": 10
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "allocated_export_energy_credits": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 5",
+            "kevins_number_code": 6
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 5",
+            "kevins_number_code": 5
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 3",
+            "kevins_number_code": 14
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "net_energy_usage_after_credits": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 22
+          },
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 6",
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 23
+          },
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 6",
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 6",
+            "kevins_number_code": 7
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "pce_energy_cost": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 34
+          }
+        ],
+        "unit": "$"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 33
+          }
+        ],
+        "unit": "$"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "$"
+      }
+    },
+    "pce_net_generation_bonus": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 37
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_energy_commission_surcharge": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 35
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_total_energy_charges": {
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_nem_credit": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 36
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_generation_charges_due_cash": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 80
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_res_energy_charges": {
+      "where_found": [
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 4",
+          "kevins_number_code": 31
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_baseline_credit": {
+      "where_found": [
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 4",
+          "kevins_number_code": 32
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_da_cca_charges": {
+      "where_found": [
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 4",
+          "kevins_number_code": 38
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_total_energy_charges": {
+      "where_found": [
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 4",
+          "kevins_number_code": 39
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_nem_billing": {
+      "where_found": [
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 4",
+          "kevins_number_code": 40
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_minimum_delivery_charge": {
+      "where_found": [
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 4",
+          "kevins_number_code": 41
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_nem_true_up_adjustment": {
+      "where_found": [
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 1 - True Up Only",
+          "kevins_number_code": 80
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_electric_delivery_charges": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Electric Delivery Charges",
+          "kevins_number_code": 30
+        },
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 4",
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "california_climate_credit": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Electric Delivery Charges",
+          "kevins_number_code": 45
+        }
+      ],
+      "unit": "$"
+    },
+    "total_bill_in_mail": {
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    }
+  },
+  "BENEFIT_METER": {
+    "billing_date": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Header",
+          "kevins_number_code": 43
+        }
+      ]
+    },
+    "service_end_date": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": null
+        },
+        {
+          "where_from": "PDF_DETAIL_OF_BILL",
+          "where_on_pdf": "Page 1",
+          "kevins_number_code": 44
+        }
+      ]
+    },
+    "energy_export_meter_channel_2": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "FIXED_VALUE",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "FIXED_VALUE",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "FIXED_VALUE",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "energy_import_meter_channel_1": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 3",
+            "kevins_number_code": 9
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "allocated_export_energy_credits": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 3",
+            "kevins_number_code": 13
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "net_energy_usage_after_credits": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 20
+          }
+        ],
+        "unit": "kWh"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 21
+          }
+        ],
+        "unit": "kWh"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "PDF_DETAIL_OF_BILL",
+            "where_on_pdf": "Page 6",
+            "kevins_number_code": 8
+          }
+        ],
+        "unit": "kWh"
+      }
+    },
+    "pce_energy_cost": {
+      "peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 25
+          }
+        ],
+        "unit": "$"
+      },
+      "off_peak": {
+        "where_found": [
+          {
+            "where_from": "PDF_BILL",
+            "where_on_pdf": "Generation Charges",
+            "kevins_number_code": 24
+          }
+        ],
+        "unit": "$"
+      },
+      "total": {
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": null,
+            "kevins_number_code": null
+          }
+        ],
+        "unit": "$"
+      }
+    },
+    "pce_net_generation_bonus": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 26
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_energy_commission_surcharge": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 27
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_total_energy_charges": {
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_nem_credit": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 28
+        }
+      ],
+      "unit": "$"
+    },
+    "pce_generation_charges_due_cash": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Generation Charges",
+          "kevins_number_code": 29
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_res_energy_charges": {
+      "where_found": [
+        {
+          "where_from": "NOT_PROVIDED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_baseline_credit": {
+      "where_found": [
+        {
+          "where_from": "NOT_PROVIDED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_da_cca_charges": {
+      "where_found": [
+        {
+          "where_from": "NOT_PROVIDED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_total_energy_charges": {
+      "where_found": [
+        {
+          "where_from": "NOT_PROVIDED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_nem_billing": {
+      "where_found": [
+        {
+          "where_from": "NOT_PROVIDED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_minimum_delivery_charge": {
+      "where_found": [
+        {
+          "where_from": "NOT_PROVIDED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_nem_true_up_adjustment": {
+      "where_found": [
+        {
+          "where_from": "NOT_PROVIDED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    },
+    "pge_electric_delivery_charges": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Electric Delivery Charges",
+          "kevins_number_code": 42
+        }
+      ],
+      "unit": "$"
+    },
+    "california_climate_credit": {
+      "where_found": [
+        {
+          "where_from": "PDF_BILL",
+          "where_on_pdf": "Electric Delivery Charges",
+          "kevins_number_code": 46
+        }
+      ],
+      "unit": "$"
+    },
+    "total_bill_in_mail": {
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": null,
+          "kevins_number_code": null
+        }
+      ],
+      "unit": "$"
+    }
+  }
+}

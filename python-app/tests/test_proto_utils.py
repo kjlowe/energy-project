@@ -102,7 +102,9 @@ def test_proto_to_dict_billing_months(sample_billing_year):
     month1 = result['billing_months'][0]
     assert month1['year'] == 2024
     assert month1['month'] == 5
-    assert month1['month_label'] == 'May'
+    # month_label is now a dict with month_name and year
+    assert month1['month_label']['month_name'] == 'May'
+    assert month1['month_label']['year'] == 2024
     assert month1['main'] is not None
     assert month1['adu'] is not None
 
@@ -116,9 +118,9 @@ def test_proto_to_dict_meter_data(sample_billing_year):
     # Check enum conversion
     assert main_meter['nem2a_meter_type'] == 'GENERATION_METER'
 
-    # Check dates
-    assert main_meter['billing_date'] == '2024-05-14'
-    assert main_meter['service_end_date'] == '2024-05-07'
+    # Check dates - they are now dicts with 'value' field
+    assert main_meter['billing_date']['value'] == '2024-05-14'
+    assert main_meter['service_end_date']['value'] == '2024-05-07'
 
     # Check TOU metrics exist
     assert 'energy_export_meter_channel_2' in main_meter
