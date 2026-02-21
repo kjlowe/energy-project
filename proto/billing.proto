@@ -1,13 +1,5 @@
 syntax = "proto3";
 
-enum WhereFrom {
-  NOT_PROVIDED = 0;
-  PDF_BILL = 1;
-  PDF_DETAIL_OF_BILL = 2;
-  CALCULATED = 3;
-  FIXED_VALUE = 4;
-}
-
 enum NEM2AMeterType {
   NEM2A_METER_TYPE_UNSPECIFIED = 0;
   GENERATION_METER = 1;

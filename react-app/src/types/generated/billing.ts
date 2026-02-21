@@ -9,15 +9,6 @@ import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "";
 
-export enum WhereFrom {
-  NOT_PROVIDED = 0,
-  PDF_BILL = 1,
-  PDF_DETAIL_OF_BILL = 2,
-  CALCULATED = 3,
-  FIXED_VALUE = 4,
-  UNRECOGNIZED = -1,
-}
-
 export enum NEM2AMeterType {
   NEM2A_METER_TYPE_UNSPECIFIED = 0,
   GENERATION_METER = 1,
