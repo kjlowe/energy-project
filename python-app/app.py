@@ -43,7 +43,7 @@ def _meter_metadata_to_dict(meter: MeterMetadata) -> dict:
     result = {}
     for field_name, field_metadata in meter.fields.items():
         result[field_name] = _field_metadata_to_dict(field_metadata)
-    return result
+    return {'fields': result}
 
 
 def _field_metadata_to_dict(field_metadata: FieldMetadata) -> dict:
@@ -52,11 +52,26 @@ def _field_metadata_to_dict(field_metadata: FieldMetadata) -> dict:
     field_type, field_value = betterproto.which_one_of(field_metadata, 'metadata')
 
     if field_type == 'date_field':
-        return _date_field_to_dict(field_value)
+        return {
+            'metadata': {
+                '$case': 'date_field',
+                'date_field': _date_field_to_dict(field_value)
+            }
+        }
     elif field_type == 'simple_field':
-        return _simple_field_to_dict(field_value)
+        return {
+            'metadata': {
+                '$case': 'simple_field',
+                'simple_field': _simple_field_to_dict(field_value)
+            }
+        }
     elif field_type == 'tou_field':
-        return _tou_field_to_dict(field_value)
+        return {
+            'metadata': {
+                '$case': 'tou_field',
+                'tou_field': _tou_field_to_dict(field_value)
+            }
+        }
     else:
         raise ValueError(f"Unknown field type: {field_type}")
 
@@ -155,9 +170,9 @@ def get_billing_metadata():
 
             if field_name:
                 meter_data = metadata_dict[meter_type]
-                if field_name not in meter_data:
+                if field_name not in meter_data['fields']:
                     return jsonify({"error": f"Invalid field: {field_name}"}), 400
-                metadata_dict = {meter_type: {field_name: meter_data[field_name]}}
+                metadata_dict = {meter_type: {'fields': {field_name: meter_data['fields'][field_name]}}}
 
         return jsonify(metadata_dict)
 
