@@ -47,15 +47,6 @@ const RawDataTable: React.FC<RawDataTableProps> = ({
             >
               Value
             </th>
-            <th
-              style={{
-                border: '1px solid #ccc',
-                padding: '8px',
-                textAlign: 'left',
-              }}
-            >
-              Unit
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -85,9 +76,6 @@ const RawDataTable: React.FC<RawDataTableProps> = ({
                 }}
               >
                 {row.value}
-              </td>
-              <td style={{ border: '1px solid #ccc', padding: '6px' }}>
-                {row.unit}
               </td>
             </tr>
           ))}

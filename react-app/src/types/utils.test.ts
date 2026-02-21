@@ -75,16 +75,16 @@ describe('Type Utilities', () => {
   });
 
   describe('formatEnergyValue', () => {
-    it('should format value with default unit', () => {
-      expect(formatEnergyValue(123.456)).toBe('123.46 kWh');
+    it('should format value without unit', () => {
+      expect(formatEnergyValue(123.456)).toBe('123.46');
     });
 
-    it('should format value with custom unit', () => {
-      expect(formatEnergyValue(789.012, 'MWh')).toBe('789.01 MWh');
+    it('should format value with two decimal places', () => {
+      expect(formatEnergyValue(789.012)).toBe('789.01');
     });
 
     it('should handle negative values', () => {
-      expect(formatEnergyValue(-50.5)).toBe('-50.50 kWh');
+      expect(formatEnergyValue(-50.5)).toBe('-50.50');
     });
   });
 });

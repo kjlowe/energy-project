@@ -54,7 +54,6 @@ export const Default: Story = {
     // Verify headers
     await expect(canvas.getByText('Property')).toBeInTheDocument();
     await expect(canvas.getByText('Value')).toBeInTheDocument();
-    await expect(canvas.getByText('Unit')).toBeInTheDocument();
 
     // Verify some data rows exist
     const rows = table?.querySelectorAll('tbody tr');
@@ -143,11 +142,11 @@ export const LargeHeight: Story = {
 export const CustomData: Story = {
   args: {
     tableData: [
-      { key: 'year', value: '2024', unit: '' },
-      { key: 'month', value: '5', unit: '' },
-      { key: 'main.energy_export', value: '-998.00', unit: 'kWh' },
-      { key: 'main.energy_import', value: '382.00', unit: 'kWh' },
-      { key: 'total_bill', value: '67.83', unit: '$' },
+      { key: 'year', value: '2024' },
+      { key: 'month', value: '5' },
+      { key: 'main.energy_export', value: '-998.00' },
+      { key: 'main.energy_import', value: '382.00' },
+      { key: 'total_bill', value: '67.83' },
     ] as TableRow[],
     maxHeight: 400,
   },
@@ -158,9 +157,6 @@ export const CustomData: Story = {
     await expect(canvas.getByText('year')).toBeInTheDocument();
     await expect(canvas.getByText('2024')).toBeInTheDocument();
     await expect(canvas.getByText('-998.00')).toBeInTheDocument();
-
-    // Multiple rows have kWh, so use getAllByText
-    const kwhElements = canvas.getAllByText('kWh');
-    expect(kwhElements.length).toBe(2); // Two rows with kWh unit
+    await expect(canvas.getByText('67.83')).toBeInTheDocument();
   },
 };

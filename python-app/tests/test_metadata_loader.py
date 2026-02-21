@@ -1,11 +1,11 @@
 """
-Unit tests for metadata_loader module.
+Unit tests for metadata_loader module (Proto-based).
 """
 
 import pytest
-import json
-from pathlib import Path
+import betterproto
 import metadata_loader
+from proto.metadata import BillingStructureMetadata, Unit, WhereFrom
 
 
 class TestMetadataLoader:
@@ -15,10 +15,10 @@ class TestMetadataLoader:
         """Clear cache before each test."""
         metadata_loader.clear_cache()
 
-    def test_load_metadata_returns_dict(self):
-        """Verify metadata loads as dictionary."""
+    def test_load_metadata_returns_proto(self):
+        """Verify metadata loads as BillingStructureMetadata proto."""
         metadata = metadata_loader.load_metadata()
-        assert isinstance(metadata, dict)
+        assert isinstance(metadata, BillingStructureMetadata)
 
     def test_load_metadata_caching(self):
         """Verify metadata loads once and caches."""
@@ -32,110 +32,129 @@ class TestMetadataLoader:
         assert metadata1 is metadata2
 
     def test_metadata_has_generation_meter(self):
-        """Check GENERATION_METER key exists."""
+        """Check generation_meter exists."""
         metadata = metadata_loader.load_metadata()
-        assert 'GENERATION_METER' in metadata
+        assert metadata.generation_meter is not None
+        assert hasattr(metadata.generation_meter, 'fields')
 
     def test_metadata_has_benefit_meter(self):
-        """Check BENEFIT_METER key exists."""
+        """Check benefit_meter exists."""
         metadata = metadata_loader.load_metadata()
-        assert 'BENEFIT_METER' in metadata
+        assert metadata.benefit_meter is not None
+        assert hasattr(metadata.benefit_meter, 'fields')
 
-    def test_metadata_structure_is_dict_not_array(self):
-        """Verify new format uses dict, not array."""
+    def test_metadata_structure_is_map(self):
+        """Verify new format uses map for fields."""
         metadata = metadata_loader.load_metadata()
 
-        # Should be dict with field names as keys
-        assert isinstance(metadata['GENERATION_METER'], dict)
-        assert isinstance(metadata['BENEFIT_METER'], dict)
+        # Should be map with field names as keys
+        assert isinstance(metadata.generation_meter.fields, dict)
+        assert isinstance(metadata.benefit_meter.fields, dict)
 
-        # Should not be array
-        assert not isinstance(metadata['GENERATION_METER'], list)
-        assert not isinstance(metadata['BENEFIT_METER'], list)
+        # Should have fields
+        assert len(metadata.generation_meter.fields) > 0
+        assert len(metadata.benefit_meter.fields) > 0
 
     def test_generation_meter_has_fields(self):
-        """Verify GENERATION_METER has expected fields."""
+        """Verify generation_meter has expected fields."""
         metadata = metadata_loader.load_metadata()
-        gen_meter = metadata['GENERATION_METER']
+        gen_meter = metadata.generation_meter
 
         # Check some known fields exist
-        assert 'billing_date' in gen_meter
-        assert 'pce_energy_cost' in gen_meter
-        assert 'total_bill_in_mail' in gen_meter
+        assert 'billing_date' in gen_meter.fields
+        assert 'pce_energy_cost' in gen_meter.fields
+        assert 'total_bill_in_mail' in gen_meter.fields
 
     def test_benefit_meter_has_fields(self):
-        """Verify BENEFIT_METER has expected fields."""
+        """Verify benefit_meter has expected fields."""
         metadata = metadata_loader.load_metadata()
-        ben_meter = metadata['BENEFIT_METER']
+        ben_meter = metadata.benefit_meter
 
         # Check some known fields exist
-        assert 'billing_date' in ben_meter
-        assert 'pce_energy_cost' in ben_meter
-        assert 'total_bill_in_mail' in ben_meter
+        assert 'billing_date' in ben_meter.fields
+        assert 'pce_energy_cost' in ben_meter.fields
+        assert 'total_bill_in_mail' in ben_meter.fields
 
     def test_date_field_structure(self):
         """Verify date fields have where_found but no unit."""
         metadata = metadata_loader.load_metadata()
-        billing_date = metadata['GENERATION_METER']['billing_date']
+        billing_date_field = metadata.generation_meter.fields['billing_date']
+
+        # Get the actual date field using which_one_of
+        field_type, date_field = betterproto.which_one_of(billing_date_field, 'metadata')
+        assert field_type == 'date_field'
 
         # Should have where_found
-        assert 'where_found' in billing_date
-        assert isinstance(billing_date['where_found'], list)
-        assert len(billing_date['where_found']) > 0
+        assert hasattr(date_field, 'where_found')
+        assert isinstance(date_field.where_found, list)
+        assert len(date_field.where_found) > 0
 
         # Should NOT have unit (it's a date)
-        assert 'unit' not in billing_date
+        assert not hasattr(date_field, 'unit')
 
     def test_simple_metric_field_structure(self):
         """Verify simple metric fields have unit and where_found."""
         metadata = metadata_loader.load_metadata()
-        climate_credit = metadata['GENERATION_METER']['california_climate_credit']
+        climate_credit_field = metadata.generation_meter.fields['california_climate_credit']
+
+        # Get the actual simple field using which_one_of
+        field_type, simple_field = betterproto.which_one_of(climate_credit_field, 'metadata')
+        assert field_type == 'simple_field'
 
         # Should have unit
-        assert 'unit' in climate_credit
-        assert climate_credit['unit'] == '$'
+        assert hasattr(simple_field, 'unit')
+        assert simple_field.unit == Unit.DOLLARS
 
         # Should have where_found
-        assert 'where_found' in climate_credit
-        assert isinstance(climate_credit['where_found'], list)
+        assert hasattr(simple_field, 'where_found')
+        assert isinstance(simple_field.where_found, list)
 
     def test_tou_metric_field_structure(self):
         """Verify TOU metric fields have peak/off_peak/total structure."""
         metadata = metadata_loader.load_metadata()
-        pce_energy_cost = metadata['GENERATION_METER']['pce_energy_cost']
+        pce_energy_cost_field = metadata.generation_meter.fields['pce_energy_cost']
+
+        # Get the actual TOU field using which_one_of
+        field_type, tou_field = betterproto.which_one_of(pce_energy_cost_field, 'metadata')
+        assert field_type == 'tou_field'
 
         # Should have peak, off_peak, total
-        assert 'peak' in pce_energy_cost
-        assert 'off_peak' in pce_energy_cost
-        assert 'total' in pce_energy_cost
+        assert hasattr(tou_field, 'peak')
+        assert hasattr(tou_field, 'off_peak')
+        assert hasattr(tou_field, 'total')
 
         # Each should have unit and where_found
-        for tou_key in ['peak', 'off_peak', 'total']:
-            assert 'unit' in pce_energy_cost[tou_key]
-            assert 'where_found' in pce_energy_cost[tou_key]
+        for component in [tou_field.peak, tou_field.off_peak, tou_field.total]:
+            assert hasattr(component, 'unit')
+            assert hasattr(component, 'where_found')
 
-        # Peak and off_peak should have $ unit
-        assert pce_energy_cost['peak']['unit'] == '$'
-        assert pce_energy_cost['off_peak']['unit'] == '$'
+        # Peak and off_peak should have DOLLARS unit
+        assert tou_field.peak.unit == Unit.DOLLARS
+        assert tou_field.off_peak.unit == Unit.DOLLARS
 
     def test_where_found_structure(self):
         """Verify where_found has correct structure."""
         metadata = metadata_loader.load_metadata()
-        billing_date = metadata['GENERATION_METER']['billing_date']
+        billing_date_field = metadata.generation_meter.fields['billing_date']
 
-        where_found = billing_date['where_found']
+        # Get the actual date field
+        field_type, date_field = betterproto.which_one_of(billing_date_field, 'metadata')
+        where_found = date_field.where_found
         assert len(where_found) > 0
 
         # First source should have expected fields
         source = where_found[0]
-        assert 'where_from' in source
-        assert 'where_on_pdf' in source
-        assert 'kevins_number_code' in source
+        assert hasattr(source, 'where_from')
+        assert hasattr(source, 'where_on_pdf')
+        assert hasattr(source, 'kevins_number_code')
 
         # where_from should be valid enum value
-        assert source['where_from'] in [
-            'PDF_BILL', 'PDF_DETAIL_OF_BILL',
-            'CALCULATED', 'FIXED_VALUE', 'NOT_PROVIDED'
+        assert source.where_from in [
+            WhereFrom.PDF_BILL,
+            WhereFrom.PDF_DETAIL_OF_BILL,
+            WhereFrom.CALCULATED,
+            WhereFrom.FIXED_VALUE,
+            WhereFrom.NOT_PROVIDED
         ]
 
     def test_clear_cache(self):
@@ -157,37 +176,32 @@ class TestMetadataLoader:
         """Verify both meter types have same number of fields."""
         metadata = metadata_loader.load_metadata()
 
-        gen_count = len(metadata['GENERATION_METER'])
-        ben_count = len(metadata['BENEFIT_METER'])
+        gen_count = len(metadata.generation_meter.fields)
+        ben_count = len(metadata.benefit_meter.fields)
 
         # Both should have 22 fields (as per proto)
         assert gen_count == ben_count
         assert gen_count == 22
 
-    def test_no_field_name_keys_in_metadata(self):
-        """Verify field_name keys were removed in transformation."""
+    def test_field_validation_against_billing_proto(self):
+        """Verify fields are validated against billing.proto."""
+        # This is tested implicitly by load_metadata() not raising an error
+        # The loader validates that JSON fields match MeterBillingMonth fields
         metadata = metadata_loader.load_metadata()
 
-        for meter_type in ['GENERATION_METER', 'BENEFIT_METER']:
-            for field_name, field_data in metadata[meter_type].items():
-                # Should NOT have field_name as a key
-                assert 'field_name' not in field_data
+        # Should have successfully loaded
+        assert metadata is not None
+        assert len(metadata.generation_meter.fields) == 22
+        assert len(metadata.benefit_meter.fields) == 22
 
-                # Check TOU nested fields too
-                for tou_key in ['peak', 'off_peak', 'total']:
-                    if tou_key in field_data:
-                        assert 'field_name' not in field_data[tou_key]
-
-    def test_no_field_type_keys_in_metadata(self):
-        """Verify field_type keys were removed in transformation."""
+    def test_energy_fields_have_kwh_unit(self):
+        """Verify energy fields have KILOWATT_HOURS unit."""
         metadata = metadata_loader.load_metadata()
 
-        for meter_type in ['GENERATION_METER', 'BENEFIT_METER']:
-            for field_name, field_data in metadata[meter_type].items():
-                # Should NOT have field_type as a key
-                assert 'field_type' not in field_data
+        energy_field = metadata.generation_meter.fields['energy_export_meter_channel_2']
+        field_type, tou_field = betterproto.which_one_of(energy_field, 'metadata')
 
-                # Check TOU nested fields too
-                for tou_key in ['peak', 'off_peak', 'total']:
-                    if tou_key in field_data:
-                        assert 'field_type' not in field_data[tou_key]
+        assert field_type == 'tou_field'
+        assert tou_field.peak.unit == Unit.KILOWATT_HOURS
+        assert tou_field.off_peak.unit == Unit.KILOWATT_HOURS
+        assert tou_field.total.unit == Unit.KILOWATT_HOURS

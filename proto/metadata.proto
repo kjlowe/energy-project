@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+// ===== ENUMERATIONS =====
+
+// Where a billing field value originates from
+enum WhereFrom {
+  WHERE_FROM_UNSPECIFIED = 0;
+  NOT_PROVIDED = 1;           // Data not provided for this meter type
+  PDF_BILL = 2;               // Found on main PDF bill
+  PDF_DETAIL_OF_BILL = 3;     // Found on detailed bill section
+  CALCULATED = 4;             // Derived/calculated from other fields
+  FIXED_VALUE = 5;            // Constant value
+}
+
+// Measurement unit for field values
+enum Unit {
+  UNIT_UNSPECIFIED = 0;
+  DOLLARS = 1;                // $
+  KILOWATT_HOURS = 2;         // kWh
+}
+
+// ===== SOURCE INFORMATION =====
+
+// Wrapper for optional int32 (betterproto doesn't support proto3 optional keyword)
+message OptionalInt32 {
+  int32 value = 1;
+}
+
+// Describes where a field value originates
+message FieldSource {
+  WhereFrom where_from = 1;                 // Source type
+  string where_on_pdf = 2;                  // PDF location (e.g., "Page 3", "Header")
+  OptionalInt32 kevins_number_code = 3;     // Legacy reference code (null message = not set)
+}
+
+// ===== FIELD TYPE METADATA =====
+
+// Metadata for date fields (no unit, just sources)
+message DateFieldMetadata {
+  repeated FieldSource where_found = 1;     // Can have multiple sources
+}
+
+// Metadata for simple numeric fields (has unit + sources)
+message SimpleFieldMetadata {
+  Unit unit = 1;                            // kWh or $
+  repeated FieldSource where_found = 2;
+}
+
+// Metadata for a single TOU component (peak/off_peak/total)
+message TOUComponentMetadata {
+  Unit unit = 1;
+  repeated FieldSource where_found = 2;
+}
+
+// Metadata for Time-of-Use fields (has 3 components)
+message TOUFieldMetadata {
+  TOUComponentMetadata peak = 1;
+  TOUComponentMetadata off_peak = 2;
+  TOUComponentMetadata total = 3;
+}
+
+// Wrapper for different field metadata types (discriminated union)
+message FieldMetadata {
+  oneof metadata {
+    DateFieldMetadata date_field = 1;
+    SimpleFieldMetadata simple_field = 2;
+    TOUFieldMetadata tou_field = 3;
+  }
+}
+
+// ===== METER METADATA =====
+
+// Complete metadata for one meter type
+// Uses map instead of explicit fields to avoid duplication with billing.proto
+// Field names are validated at runtime against MeterBillingMonth
+message MeterMetadata {
+  map<string, FieldMetadata> fields = 1;
+}
+
+// ===== ROOT METADATA STRUCTURE =====
+
+// Complete billing structure metadata for both meter types
+message BillingStructureMetadata {
+  MeterMetadata generation_meter = 1;
+  MeterMetadata benefit_meter = 2;
+}

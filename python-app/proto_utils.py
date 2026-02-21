@@ -143,13 +143,11 @@ def _serialize_metric(metric: EnergyMetric) -> dict:
         Dict with:
         - subcomponent_values: Original array of values
         - value: Sum of subcomponent_values (convenience field for frontend)
-        - unit: Always 'kWh' for energy metrics, '$' for cost metrics (inferred from context)
     """
     if not metric:
         return {
             'subcomponent_values': [],
-            'value': None,
-            'unit': 'kWh'
+            'value': None
         }
 
     subcomponents = metric.subcomponent_values if metric.subcomponent_values else []
@@ -159,6 +157,5 @@ def _serialize_metric(metric: EnergyMetric) -> dict:
 
     return {
         'subcomponent_values': subcomponents,
-        'value': value,
-        'unit': 'kWh'  # Default unit (frontend can override for cost fields)
+        'value': value
     }

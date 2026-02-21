@@ -52,8 +52,8 @@ export function isValidNumber(value: unknown): value is number {
 }
 
 /**
- * Format energy value for display (e.g., "123.45 kWh")
+ * Format energy value for display (e.g., "123.45")
  */
-export function formatEnergyValue(value: number, unit: string = 'kWh'): string {
-  return `${value.toFixed(2)} ${unit}`;
+export function formatEnergyValue(value: number): string {
+  return value.toFixed(2);
 }

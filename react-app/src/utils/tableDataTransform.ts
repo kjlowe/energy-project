@@ -1,7 +1,6 @@
 export interface TableRow {
   key: string;
   value: string;
-  unit: string;
 }
 
 export function renderDataValue(value: unknown): string {
@@ -30,14 +29,12 @@ export function renderDataTable(
           rows.push({
             key: currentPath,
             value: renderDataValue(objValue.value),
-            unit: (objValue.unit as string) || '',
           });
         }
       } else if (typeof value !== 'object') {
         rows.push({
           key: currentPath,
           value: renderDataValue(value),
-          unit: '',
         });
       }
     });

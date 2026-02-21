@@ -12,7 +12,6 @@ def test_serialize_metric_with_values():
 
     assert result['subcomponent_values'] == [100.5, 50.25, 25.0]
     assert result['value'] == 175.75  # Sum of subcomponents
-    assert result['unit'] == 'kWh'
 
 
 def test_serialize_metric_empty():
@@ -22,7 +21,6 @@ def test_serialize_metric_empty():
 
     assert result['subcomponent_values'] == []
     assert result['value'] is None
-    assert result['unit'] == 'kWh'
 
 
 def test_serialize_metric_none():
@@ -31,7 +29,6 @@ def test_serialize_metric_none():
 
     assert result['subcomponent_values'] == []
     assert result['value'] is None
-    assert result['unit'] == 'kWh'
 
 
 def test_serialize_tou_metric():

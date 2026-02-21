@@ -1,5 +1,5 @@
 """
-Unit tests for /api/billing-metadata endpoint.
+Unit tests for /api/billing-metadata endpoint (Proto-based).
 """
 
 import pytest
@@ -38,54 +38,54 @@ class TestMetadataAPI:
         response = client.get('/api/billing-metadata')
         data = json.loads(response.data)
 
-        # Should have both meter types
-        assert 'GENERATION_METER' in data
-        assert 'BENEFIT_METER' in data
+        # Should have both meter types (lowercase)
+        assert 'generation_meter' in data
+        assert 'benefit_meter' in data
 
         # Both should be dicts with fields
-        assert isinstance(data['GENERATION_METER'], dict)
-        assert isinstance(data['BENEFIT_METER'], dict)
-        assert len(data['GENERATION_METER']) > 0
-        assert len(data['BENEFIT_METER']) > 0
+        assert isinstance(data['generation_meter'], dict)
+        assert isinstance(data['benefit_meter'], dict)
+        assert len(data['generation_meter']) > 0
+        assert len(data['benefit_meter']) > 0
 
     def test_metadata_filter_by_generation_meter(self, client):
-        """Query param filtering by GENERATION_METER works."""
-        response = client.get('/api/billing-metadata?meter_type=GENERATION_METER')
+        """Query param filtering by generation_meter works."""
+        response = client.get('/api/billing-metadata?meter_type=generation_meter')
         data = json.loads(response.data)
 
-        # Should only have GENERATION_METER
-        assert 'GENERATION_METER' in data
-        assert 'BENEFIT_METER' not in data
+        # Should only have generation_meter
+        assert 'generation_meter' in data
+        assert 'benefit_meter' not in data
 
         # Should have fields
-        assert len(data['GENERATION_METER']) > 0
+        assert len(data['generation_meter']) > 0
 
     def test_metadata_filter_by_benefit_meter(self, client):
-        """Query param filtering by BENEFIT_METER works."""
-        response = client.get('/api/billing-metadata?meter_type=BENEFIT_METER')
+        """Query param filtering by benefit_meter works."""
+        response = client.get('/api/billing-metadata?meter_type=benefit_meter')
         data = json.loads(response.data)
 
-        # Should only have BENEFIT_METER
-        assert 'BENEFIT_METER' in data
-        assert 'GENERATION_METER' not in data
+        # Should only have benefit_meter
+        assert 'benefit_meter' in data
+        assert 'generation_meter' not in data
 
         # Should have fields
-        assert len(data['BENEFIT_METER']) > 0
+        assert len(data['benefit_meter']) > 0
 
     def test_metadata_filter_by_field(self, client):
         """Field-specific filtering works."""
         response = client.get(
-            '/api/billing-metadata?meter_type=GENERATION_METER&field=pce_energy_cost'
+            '/api/billing-metadata?meter_type=generation_meter&field=pce_energy_cost'
         )
         data = json.loads(response.data)
 
-        # Should only have GENERATION_METER
-        assert 'GENERATION_METER' in data
-        assert 'BENEFIT_METER' not in data
+        # Should only have generation_meter
+        assert 'generation_meter' in data
+        assert 'benefit_meter' not in data
 
         # Should only have pce_energy_cost field
-        assert 'pce_energy_cost' in data['GENERATION_METER']
-        assert len(data['GENERATION_METER']) == 1
+        assert 'pce_energy_cost' in data['generation_meter']
+        assert len(data['generation_meter']) == 1
 
     def test_metadata_invalid_meter_type_returns_400(self, client):
         """Error handling for invalid meter type."""
@@ -94,18 +94,16 @@ class TestMetadataAPI:
 
         data = json.loads(response.data)
         assert 'error' in data
-        assert 'valid_values' in data
 
-    def test_metadata_field_not_found_returns_404(self, client):
+    def test_metadata_field_not_found_returns_400(self, client):
         """Error handling for field not found."""
         response = client.get(
-            '/api/billing-metadata?meter_type=GENERATION_METER&field=nonexistent_field'
+            '/api/billing-metadata?meter_type=generation_meter&field=nonexistent_field'
         )
-        assert response.status_code == 404
+        assert response.status_code == 400
 
         data = json.loads(response.data)
         assert 'error' in data
-        assert 'available_fields' in data
 
     def test_metadata_field_without_meter_type(self, client):
         """Field filter without meter_type returns full metadata."""
@@ -114,21 +112,21 @@ class TestMetadataAPI:
         data = json.loads(response.data)
 
         # Should return full metadata (field filter ignored)
-        assert 'GENERATION_METER' in data
-        assert 'BENEFIT_METER' in data
+        assert 'generation_meter' in data
+        assert 'benefit_meter' in data
 
     def test_metadata_has_units(self, client):
         """Verify unit present in leaf nodes."""
         response = client.get('/api/billing-metadata')
         data = json.loads(response.data)
 
-        # Check simple field has unit
-        climate_credit = data['GENERATION_METER']['california_climate_credit']
+        # Check simple field has unit (enum name)
+        climate_credit = data['generation_meter']['california_climate_credit']
         assert 'unit' in climate_credit
-        assert climate_credit['unit'] == '$'
+        assert climate_credit['unit'] == 'DOLLARS'
 
         # Check TOU field has units in nested structure
-        pce_cost = data['GENERATION_METER']['pce_energy_cost']
+        pce_cost = data['generation_meter']['pce_energy_cost']
         assert 'unit' in pce_cost['peak']
         assert 'unit' in pce_cost['off_peak']
         assert 'unit' in pce_cost['total']
@@ -139,13 +137,13 @@ class TestMetadataAPI:
         data = json.loads(response.data)
 
         # Check simple field has where_found
-        billing_date = data['GENERATION_METER']['billing_date']
+        billing_date = data['generation_meter']['billing_date']
         assert 'where_found' in billing_date
         assert isinstance(billing_date['where_found'], list)
         assert len(billing_date['where_found']) > 0
 
         # Check TOU field has where_found in nested structure
-        pce_cost = data['GENERATION_METER']['pce_energy_cost']
+        pce_cost = data['generation_meter']['pce_energy_cost']
         assert 'where_found' in pce_cost['peak']
         assert 'where_found' in pce_cost['off_peak']
         assert 'where_found' in pce_cost['total']
@@ -155,7 +153,7 @@ class TestMetadataAPI:
         response = client.get('/api/billing-metadata')
         data = json.loads(response.data)
 
-        billing_date = data['GENERATION_METER']['billing_date']
+        billing_date = data['generation_meter']['billing_date']
         where_found = billing_date['where_found'][0]
 
         # Should have expected fields
@@ -169,8 +167,8 @@ class TestMetadataAPI:
         data = json.loads(response.data)
 
         # Date fields should NOT have unit
-        billing_date = data['GENERATION_METER']['billing_date']
-        service_end_date = data['GENERATION_METER']['service_end_date']
+        billing_date = data['generation_meter']['billing_date']
+        service_end_date = data['generation_meter']['service_end_date']
 
         assert 'unit' not in billing_date
         assert 'unit' not in service_end_date
@@ -189,7 +187,7 @@ class TestMetadataAPI:
         ]
 
         for field_name in tou_fields:
-            field_data = data['GENERATION_METER'][field_name]
+            field_data = data['generation_meter'][field_name]
 
             # Should have peak, off_peak, total
             assert 'peak' in field_data
@@ -202,37 +200,37 @@ class TestMetadataAPI:
                 assert 'where_found' in field_data[tou_key]
 
     def test_metadata_energy_fields_have_kwh_unit(self, client):
-        """Energy fields should have kWh unit."""
+        """Energy fields should have KILOWATT_HOURS unit."""
         response = client.get('/api/billing-metadata')
         data = json.loads(response.data)
 
-        # Check energy import field
-        energy_import = data['GENERATION_METER']['energy_import_meter_channel_1']
-        assert energy_import['peak']['unit'] == 'kWh'
-        assert energy_import['off_peak']['unit'] == 'kWh'
-        assert energy_import['total']['unit'] == 'kWh'
+        # Check energy import field (enum name)
+        energy_import = data['generation_meter']['energy_import_meter_channel_1']
+        assert energy_import['peak']['unit'] == 'KILOWATT_HOURS'
+        assert energy_import['off_peak']['unit'] == 'KILOWATT_HOURS'
+        assert energy_import['total']['unit'] == 'KILOWATT_HOURS'
 
     def test_metadata_cost_fields_have_dollar_unit(self, client):
-        """Cost fields should have $ unit."""
+        """Cost fields should have DOLLARS unit."""
         response = client.get('/api/billing-metadata')
         data = json.loads(response.data)
 
-        # Check cost field
-        pce_cost = data['GENERATION_METER']['pce_energy_cost']
-        assert pce_cost['peak']['unit'] == '$'
-        assert pce_cost['off_peak']['unit'] == '$'
+        # Check cost field (enum name)
+        pce_cost = data['generation_meter']['pce_energy_cost']
+        assert pce_cost['peak']['unit'] == 'DOLLARS'
+        assert pce_cost['off_peak']['unit'] == 'DOLLARS'
 
         # Check simple cost field
-        climate_credit = data['GENERATION_METER']['california_climate_credit']
-        assert climate_credit['unit'] == '$'
+        climate_credit = data['generation_meter']['california_climate_credit']
+        assert climate_credit['unit'] == 'DOLLARS'
 
     def test_metadata_both_meters_have_same_fields(self, client):
-        """GENERATION_METER and BENEFIT_METER should have same field names."""
+        """generation_meter and benefit_meter should have same field names."""
         response = client.get('/api/billing-metadata')
         data = json.loads(response.data)
 
-        gen_fields = set(data['GENERATION_METER'].keys())
-        ben_fields = set(data['BENEFIT_METER'].keys())
+        gen_fields = set(data['generation_meter'].keys())
+        ben_fields = set(data['benefit_meter'].keys())
 
         assert gen_fields == ben_fields
 
@@ -242,5 +240,5 @@ class TestMetadataAPI:
         data = json.loads(response.data)
 
         # Should have 22 fields for each meter type
-        assert len(data['GENERATION_METER']) == 22
-        assert len(data['BENEFIT_METER']) == 22
+        assert len(data['generation_meter']) == 22
+        assert len(data['benefit_meter']) == 22

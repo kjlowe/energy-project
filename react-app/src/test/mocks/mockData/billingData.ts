@@ -26,40 +26,33 @@ export const mockBillingYear = {
           peak: {
             subcomponent_values: [-113.825],
             value: -113.825,
-            unit: 'kWh',
           },
           off_peak: {
             subcomponent_values: [-884.175],
             value: -884.175,
-            unit: 'kWh',
           },
           total: {
             subcomponent_values: [-998.0],
             value: -998.0,
-            unit: 'kWh',
           },
         },
         energy_import_meter_channel_1: {
           peak: {
             subcomponent_values: [88.0],
             value: 88.0,
-            unit: 'kWh',
           },
           off_peak: {
             subcomponent_values: [294.0],
             value: 294.0,
-            unit: 'kWh',
           },
           total: {
             subcomponent_values: [382.0],
             value: 382.0,
-            unit: 'kWh',
           },
         },
         total_bill_in_mail: {
           subcomponent_values: [67.83],
           value: 67.83,
-          unit: 'kWh',
         },
       },
       adu: {
@@ -67,19 +60,18 @@ export const mockBillingYear = {
         billing_date: { value: '2024-05-14' },
         service_end_date: { value: '2024-05-07' },
         energy_export_meter_channel_2: {
-          peak: { subcomponent_values: [0.0], value: 0.0, unit: 'kWh' },
-          off_peak: { subcomponent_values: [0.0], value: 0.0, unit: 'kWh' },
-          total: { subcomponent_values: [0.0], value: 0.0, unit: 'kWh' },
+          peak: { subcomponent_values: [0.0], value: 0.0 },
+          off_peak: { subcomponent_values: [0.0], value: 0.0 },
+          total: { subcomponent_values: [0.0], value: 0.0 },
         },
         energy_import_meter_channel_1: {
-          peak: { subcomponent_values: [25.0], value: 25.0, unit: 'kWh' },
-          off_peak: { subcomponent_values: [100.0], value: 100.0, unit: 'kWh' },
-          total: { subcomponent_values: [125.0], value: 125.0, unit: 'kWh' },
+          peak: { subcomponent_values: [25.0], value: 25.0 },
+          off_peak: { subcomponent_values: [100.0], value: 100.0 },
+          total: { subcomponent_values: [125.0], value: 125.0 },
         },
         total_bill_in_mail: {
           subcomponent_values: [15.50],
           value: 15.50,
-          unit: 'kWh',
         },
       },
     },
@@ -92,19 +84,18 @@ export const mockBillingYear = {
         billing_date: { value: '2024-06-14' },
         service_end_date: { value: '2024-06-07' },
         energy_export_meter_channel_2: {
-          peak: { subcomponent_values: [-150.0], value: -150.0, unit: 'kWh' },
-          off_peak: { subcomponent_values: [-900.0], value: -900.0, unit: 'kWh' },
-          total: { subcomponent_values: [-1050.0], value: -1050.0, unit: 'kWh' },
+          peak: { subcomponent_values: [-150.0], value: -150.0 },
+          off_peak: { subcomponent_values: [-900.0], value: -900.0 },
+          total: { subcomponent_values: [-1050.0], value: -1050.0 },
         },
         energy_import_meter_channel_1: {
-          peak: { subcomponent_values: [75.0], value: 75.0, unit: 'kWh' },
-          off_peak: { subcomponent_values: [250.0], value: 250.0, unit: 'kWh' },
-          total: { subcomponent_values: [325.0], value: 325.0, unit: 'kWh' },
+          peak: { subcomponent_values: [75.0], value: 75.0 },
+          off_peak: { subcomponent_values: [250.0], value: 250.0 },
+          total: { subcomponent_values: [325.0], value: 325.0 },
         },
         total_bill_in_mail: {
           subcomponent_values: [55.25],
           value: 55.25,
-          unit: 'kWh',
         },
       },
       adu: {
@@ -112,19 +103,18 @@ export const mockBillingYear = {
         billing_date: { value: '2024-06-14' },
         service_end_date: { value: '2024-06-07' },
         energy_export_meter_channel_2: {
-          peak: { subcomponent_values: [0.0], value: 0.0, unit: 'kWh' },
-          off_peak: { subcomponent_values: [0.0], value: 0.0, unit: 'kWh' },
-          total: { subcomponent_values: [0.0], value: 0.0, unit: 'kWh' },
+          peak: { subcomponent_values: [0.0], value: 0.0 },
+          off_peak: { subcomponent_values: [0.0], value: 0.0 },
+          total: { subcomponent_values: [0.0], value: 0.0 },
         },
         energy_import_meter_channel_1: {
-          peak: { subcomponent_values: [30.0], value: 30.0, unit: 'kWh' },
-          off_peak: { subcomponent_values: [110.0], value: 110.0, unit: 'kWh' },
-          total: { subcomponent_values: [140.0], value: 140.0, unit: 'kWh' },
+          peak: { subcomponent_values: [30.0], value: 30.0 },
+          off_peak: { subcomponent_values: [110.0], value: 110.0 },
+          total: { subcomponent_values: [140.0], value: 140.0 },
         },
         total_bill_in_mail: {
           subcomponent_values: [18.75],
           value: 18.75,
-          unit: 'kWh',
         },
       },
     },
