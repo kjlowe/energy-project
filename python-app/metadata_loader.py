@@ -45,7 +45,7 @@ def load_metadata() -> Dict[str, Any]:
 
     # Determine metadata file path
     current_dir = Path(__file__).parent
-    metadata_path = current_dir / 'data' / 'billing_structure_metadata.json.new'
+    metadata_path = current_dir / 'data' / 'billing_structure_metadata.json'
 
     if not metadata_path.exists():
         raise FileNotFoundError(
