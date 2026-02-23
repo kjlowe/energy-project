@@ -129,13 +129,19 @@ http://localhost:6006/
 
 1. (DONE) UI: Overlay the metadata on top of the month view and table view.
 
-2. UI: then make the per month view show what I have on the paper to make it really clear how allocation is being done. 
+2. (DONE) UI: update the per month view to show costs as well. 
 
-3. UI: update the per month view to show costs as well. 
+3. (DONE) Got the calculated values to be actually calculated at runtime. 
 
-4. UI: Make a tool to show how much the ADU would pay if they did not have solar.
+4. Need the app to have more information about allocation percentage. The cummulative allocation percentage for example. 
 
-5. Jupyter Notebook: See if you can pull the data from the sqlite database into Jupyter notebook to make the data explorable and create custom anlytics. 
+5. Need to understand more about how the total bill it calculated. Like the delivery charges that come in at the end of the year. This is needed to back calculate what the delivery charges would be for energy use.
+
+6. UI: then make the per month view show what I have on the paper to make it really clear how allocation is being done. 
+
+7. UI: Make a tool to show how much the ADU would pay if they did not have solar.
+
+8. Jupyter Notebook: See if you can pull the data from the sqlite database into Jupyter notebook to make the data explorable and create custom anlytics. 
 
 Some things to understand about the bills:
 - Go to Tara & Pirouz house to look at September 2025 to see why the numbers on the Detail of Bill and Main Unit bill don't line up.
