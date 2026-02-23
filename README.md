@@ -127,7 +127,7 @@ http://localhost:6006/
 
 # Next Steps
 
-1. UI: Overlay the metadata on top of the month view and table view.
+1. (DONE) UI: Overlay the metadata on top of the month view and table view.
 
 2. UI: then make the per month view show what I have on the paper to make it really clear how allocation is being done. 
 
