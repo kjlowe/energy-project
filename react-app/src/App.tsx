@@ -104,7 +104,7 @@ const App: React.FC = () => {
 
         {/* Conditional Content */}
         {viewMode === 'month' ? (
-          <MonthlyBillingView data={currentBillingYear} width={400} height={400} />
+          <MonthlyBillingView data={currentBillingYear} metadata={metadata} width={400} height={400} />
         ) : (
           <YearlyBillingView data={currentBillingYear} />
         )}

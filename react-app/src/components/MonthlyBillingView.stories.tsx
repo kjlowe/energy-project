@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within, userEvent } from 'storybook/test';
 import MonthlyBillingView from './MonthlyBillingView';
 import { mockBillingYear } from '../test/mocks/mockData/billingData';
+import { mockFullMetadata } from '../test/mocks/mockData/metadataFixtures';
 import type { BillingYearWithId } from '@/types/api';
 
 const meta = {
@@ -29,6 +30,10 @@ const meta = {
       control: false,
       description: 'Billing year data with months',
     },
+    metadata: {
+      control: false,
+      description: 'Billing metadata for field information',
+    },
   },
 } satisfies Meta<typeof MonthlyBillingView>;
 
@@ -39,11 +44,12 @@ type Story = StoryObj<typeof meta>;
 
 /**
  * Default state showing May data (first month).
- * Integration test verifying all three sub-components work together.
+ * Integration test verifying both generation and benefit meter sections work together.
  */
 export const Default: Story = {
   args: {
     data: mockBillingYear,
+    metadata: mockFullMetadata,
     width: 600,
     height: 400,
   },
@@ -55,19 +61,23 @@ export const Default: Story = {
     await expect(canvas.getByText(/Month: May/i)).toBeInTheDocument();
     await expect(canvas.getByText(/Month: 1/i)).toBeInTheDocument();
 
-    // Verify SolarChart renders with May values
+    // Verify both section headings
+    await expect(canvas.getByText(/Generation Meter/i)).toBeInTheDocument();
+    await expect(canvas.getByText(/Benefit Meter/i)).toBeInTheDocument();
+
+    // Verify both MeterCharts render
+    const svgs = canvasElement.querySelectorAll('svg');
+    expect(svgs.length).toBe(2); // Two charts
+
+    // Verify both tables render
+    const tables = canvasElement.querySelectorAll('table');
+    expect(tables.length).toBe(2); // Two tables
+
+    // Verify Generation MeterChart renders with May values
     await expect(canvas.getByText('-884')).toBeInTheDocument(); // off-peak export
     await expect(canvas.getByText('-114')).toBeInTheDocument(); // peak export
     await expect(canvas.getByText('294')).toBeInTheDocument(); // off-peak import
     await expect(canvas.getByText('88')).toBeInTheDocument(); // peak import
-
-    // Verify SVG renders
-    const svg = canvasElement.querySelector('svg');
-    expect(svg).toBeInTheDocument();
-
-    // Verify RawDataTable renders
-    const table = canvasElement.querySelector('table');
-    expect(table).toBeInTheDocument();
 
     // Integration test: Navigate to June and verify all components update
     const nextButton = canvas.getAllByRole('button')[1];
@@ -89,6 +99,7 @@ export const Default: Story = {
 export const EmptyData: Story = {
   args: {
     data: null,
+    metadata: mockFullMetadata,
     width: 600,
     height: 400,
   },
@@ -111,6 +122,7 @@ export const EmptyMonthsArray: Story = {
       months: [],
       billing_months: [],
     } as BillingYearWithId,
+    metadata: mockFullMetadata,
     width: 600,
     height: 400,
   },
@@ -140,15 +152,19 @@ export const MissingNestedData: Story = {
         },
       ],
     } as any,
+    metadata: mockFullMetadata,
     width: 600,
     height: 400,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Should handle gracefully with N/A values
-    const naTexts = canvas.getAllByText('N/A');
-    expect(naTexts.length).toBeGreaterThan(0);
+    // Should handle gracefully - MonthSelector still renders
+    await expect(canvas.getByText(/Month: January/i)).toBeInTheDocument();
+
+    // Verify no meter sections render when data is missing
+    const headings = canvas.queryAllByRole('heading', { level: 3 });
+    expect(headings.length).toBe(0); // No meter section headings
   },
 };
 
@@ -163,6 +179,7 @@ export const JuneData: Story = {
       months: [mockBillingYear.months[1]!],
       num_months: 1,
     } as BillingYearWithId,
+    metadata: mockFullMetadata,
     width: 600,
     height: 400,
   },

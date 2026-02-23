@@ -63,60 +63,28 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
   const tableStyle: React.CSSProperties = {
     width: '100%',
     borderCollapse: 'collapse',
-    marginTop: '12px',
-    fontSize: '14px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+    marginTop: '8px',
+    fontSize: '12px',
   };
 
   const thStyle: React.CSSProperties = {
-    backgroundColor: '#2c3e50',
-    padding: '14px 12px',
+    backgroundColor: '#f0f0f0',
+    padding: '8px',
     textAlign: 'left',
     fontWeight: 600,
-    borderBottom: '2px solid #34495e',
-    color: '#ecf0f1',
+    border: '1px solid #ccc',
+    color: '#333',
     cursor: 'pointer',
     userSelect: 'none',
-    transition: 'background-color 0.2s',
+    position: 'sticky',
+    top: 0,
   };
 
   const tdStyle: React.CSSProperties = {
-    padding: '12px',
-    borderBottom: '1px solid #e9ecef',
+    padding: '6px',
+    border: '1px solid #ccc',
     verticalAlign: 'middle',
-  };
-
-  const badgeStyle = (color: string): React.CSSProperties => ({
-    display: 'inline-block',
-    padding: '5px 10px',
-    borderRadius: '4px',
     fontSize: '11px',
-    fontWeight: 600,
-    backgroundColor: color,
-    color: '#fff',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-  });
-
-  const unitStyle: React.CSSProperties = {
-    fontFamily: 'monospace',
-    backgroundColor: '#e3f2fd',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    fontSize: '12px',
-    color: '#1565c0',
-    fontWeight: 500,
-  };
-
-  const touBadgeStyle: React.CSSProperties = {
-    display: 'inline-block',
-    padding: '3px 8px',
-    borderRadius: '3px',
-    fontSize: '11px',
-    fontWeight: 600,
-    backgroundColor: '#fff3cd',
-    color: '#856404',
-    border: '1px solid #ffeaa7',
   };
 
   // Helper to extract first source or return empty values
@@ -279,18 +247,15 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
             onClick={onClose}
             data-testid="metadata-modal-close-button"
             style={{
-              padding: '10px 20px',
-              backgroundColor: '#dc3545',
+              padding: '6px 12px',
+              backgroundColor: '#666',
               color: '#fff',
               border: 'none',
-              borderRadius: '6px',
               cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 500,
-              transition: 'background-color 0.2s',
+              fontSize: '12px',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#c82333')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#dc3545')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#555')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#666')}
           >
             Close
           </button>
@@ -300,13 +265,13 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
         {generationRows.length > 0 && (
           <div style={{ marginBottom: '32px' }}>
             <h3 style={{
-              borderBottom: '3px solid #3498db',
-              paddingBottom: '10px',
+              borderBottom: '2px solid #ccc',
+              paddingBottom: '8px',
               marginBottom: '0',
-              color: '#2c3e50',
-              fontSize: '20px',
-              fontWeight: 700,
-              letterSpacing: '0.5px'
+              color: '#333',
+              fontSize: '16px',
+              fontWeight: 600,
+              letterSpacing: '0px'
             }}>
               Generation Meter
             </h3>
@@ -316,56 +281,56 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
                   <th
                     style={{ ...thStyle, width: '20%' }}
                     onClick={() => handleHeaderClick('fieldName')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Field Name {sortColumn === 'fieldName' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '12%' }}
                     onClick={() => handleHeaderClick('type')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Type {sortColumn === 'type' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '10%' }}
                     onClick={() => handleHeaderClick('tou')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     TOU {sortColumn === 'tou' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '14%' }}
                     onClick={() => handleHeaderClick('unit')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Unit {sortColumn === 'unit' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '16%' }}
                     onClick={() => handleHeaderClick('whereFrom')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Where From {sortColumn === 'whereFrom' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '14%' }}
                     onClick={() => handleHeaderClick('page')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Page {sortColumn === 'page' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '14%' }}
                     onClick={() => handleHeaderClick('numberCode')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Number Code {sortColumn === 'numberCode' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
@@ -396,8 +361,6 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
                         <td
                           style={{
                             ...tdStyle,
-                            fontWeight: 600,
-                            color: '#2c3e50',
                             verticalAlign: shouldMergeFieldNames && rowSpan > 1 ? 'top' : 'middle'
                           }}
                           rowSpan={shouldMergeFieldNames ? rowSpan : 1}
@@ -406,31 +369,17 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
                         </td>
                       )}
                       <td style={tdStyle}>
-                        <span style={badgeStyle(
-                          row.type === 'Date Field' ? '#95a5a6' :
-                          row.type === 'Simple Field' ? '#3498db' :
-                          '#27ae60'
-                        )}>
-                          {row.type}
-                        </span>
+                        {row.type}
                       </td>
                       <td style={tdStyle}>
-                        {row.tou !== '—' ? (
-                          <span style={touBadgeStyle}>{row.tou}</span>
-                        ) : (
-                          <span style={{ color: '#95a5a6', fontSize: '13px' }}>—</span>
-                        )}
+                        {row.tou}
                       </td>
-                      <td style={tdStyle}>
-                        {row.unit !== '—' ? (
-                          <code style={unitStyle}>{row.unit}</code>
-                        ) : (
-                          <span style={{ color: '#95a5a6', fontSize: '13px' }}>—</span>
-                        )}
+                      <td style={{ ...tdStyle, fontFamily: 'monospace' }}>
+                        {row.unit}
                       </td>
-                      <td style={{ ...tdStyle, fontSize: '13px', color: '#34495e' }}>{row.whereFrom}</td>
-                      <td style={{ ...tdStyle, fontSize: '13px', color: '#34495e' }}>{row.page}</td>
-                      <td style={{ ...tdStyle, fontSize: '13px', fontFamily: 'monospace', color: '#7f8c8d' }}>{row.numberCode}</td>
+                      <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{row.whereFrom}</td>
+                      <td style={{ ...tdStyle }}>{row.page}</td>
+                      <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{row.numberCode}</td>
                     </tr>
                   );
                 })}
@@ -443,13 +392,13 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
         {benefitRows.length > 0 && (
           <div>
             <h3 style={{
-              borderBottom: '3px solid #27ae60',
-              paddingBottom: '10px',
+              borderBottom: '2px solid #ccc',
+              paddingBottom: '8px',
               marginBottom: '0',
-              color: '#2c3e50',
-              fontSize: '20px',
-              fontWeight: 700,
-              letterSpacing: '0.5px'
+              color: '#333',
+              fontSize: '16px',
+              fontWeight: 600,
+              letterSpacing: '0px'
             }}>
               Benefit Meter
             </h3>
@@ -459,56 +408,56 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
                   <th
                     style={{ ...thStyle, width: '20%' }}
                     onClick={() => handleHeaderClick('fieldName')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Field Name {sortColumn === 'fieldName' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '12%' }}
                     onClick={() => handleHeaderClick('type')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Type {sortColumn === 'type' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '10%' }}
                     onClick={() => handleHeaderClick('tou')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     TOU {sortColumn === 'tou' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '14%' }}
                     onClick={() => handleHeaderClick('unit')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Unit {sortColumn === 'unit' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '16%' }}
                     onClick={() => handleHeaderClick('whereFrom')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Where From {sortColumn === 'whereFrom' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '14%' }}
                     onClick={() => handleHeaderClick('page')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Page {sortColumn === 'page' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
                   <th
                     style={{ ...thStyle, width: '14%' }}
                     onClick={() => handleHeaderClick('numberCode')}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34495e')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2c3e50')}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
                   >
                     Number Code {sortColumn === 'numberCode' && (sortDirection === 'asc' ? '▲' : '▼')}
                   </th>
@@ -539,8 +488,6 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
                         <td
                           style={{
                             ...tdStyle,
-                            fontWeight: 600,
-                            color: '#2c3e50',
                             verticalAlign: shouldMergeFieldNames && rowSpan > 1 ? 'top' : 'middle'
                           }}
                           rowSpan={shouldMergeFieldNames ? rowSpan : 1}
@@ -549,31 +496,17 @@ export const MetadataModal: React.FC<MetadataModalProps> = ({ metadata, onClose 
                         </td>
                       )}
                       <td style={tdStyle}>
-                        <span style={badgeStyle(
-                          row.type === 'Date Field' ? '#95a5a6' :
-                          row.type === 'Simple Field' ? '#3498db' :
-                          '#27ae60'
-                        )}>
-                          {row.type}
-                        </span>
+                        {row.type}
                       </td>
                       <td style={tdStyle}>
-                        {row.tou !== '—' ? (
-                          <span style={touBadgeStyle}>{row.tou}</span>
-                        ) : (
-                          <span style={{ color: '#95a5a6', fontSize: '13px' }}>—</span>
-                        )}
+                        {row.tou}
                       </td>
-                      <td style={tdStyle}>
-                        {row.unit !== '—' ? (
-                          <code style={unitStyle}>{row.unit}</code>
-                      ) : (
-                          <span style={{ color: '#95a5a6', fontSize: '13px' }}>—</span>
-                        )}
+                      <td style={{ ...tdStyle, fontFamily: 'monospace' }}>
+                        {row.unit}
                       </td>
-                      <td style={{ ...tdStyle, fontSize: '13px', color: '#34495e' }}>{row.whereFrom}</td>
-                      <td style={{ ...tdStyle, fontSize: '13px', color: '#34495e' }}>{row.page}</td>
-                      <td style={{ ...tdStyle, fontSize: '13px', fontFamily: 'monospace', color: '#7f8c8d' }}>{row.numberCode}</td>
+                      <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{row.whereFrom}</td>
+                      <td style={{ ...tdStyle }}>{row.page}</td>
+                      <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{row.numberCode}</td>
                     </tr>
                   );
                 })}
