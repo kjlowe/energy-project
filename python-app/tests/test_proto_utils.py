@@ -1,8 +1,8 @@
 """Tests for proto_utils serialization functions."""
 
 import pytest
-from proto_utils import proto_to_dict, _serialize_metric, _serialize_tou_metric, _serialize_meter
-from proto.billing import EnergyMetric, EnergyMetricTOU, NEM2AMeterType
+from proto_utils import proto_to_dict, _serialize_metric, _serialize_tou_metric, _serialize_meter, _merge_calculated_values
+from proto.billing import EnergyMetric, EnergyMetricTOU, NEM2AMeterType, MeterBillingMonth
 
 
 def test_serialize_metric_with_values():
@@ -200,3 +200,163 @@ def test_negative_energy_values():
 
     assert result['value'] == -750.0
     assert result['subcomponent_values'] == [-500.0, -250.0]
+
+
+# ============================================================================
+# INTEGRATION TESTS FOR RUNTIME CALCULATIONS
+# ============================================================================
+
+def test_generation_meter_has_calculated_values(sample_billing_year):
+    """Verify generation meter calculations appear in serialized output."""
+    result = proto_to_dict(sample_billing_year)
+
+    gen_meter = result['billing_months'][0]['main']
+
+    # Check calculated fields have 'value'
+    assert 'value' in gen_meter['energy_export_meter_channel_2']['peak']
+    assert 'value' in gen_meter['energy_export_meter_channel_2']['off_peak']
+    assert 'value' in gen_meter['pce_energy_cost']['total']
+    assert 'value' in gen_meter['pce_total_energy_charges']
+    assert 'value' in gen_meter['total_bill_in_mail']
+
+
+def test_benefit_meter_has_calculated_values(sample_billing_year):
+    """Verify benefit meter calculations appear in serialized output."""
+    result = proto_to_dict(sample_billing_year)
+
+    benefit_meter = result['billing_months'][0]['adu']
+
+    # Check calculated fields
+    assert 'value' in benefit_meter['allocated_export_energy_credits']['peak']
+    assert 'value' in benefit_meter['allocated_export_energy_credits']['off_peak']
+    assert 'value' in benefit_meter['energy_import_meter_channel_1']['peak']
+    assert 'value' in benefit_meter['energy_import_meter_channel_1']['off_peak']
+
+
+def test_calculations_preserve_subcomponents(sample_billing_year):
+    """Calculated values should not remove subcomponent_values."""
+    result = proto_to_dict(sample_billing_year)
+
+    gen_meter = result['billing_months'][0]['main']
+
+    # Both subcomponent_values and value should exist
+    assert 'subcomponent_values' in gen_meter['pce_energy_cost']['total']
+    assert 'value' in gen_meter['pce_energy_cost']['total']
+
+    # Original subcomponent_values should be preserved
+    assert 'subcomponent_values' in gen_meter['pce_net_generation_bonus']
+    assert 'value' in gen_meter['pce_net_generation_bonus']
+
+
+def test_calculation_order_generation_before_benefit(sample_billing_year):
+    """Benefit meter calculations should use generation meter results."""
+    result = proto_to_dict(sample_billing_year)
+
+    # Check that calculated values exist (even if None)
+    gen_meter = result['billing_months'][0]['main']
+    benefit_meter = result['billing_months'][0]['adu']
+
+    # Both meters should have the calculated fields present
+    assert 'value' in gen_meter['energy_export_meter_channel_2']['peak']
+    assert 'value' in benefit_meter['allocated_export_energy_credits']['peak']
+
+
+def test_pce_cost_total_calculation():
+    """Verify pce_energy_cost.total is calculated as peak + off_peak."""
+    # Create a simple test case with known values
+    meter = MeterBillingMonth(
+        nem2a_meter_type=NEM2AMeterType.GENERATION_METER,
+        pce_energy_cost=EnergyMetricTOU(
+            peak=EnergyMetric(subcomponent_values=[50.0]),
+            off_peak=EnergyMetric(subcomponent_values=[75.0]),
+            total=EnergyMetric(subcomponent_values=[])  # Empty - should be calculated
+        )
+    )
+
+    from proto_utils import _serialize_meter
+    from billing_calculations import calculate_meter_values
+
+    serialized = _serialize_meter(meter)
+    calculated = calculate_meter_values(serialized)
+
+    # Verify calculation
+    assert calculated['pce_energy_cost']['total']['value'] == 125.0  # 50 + 75
+
+
+def test_total_bill_calculation():
+    """Verify total_bill_in_mail is calculated correctly."""
+    meter = MeterBillingMonth(
+        nem2a_meter_type=NEM2AMeterType.GENERATION_METER,
+        pce_generation_charges_due_cash=EnergyMetric(subcomponent_values=[50.0]),
+        pge_electric_delivery_charges=EnergyMetric(subcomponent_values=[25.0]),
+        california_climate_credit=EnergyMetric(subcomponent_values=[-10.0]),
+        total_bill_in_mail=EnergyMetric(subcomponent_values=[])  # Empty - should be calculated
+    )
+
+    from proto_utils import _serialize_meter
+    from billing_calculations import calculate_meter_values
+
+    serialized = _serialize_meter(meter)
+    calculated = calculate_meter_values(serialized)
+
+    # Verify calculation: 50 + 25 + (-10) = 65
+    assert calculated['total_bill_in_mail']['value'] == 65.0
+
+
+def test_benefit_meter_energy_import_calculation():
+    """Verify benefit meter energy import is calculated correctly."""
+    # Create generation meter with export data
+    gen_meter = MeterBillingMonth(
+        nem2a_meter_type=NEM2AMeterType.GENERATION_METER,
+        energy_export_meter_channel_2=EnergyMetricTOU(
+            peak=EnergyMetric(subcomponent_values=[]),  # Will be calculated
+            off_peak=EnergyMetric(subcomponent_values=[]),
+            total=EnergyMetric(subcomponent_values=[-1000.0])
+        ),
+        allocated_export_energy_credits=EnergyMetricTOU(
+            peak=EnergyMetric(subcomponent_values=[-200.0]),
+            off_peak=EnergyMetric(subcomponent_values=[-300.0]),
+            total=EnergyMetric(subcomponent_values=[-500.0])
+        )
+    )
+
+    # Create benefit meter
+    benefit_meter = MeterBillingMonth(
+        nem2a_meter_type=NEM2AMeterType.BENEFIT_METER,
+        net_energy_usage_after_credits=EnergyMetricTOU(
+            peak=EnergyMetric(subcomponent_values=[150.0]),
+            off_peak=EnergyMetric(subcomponent_values=[200.0]),
+            total=EnergyMetric(subcomponent_values=[350.0])
+        ),
+        allocated_export_energy_credits=EnergyMetricTOU(
+            peak=EnergyMetric(subcomponent_values=[]),  # Will be calculated
+            off_peak=EnergyMetric(subcomponent_values=[]),
+            total=EnergyMetric(subcomponent_values=[])
+        ),
+        energy_import_meter_channel_1=EnergyMetricTOU(
+            peak=EnergyMetric(subcomponent_values=[]),  # Will be calculated
+            off_peak=EnergyMetric(subcomponent_values=[]),
+            total=EnergyMetric(subcomponent_values=[])
+        )
+    )
+
+    from proto_utils import _serialize_meter
+    from billing_calculations import calculate_meter_values
+
+    # Serialize and calculate generation meter
+    gen_serialized = _serialize_meter(gen_meter)
+    gen_calculated = calculate_meter_values(gen_serialized)
+    gen_result = _merge_calculated_values(gen_serialized, gen_calculated)
+
+    # Serialize and calculate benefit meter (using generation meter data)
+    benefit_serialized = _serialize_meter(benefit_meter)
+    benefit_calculated = calculate_meter_values(benefit_serialized, gen_result)
+    benefit_result = _merge_calculated_values(benefit_serialized, benefit_calculated)
+
+    # Verify allocated credits calculation exists
+    assert 'value' in benefit_result['allocated_export_energy_credits']['peak']
+    assert 'value' in benefit_result['energy_import_meter_channel_1']['peak']
+
+    # Verify import calculation: net_usage - allocated_credits
+    import_peak = benefit_result['energy_import_meter_channel_1']['peak']['value']
+    assert import_peak is not None

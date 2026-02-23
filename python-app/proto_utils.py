@@ -10,6 +10,7 @@ from proto.billing import (
     EnergyDate,
     MonthLabel
 )
+from billing_calculations import calculate_meter_values
 
 
 def proto_to_dict(billing_year: BillingYear) -> dict:
@@ -51,14 +52,85 @@ def _serialize_month_label(month_label: MonthLabel) -> dict:
 
 
 def _serialize_billing_month(billing_month: NEM2AAggregationBillingMonth) -> dict:
-    """Serialize NEM2AAggregationBillingMonth to dict."""
+    """
+    Serialize NEM2AAggregationBillingMonth to dict with runtime calculations.
+
+    Calculations are applied after basic serialization:
+    1. Generation meter (main) calculated first
+    2. Benefit meter (adu) calculated second (uses generation meter results)
+    """
+    # First serialize without calculations
+    main_serialized = _serialize_meter(billing_month.main) if billing_month.main else None
+    adu_serialized = _serialize_meter(billing_month.adu) if billing_month.adu else None
+
+    # Apply calculations to generation meter (main)
+    if main_serialized:
+        calculated_values = calculate_meter_values(main_serialized, generation_meter_data=None)
+        main_serialized = _merge_calculated_values(main_serialized, calculated_values)
+
+    # Apply calculations to benefit meter (adu) - needs generation meter data
+    if adu_serialized and main_serialized:
+        calculated_values = calculate_meter_values(adu_serialized, generation_meter_data=main_serialized)
+        adu_serialized = _merge_calculated_values(adu_serialized, calculated_values)
+
     return {
         'year': billing_month.year,
         'month': billing_month.month,
         'month_label': _serialize_month_label(billing_month.month_label) if billing_month.month_label else None,
-        'main': _serialize_meter(billing_month.main) if billing_month.main else None,
-        'adu': _serialize_meter(billing_month.adu) if billing_month.adu else None
+        'main': main_serialized,
+        'adu': adu_serialized
     }
+
+
+def _merge_calculated_values(original: dict, calculated: dict) -> dict:
+    """
+    Merge calculated values into original serialized meter data.
+
+    Calculated values override original values where they exist.
+    Preserves subcomponent_values from original.
+
+    Args:
+        original: Serialized meter dict from _serialize_meter()
+        calculated: Calculated values dict from calculate_meter_values()
+
+    Returns:
+        Merged dictionary
+    """
+    if not calculated:
+        return original
+
+    result = original.copy()
+
+    for field_name, field_data in calculated.items():
+        if field_name not in result:
+            result[field_name] = field_data
+        elif isinstance(field_data, dict) and isinstance(result[field_name], dict):
+            # Deep merge for nested structures (TOU metrics)
+            result[field_name] = _deep_merge(result[field_name], field_data)
+        else:
+            result[field_name] = field_data
+
+    return result
+
+
+def _deep_merge(base: dict, override: dict) -> dict:
+    """
+    Deep merge two dictionaries, with override taking precedence.
+
+    Args:
+        base: Base dictionary
+        override: Override dictionary (values take precedence)
+
+    Returns:
+        Merged dictionary
+    """
+    result = base.copy()
+    for key, value in override.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = _deep_merge(result[key], value)
+        else:
+            result[key] = value
+    return result
 
 
 def _serialize_meter(meter: MeterBillingMonth) -> dict:

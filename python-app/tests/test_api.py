@@ -239,3 +239,48 @@ def test_cors_headers(client):
 
     # CORS headers should be present
     assert 'Access-Control-Allow-Origin' in response.headers
+
+
+# ============================================================================
+# RUNTIME CALCULATION TESTS
+# ============================================================================
+
+def test_api_returns_calculated_generation_values(client):
+    """Verify API response includes calculated generation meter values."""
+    response = client.get('/api/billing-years')
+    data = response.get_json()
+
+    gen_meter = data['billing_years'][0]['billing_months'][0]['main']
+
+    # Calculated fields should be present with 'value'
+    assert 'value' in gen_meter['energy_export_meter_channel_2']['peak']
+    assert 'value' in gen_meter['energy_export_meter_channel_2']['off_peak']
+    assert 'value' in gen_meter['pce_energy_cost']['total']
+    assert 'value' in gen_meter['pce_total_energy_charges']
+    assert 'value' in gen_meter['total_bill_in_mail']
+
+
+def test_api_returns_calculated_benefit_values(client):
+    """Verify API response includes calculated benefit meter values."""
+    response = client.get('/api/billing-years')
+    data = response.get_json()
+
+    benefit_meter = data['billing_years'][0]['billing_months'][0]['adu']
+
+    # Calculated fields should be present with 'value'
+    assert 'value' in benefit_meter['allocated_export_energy_credits']['peak']
+    assert 'value' in benefit_meter['allocated_export_energy_credits']['off_peak']
+    assert 'value' in benefit_meter['energy_import_meter_channel_1']['peak']
+    assert 'value' in benefit_meter['energy_import_meter_channel_1']['off_peak']
+
+
+def test_api_calculations_preserve_subcomponents(client):
+    """Verify API response preserves original subcomponent_values."""
+    response = client.get('/api/billing-years')
+    data = response.get_json()
+
+    gen_meter = data['billing_years'][0]['billing_months'][0]['main']
+
+    # Both subcomponent_values and calculated value should exist
+    assert 'subcomponent_values' in gen_meter['total_bill_in_mail']
+    assert 'value' in gen_meter['total_bill_in_mail']
