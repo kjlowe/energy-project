@@ -121,6 +121,22 @@ export const mockFullMetadata: BillingStructureMetadata = createBillingStructure
       createFieldSource(WhereFrom.PDF_BILL, 'Header'),
       createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 1'),
     ]),
+    energy_export_meter_channel_2: createTOUField(
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 10)],
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 11)],
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 12)]
+    ),
+    energy_import_meter_channel_1: createTOUField(
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 4)],
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 5)],
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 6)]
+    ),
     pce_energy_cost: createTOUField(
       Unit.DOLLARS,
       [createFieldSource(WhereFrom.CALCULATED, '')],
@@ -129,6 +145,12 @@ export const mockFullMetadata: BillingStructureMetadata = createBillingStructure
       Unit.DOLLARS,
       [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 3', 25)]
     ),
+    pce_nem_credit: createSimpleField(Unit.DOLLARS, [
+      createFieldSource(WhereFrom.CALCULATED, 'Generation Charges', 38),
+    ]),
+    pge_electric_delivery_charges: createSimpleField(Unit.DOLLARS, [
+      createFieldSource(WhereFrom.PDF_BILL, 'Electric Delivery Charges', 45),
+    ]),
     california_climate_credit: createSimpleField(Unit.DOLLARS, [
       createFieldSource(WhereFrom.PDF_BILL, 'Electric Delivery Charges', 46),
     ]),
@@ -140,6 +162,14 @@ export const mockFullMetadata: BillingStructureMetadata = createBillingStructure
     billing_date: createDateField([
       createFieldSource(WhereFrom.PDF_BILL, 'Header', 43),
     ]),
+    energy_import_meter_channel_1: createTOUField(
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 4)],
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 5)],
+      Unit.KILOWATT_HOURS,
+      [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 5', 6)]
+    ),
     pce_energy_cost: createTOUField(
       Unit.DOLLARS,
       [createFieldSource(WhereFrom.CALCULATED, '')],
@@ -148,8 +178,17 @@ export const mockFullMetadata: BillingStructureMetadata = createBillingStructure
       Unit.DOLLARS,
       [createFieldSource(WhereFrom.PDF_DETAIL_OF_BILL, 'Page 3', 25)]
     ),
+    pce_nem_credit: createSimpleField(Unit.DOLLARS, [
+      createFieldSource(WhereFrom.CALCULATED, 'Generation Charges', 38),
+    ]),
+    pge_electric_delivery_charges: createSimpleField(Unit.DOLLARS, [
+      createFieldSource(WhereFrom.PDF_BILL, 'Electric Delivery Charges', 45),
+    ]),
     california_climate_credit: createSimpleField(Unit.DOLLARS, [
       createFieldSource(WhereFrom.PDF_BILL, 'Electric Delivery Charges', 46),
+    ]),
+    total_bill_in_mail: createSimpleField(Unit.DOLLARS, [
+      createFieldSource(WhereFrom.PDF_BILL, 'Amount Due', 42),
     ]),
   })
 );

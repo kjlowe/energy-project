@@ -364,14 +364,6 @@ export const BillingMetadataTable: React.FC<BillingMetadataTableProps> = ({
             </th>
             <th
               style={thStyle}
-              onClick={() => handleHeaderClick('value')}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
-            >
-              Value {sortColumn === 'value' && (sortDirection === 'asc' ? '▲' : '▼')}
-            </th>
-            <th
-              style={thStyle}
               onClick={() => handleHeaderClick('whereFrom')}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
@@ -393,6 +385,14 @@ export const BillingMetadataTable: React.FC<BillingMetadataTableProps> = ({
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
             >
               Number Code {sortColumn === 'numberCode' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
+            <th
+              style={thStyle}
+              onClick={() => handleHeaderClick('value')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e8e8e8')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
+            >
+              Value {sortColumn === 'value' && (sortDirection === 'asc' ? '▲' : '▼')}
             </th>
           </tr>
         </thead>
@@ -435,12 +435,12 @@ export const BillingMetadataTable: React.FC<BillingMetadataTableProps> = ({
                 <td style={tdStyle}>{row.type}</td>
                 <td style={tdStyle}>{row.tou}</td>
                 <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{row.unit}</td>
-                <td style={{ ...tdStyle, fontFamily: 'monospace', textAlign: 'right', fontWeight: 'bold' }}>
-                  {row.value}
-                </td>
                 <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{row.whereFrom}</td>
                 <td style={tdStyle}>{row.page}</td>
                 <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{row.numberCode}</td>
+                <td style={{ ...tdStyle, fontFamily: 'monospace', textAlign: 'right', fontWeight: 'bold' }}>
+                  {row.value}
+                </td>
               </tr>
             );
           })}

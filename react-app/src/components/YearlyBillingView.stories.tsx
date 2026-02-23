@@ -3,6 +3,7 @@ import { expect, within, waitFor, userEvent } from 'storybook/test';
 import YearlyBillingView from './YearlyBillingView';
 import { mockBillingYear } from '../test/mocks/mockData/billingData';
 import { mockBillingYear2023 } from '../test/mocks/mockData/billingData2023';
+import { mockFullMetadata } from '../test/mocks/mockData/metadataFixtures';
 import type { BillingYearWithId } from '@/types/api';
 
 const meta = {
@@ -20,6 +21,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     data: mockBillingYear,
+    metadata: mockFullMetadata,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -109,6 +111,7 @@ export const WithMultipleSubcomponents: Story = {
         },
       ],
     } as BillingYearWithId,
+    metadata: mockFullMetadata,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -122,6 +125,7 @@ export const WithMultipleSubcomponents: Story = {
 export const DenseViewToggle: Story = {
   args: {
     data: mockBillingYear,
+    metadata: mockFullMetadata,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -283,6 +287,7 @@ export const MixedSubcomponents: Story = {
         },
       ],
     } as BillingYearWithId,
+    metadata: mockFullMetadata,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -314,6 +319,7 @@ export const MixedSubcomponents: Story = {
 export const FullYear: Story = {
   args: {
     data: mockBillingYear2023,
+    metadata: mockFullMetadata,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -338,6 +344,7 @@ export const SingleMonth: Story = {
       months: [{ month_name: 'May', year: 2024 }],
       billing_months: [mockBillingYear.billing_months[0]!],
     } as BillingYearWithId,
+    metadata: mockFullMetadata,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -361,6 +368,7 @@ export const EmptyMonths: Story = {
       months: [],
       billing_months: [],
     } as BillingYearWithId,
+    metadata: mockFullMetadata,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -373,5 +381,101 @@ export const EmptyMonths: Story = {
     // No tables should be rendered
     const tables = canvas.queryAllByRole('table');
     await expect(tables).toHaveLength(0);
+  },
+};
+
+export const WithMetadataHeaders: Story = {
+  args: {
+    data: mockBillingYear,
+    metadata: mockFullMetadata,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Verify 7 header rows exist (4 metadata + 3 existing)
+    const headerRows = canvasElement.querySelectorAll('thead tr');
+    expect(headerRows.length).toBe(7);
+
+    // Verify metadata values appear (using getAllByText since there can be multiple)
+    const allCells = canvasElement.querySelectorAll('thead th');
+    const cellTexts = Array.from(allCells).map(c => c.textContent || '');
+
+    // Should have kWh units
+    const hasKwh = cellTexts.some(text => text === 'kWh');
+    expect(hasKwh).toBe(true);
+
+    // Should have $ units
+    const hasDollar = cellTexts.some(text => text === '$');
+    expect(hasDollar).toBe(true);
+
+    // Verify where_from values appear (should have at least one)
+    const hasWhereFrom = cellTexts.some(text =>
+      text.includes('PDF_BILL') ||
+      text.includes('PDF_DETAIL_OF_BILL') ||
+      text.includes('CALCULATED')
+    );
+    expect(hasWhereFrom).toBe(true);
+  },
+};
+
+export const WithoutMetadata: Story = {
+  args: {
+    data: mockBillingYear,
+    metadata: null,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Verify 7 header rows exist (metadata shown by default)
+    const headerRows = canvasElement.querySelectorAll('thead tr');
+    expect(headerRows.length).toBe(7);
+
+    // Verify em dashes shown when metadata missing
+    const cells = canvasElement.querySelectorAll('thead th');
+    const dashCells = Array.from(cells).filter(c => c.textContent === '—');
+    expect(dashCells.length).toBeGreaterThan(0);
+  },
+};
+
+export const MetadataToggle: Story = {
+  args: {
+    data: mockBillingYear,
+    metadata: mockFullMetadata,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    // Initially 7 header rows (metadata shown by default)
+    let headerRows = canvasElement.querySelectorAll('thead tr');
+    expect(headerRows.length).toBe(7);
+
+    // Verify Hide Metadata button exists
+    const hideButton = canvas.getByRole('button', { name: /Hide Metadata/i });
+    await expect(hideButton).toBeInTheDocument();
+
+    // Click to hide metadata
+    await user.click(hideButton);
+
+    // Wait for metadata rows to be hidden
+    await waitFor(() => {
+      headerRows = canvasElement.querySelectorAll('thead tr');
+      expect(headerRows.length).toBe(3); // Only 3 base rows
+    });
+
+    // Verify Show Metadata button now appears
+    await waitFor(() => {
+      expect(canvas.getByRole('button', { name: /Show Metadata/i })).toBeInTheDocument();
+    });
+
+    // Click to show metadata again
+    const showButton = canvas.getByRole('button', { name: /Show Metadata/i });
+    await user.click(showButton);
+
+    // Verify metadata rows are back
+    await waitFor(() => {
+      headerRows = canvasElement.querySelectorAll('thead tr');
+      expect(headerRows.length).toBe(7);
+    });
   },
 };

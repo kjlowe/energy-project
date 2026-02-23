@@ -106,7 +106,7 @@ const App: React.FC = () => {
         {viewMode === 'month' ? (
           <MonthlyBillingView data={currentBillingYear} metadata={metadata} width={400} height={400} />
         ) : (
-          <YearlyBillingView data={currentBillingYear} />
+          <YearlyBillingView data={currentBillingYear} metadata={metadata} />
         )}
 
         {/* Metadata Modal */}

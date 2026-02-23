@@ -1,12 +1,16 @@
 import React, { useState, CSSProperties } from 'react';
 import type { BillingYearWithId } from '@/types/api';
+import type { BillingStructureMetadata } from '@/types/generated/metadata';
 import { tableConfig, type ColumnConfig, type EnergyMetricWithValue } from '@/utils/yearlyBillingTableConfig';
 import { formatValue } from '@/utils/formatters';
 import { generateYearLabel } from '@/utils/yearLabel';
+import { extractColumnMetadata } from '@/utils/metadataExtractors';
 
 interface YearlyBillingViewProps {
   /** Full billing year data */
   data: BillingYearWithId;
+  /** Metadata for field information (optional) */
+  metadata?: BillingStructureMetadata | null;
 }
 
 /**
@@ -119,6 +123,59 @@ function renderCategoryHeaders(columns: ColumnConfig[]): JSX.Element[] {
 }
 
 /**
+ * Renders a single metadata header row
+ */
+function renderMetadataRow(
+  columns: ColumnConfig[],
+  metadata: BillingStructureMetadata | null | undefined,
+  rowType: 'units' | 'whereFrom' | 'whereOnPdf' | 'numberCode',
+  unitBoundaries: boolean[]
+): JSX.Element[] {
+  const metadataHeaderStyle: CSSProperties = {
+    border: '1px solid #dee2e6',
+    padding: '6px',
+    backgroundColor: '#e9ecef', // Grey to match category headers
+    fontWeight: 'normal',
+    textAlign: 'center',
+    fontSize: '10px',
+    fontFamily: 'monospace',
+    whiteSpace: 'nowrap',
+  };
+
+  return columns.map((col, idx) => {
+    const metadataInfo = extractColumnMetadata(col, metadata ?? null);
+
+    let value: string;
+    switch (rowType) {
+      case 'units':
+        value = metadataInfo.units;
+        break;
+      case 'whereFrom':
+        value = metadataInfo.whereFrom;
+        break;
+      case 'whereOnPdf':
+        value = metadataInfo.whereOnPdf;
+        break;
+      case 'numberCode':
+        value = metadataInfo.kevinsNumberCode;
+        break;
+    }
+
+    return (
+      <th
+        key={idx}
+        style={{
+          ...metadataHeaderStyle,
+          borderLeft: unitBoundaries[idx] ? '3px solid #000' : '1px solid #dee2e6',
+        }}
+      >
+        {value}
+      </th>
+    );
+  });
+}
+
+/**
  * Get column background color based on group
  */
 function getColumnStyle(group: string, isUnitBoundary: boolean): CSSProperties {
@@ -145,9 +202,10 @@ function getColumnStyle(group: string, isUnitBoundary: boolean): CSSProperties {
   };
 }
 
-const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
+const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data, metadata }) => {
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [isDenseView, setIsDenseView] = useState<boolean>(true);
+  const [showMetadata, setShowMetadata] = useState<boolean>(true);
 
   if (!data || !data.billing_months || data.billing_months.length === 0) {
     return (
@@ -248,23 +306,42 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
         <h2 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
           {generateYearLabel(data)}
         </h2>
-        <button
-          onClick={() => setIsDenseView(!isDenseView)}
-          style={{
-            padding: '8px 16px',
-            fontSize: '14px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: '500',
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
-        >
-          {isDenseView ? 'Show All Columns' : 'Show Fewer Columns'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={() => setShowMetadata(!showMetadata)}
+            style={{
+              padding: '8px 16px',
+              fontSize: '14px',
+              backgroundColor: '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: '500',
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#5a6268')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#6c757d')}
+          >
+            {showMetadata ? 'Hide Metadata' : 'Show Metadata'}
+          </button>
+          <button
+            onClick={() => setIsDenseView(!isDenseView)}
+            style={{
+              padding: '8px 16px',
+              fontSize: '14px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: '500',
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+          >
+            {isDenseView ? 'Show All Columns' : 'Show Fewer Columns'}
+          </button>
+        </div>
       </div>
 
       <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
@@ -280,7 +357,7 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
             {/* Row 1: Unit Headers (main, adu) */}
             <tr>
               <th
-                rowSpan={3}
+                rowSpan={showMetadata ? 7 : 3}
                 style={{
                   position: 'sticky',
                   left: 0,
@@ -322,6 +399,26 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data }) => {
                 </th>
               ))}
             </tr>
+
+            {/* Row 4: Units (kWh, $, —) - Only shown if showMetadata is true */}
+            {showMetadata && (
+              <tr>{renderMetadataRow(allColumns, metadata, 'units', unitBoundaries)}</tr>
+            )}
+
+            {/* Row 5: Where From - Only shown if showMetadata is true */}
+            {showMetadata && (
+              <tr>{renderMetadataRow(allColumns, metadata, 'whereFrom', unitBoundaries)}</tr>
+            )}
+
+            {/* Row 6: Where On PDF - Only shown if showMetadata is true */}
+            {showMetadata && (
+              <tr>{renderMetadataRow(allColumns, metadata, 'whereOnPdf', unitBoundaries)}</tr>
+            )}
+
+            {/* Row 7: Kevin's Number Code - Only shown if showMetadata is true */}
+            {showMetadata && (
+              <tr>{renderMetadataRow(allColumns, metadata, 'numberCode', unitBoundaries)}</tr>
+            )}
           </thead>
 
           <tbody>

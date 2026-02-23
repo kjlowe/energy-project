@@ -199,10 +199,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'allocated_credits',
-    metadata: {
-      fieldName: 'allocated_export_energy_credits',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'main_allocated_peak',
@@ -215,10 +211,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'allocated_credits',
-    metadata: {
-      fieldName: 'allocated_export_energy_credits',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'main_allocated_total',
@@ -231,10 +223,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'allocated_credits',
-    metadata: {
-      fieldName: 'allocated_export_energy_credits',
-      touComponent: 'total',
-    },
   },
 
   // net_energy_usage_after_credits
@@ -249,10 +237,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'net_energy',
-    metadata: {
-      fieldName: 'net_energy_usage_after_credits',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'main_net_peak',
@@ -265,10 +249,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'net_energy',
-    metadata: {
-      fieldName: 'net_energy_usage_after_credits',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'main_net_total',
@@ -281,10 +261,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'net_energy',
-    metadata: {
-      fieldName: 'net_energy_usage_after_credits',
-      touComponent: 'total',
-    },
   },
 
   // pce_energy_cost (TOU)
@@ -299,10 +275,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_cost',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'main_pce_cost_peak',
@@ -315,10 +287,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_cost',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'main_pce_cost_total',
@@ -331,10 +299,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_cost',
-      touComponent: 'total',
-    },
   },
 
   // PCE single-value columns
@@ -349,9 +313,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_net_generation_bonus',
-    },
   },
   {
     id: 'main_pce_energy_commission_surcharge',
@@ -364,9 +325,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_commission_surcharge',
-    },
   },
   {
     id: 'main_pce_total_energy_charges',
@@ -379,9 +337,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_total_energy_charges',
-    },
   },
   {
     id: 'main_pce_nem_credit',
@@ -394,9 +349,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_nem_credit',
-    },
   },
   {
     id: 'main_pce_generation_charges_due_cash',
@@ -409,9 +361,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_generation_charges_due_cash',
-    },
   },
 
   // PG&E columns
@@ -426,9 +375,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_res_energy_charges',
-    },
   },
   {
     id: 'main_pge_baseline_credit',
@@ -441,9 +387,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_baseline_credit',
-    },
   },
   {
     id: 'main_pge_da_cca_charges',
@@ -456,9 +399,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_da_cca_charges',
-    },
   },
   {
     id: 'main_pge_total_energy_charges',
@@ -471,9 +411,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_total_energy_charges',
-    },
   },
   {
     id: 'main_pge_nem_billing',
@@ -486,9 +423,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_nem_billing',
-    },
   },
   {
     id: 'main_pge_minimum_delivery_charge',
@@ -501,9 +435,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_minimum_delivery_charge',
-    },
   },
   {
     id: 'main_pge_nem_true_up_adjustment',
@@ -516,9 +447,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_nem_true_up_adjustment',
-    },
   },
   {
     id: 'main_pge_electric_delivery_charges',
@@ -531,9 +459,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_electric_delivery_charges',
-    },
   },
 
   // Totals
@@ -548,9 +473,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'totals',
-    metadata: {
-      fieldName: 'california_climate_credit',
-    },
   },
   {
     id: 'main_total_bill_in_mail',
@@ -563,9 +485,6 @@ export const mainColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'totals',
-    metadata: {
-      fieldName: 'total_bill_in_mail',
-    },
   },
 ];
 
@@ -584,9 +503,6 @@ export const aduColumns: ColumnConfig[] = [
     accessor: (month) => month.adu?.service_end_date ? { value: month.adu.service_end_date.value } : null,
     format: 'text',
     group: 'dates',
-    metadata: {
-      fieldName: 'service_end_date',
-    },
   },
   {
     id: 'adu_billing_date',
@@ -598,9 +514,6 @@ export const aduColumns: ColumnConfig[] = [
     accessor: (month) => month.adu?.billing_date ? { value: month.adu.billing_date.value } : null,
     format: 'text',
     group: 'dates',
-    metadata: {
-      fieldName: 'billing_date',
-    },
   },
 
   // energy_export_meter_channel_2
@@ -615,10 +528,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'energy_export',
-    metadata: {
-      fieldName: 'energy_export_meter_channel_2',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'adu_export_peak',
@@ -631,10 +540,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'energy_export',
-    metadata: {
-      fieldName: 'energy_export_meter_channel_2',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'adu_export_total',
@@ -647,10 +552,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'energy_export',
-    metadata: {
-      fieldName: 'energy_export_meter_channel_2',
-      touComponent: 'total',
-    },
   },
 
   // energy_import_meter_channel_1
@@ -665,10 +566,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'energy_import',
-    metadata: {
-      fieldName: 'energy_import_meter_channel_1',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'adu_import_peak',
@@ -681,10 +578,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'energy_import',
-    metadata: {
-      fieldName: 'energy_import_meter_channel_1',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'adu_import_total',
@@ -697,10 +590,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'energy_import',
-    metadata: {
-      fieldName: 'energy_import_meter_channel_1',
-      touComponent: 'total',
-    },
   },
 
   // allocated_export_energy_credits
@@ -715,10 +604,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'allocated_credits',
-    metadata: {
-      fieldName: 'allocated_export_energy_credits',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'adu_allocated_peak',
@@ -731,10 +616,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'allocated_credits',
-    metadata: {
-      fieldName: 'allocated_export_energy_credits',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'adu_allocated_total',
@@ -747,10 +628,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'allocated_credits',
-    metadata: {
-      fieldName: 'allocated_export_energy_credits',
-      touComponent: 'total',
-    },
   },
 
   // net_energy_usage_after_credits
@@ -765,10 +642,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'net_energy',
-    metadata: {
-      fieldName: 'net_energy_usage_after_credits',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'adu_net_peak',
@@ -781,10 +654,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'net_energy',
-    metadata: {
-      fieldName: 'net_energy_usage_after_credits',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'adu_net_total',
@@ -797,10 +666,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'net_energy',
-    metadata: {
-      fieldName: 'net_energy_usage_after_credits',
-      touComponent: 'total',
-    },
   },
 
   // pce_energy_cost (TOU)
@@ -815,10 +680,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_cost',
-      touComponent: 'off_peak',
-    },
   },
   {
     id: 'adu_pce_cost_peak',
@@ -831,10 +692,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_cost',
-      touComponent: 'peak',
-    },
   },
   {
     id: 'adu_pce_cost_total',
@@ -847,10 +704,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_cost',
-      touComponent: 'total',
-    },
   },
 
   // PCE single-value columns
@@ -865,9 +718,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_net_generation_bonus',
-    },
   },
   {
     id: 'adu_pce_energy_commission_surcharge',
@@ -880,9 +730,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_energy_commission_surcharge',
-    },
   },
   {
     id: 'adu_pce_total_energy_charges',
@@ -895,9 +742,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_total_energy_charges',
-    },
   },
   {
     id: 'adu_pce_nem_credit',
@@ -910,9 +754,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_nem_credit',
-    },
   },
   {
     id: 'adu_pce_generation_charges_due_cash',
@@ -925,9 +766,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pce',
-    metadata: {
-      fieldName: 'pce_generation_charges_due_cash',
-    },
   },
 
   // PG&E columns
@@ -942,9 +780,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_res_energy_charges',
-    },
   },
   {
     id: 'adu_pge_baseline_credit',
@@ -957,9 +792,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_baseline_credit',
-    },
   },
   {
     id: 'adu_pge_da_cca_charges',
@@ -972,9 +804,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_da_cca_charges',
-    },
   },
   {
     id: 'adu_pge_total_energy_charges',
@@ -987,9 +816,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_total_energy_charges',
-    },
   },
   {
     id: 'adu_pge_nem_billing',
@@ -1002,9 +828,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_nem_billing',
-    },
   },
   {
     id: 'adu_pge_minimum_delivery_charge',
@@ -1017,9 +840,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_minimum_delivery_charge',
-    },
   },
   {
     id: 'adu_pge_nem_true_up_adjustment',
@@ -1032,9 +852,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_nem_true_up_adjustment',
-    },
   },
   {
     id: 'adu_pge_electric_delivery_charges',
@@ -1047,9 +864,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'pge',
-    metadata: {
-      fieldName: 'pge_electric_delivery_charges',
-    },
   },
 
   // Totals
@@ -1064,9 +878,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'totals',
-    metadata: {
-      fieldName: 'california_climate_credit',
-    },
   },
   {
     id: 'adu_total_bill_in_mail',
@@ -1079,9 +890,6 @@ export const aduColumns: ColumnConfig[] = [
     format: 'number',
     decimals: 2,
     group: 'totals',
-    metadata: {
-      fieldName: 'total_bill_in_mail',
-    },
   },
 ];
 
