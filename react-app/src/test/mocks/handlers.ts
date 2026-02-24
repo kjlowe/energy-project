@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { mockBillingYearSnakeCase } from './mockData/billingData';
 import { mockBillingYear2023 } from './mockData/billingData2023';
 import { mockBillingYear2025 } from './mockData/billingData2025';
+import { mockFullMetadata } from './mockData/metadataFixtures';
 
 const API_BASE = 'http://localhost:5000';
 
@@ -16,9 +17,20 @@ export const handlers = [
     };
     return HttpResponse.json(response);
   }),
+
+  // GET /api/billing-metadata
+  // Returns metadata for all billing fields
+  http.get(`${API_BASE}/api/billing-metadata`, () => {
+    return HttpResponse.json(mockFullMetadata);
+  }),
 ];
 
 // Additional handlers for testing multi-year scenarios
+
+// Metadata handler (can be reused in stories)
+export const metadataHandler = http.get(`${API_BASE}/api/billing-metadata`, () => {
+  return HttpResponse.json(mockFullMetadata);
+});
 
 // Handler returning 3 billing years
 export const multipleYearsHandler = http.get(

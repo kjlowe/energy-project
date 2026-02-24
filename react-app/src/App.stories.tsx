@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, waitFor } from 'storybook/test';
 import App from './App';
-import { multipleYearsHandler, emptyYearsHandler } from './test/mocks/handlers';
+import { multipleYearsHandler, emptyYearsHandler, metadataHandler } from './test/mocks/handlers';
 
 const meta = {
   title: 'App',
@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 export const MultipleYears: Story = {
   parameters: {
     msw: {
-      handlers: [multipleYearsHandler],
+      handlers: [multipleYearsHandler, metadataHandler],
     },
   },
   play: async ({ canvasElement }) => {
@@ -90,7 +90,7 @@ export const SingleYear: Story = {
 export const EmptyYears: Story = {
   parameters: {
     msw: {
-      handlers: [emptyYearsHandler],
+      handlers: [emptyYearsHandler, metadataHandler],
     },
   },
   play: async ({ canvasElement }) => {
@@ -118,7 +118,7 @@ export const EmptyYears: Story = {
 export const YearToYearNavigation: Story = {
   parameters: {
     msw: {
-      handlers: [multipleYearsHandler],
+      handlers: [multipleYearsHandler, metadataHandler],
     },
   },
   play: async ({ canvasElement }) => {
@@ -162,7 +162,7 @@ export const YearToYearNavigation: Story = {
 export const MonthAndYearToggle: Story = {
   parameters: {
     msw: {
-      handlers: [multipleYearsHandler],
+      handlers: [multipleYearsHandler, metadataHandler],
     },
   },
   play: async ({ canvasElement }) => {
