@@ -399,6 +399,40 @@ export const mainColumns: ColumnConfig[] = [
     },
   },
 
+  // pce_energy_rates (TOU) - $/kWh rates
+  {
+    id: 'main_pce_rates_off_peak',
+    headers: {
+      unit: 'main',
+      category: 'pce_energy_rates',
+      subheader: 'off_peak',
+    },
+    accessor: (month) => month.main?.pce_energy_rates?.off_peak as EnergyMetricWithValue | null ?? null,
+    format: 'number',
+    decimals: 4,  // 4 decimals for $/kWh precision (e.g., 0.2174)
+    group: 'pce',
+    metadata: {
+      fieldName: 'pce_energy_rates',
+      touComponent: 'off_peak',
+    },
+  },
+  {
+    id: 'main_pce_rates_peak',
+    headers: {
+      unit: 'main',
+      category: 'pce_energy_rates',
+      subheader: 'peak',
+    },
+    accessor: (month) => month.main?.pce_energy_rates?.peak as EnergyMetricWithValue | null ?? null,
+    format: 'number',
+    decimals: 4,  // 4 decimals for $/kWh precision
+    group: 'pce',
+    metadata: {
+      fieldName: 'pce_energy_rates',
+      touComponent: 'peak',
+    },
+  },
+
   // PCE single-value columns
   {
     id: 'main_pce_net_generation_bonus',
@@ -974,6 +1008,40 @@ export const aduColumns: ColumnConfig[] = [
     metadata: {
       fieldName: 'pce_energy_cost',
       touComponent: 'total',
+    },
+  },
+
+  // pce_energy_rates (TOU) - $/kWh rates
+  {
+    id: 'adu_pce_rates_off_peak',
+    headers: {
+      unit: 'adu',
+      category: 'pce_energy_rates',
+      subheader: 'off_peak',
+    },
+    accessor: (month) => month.adu?.pce_energy_rates?.off_peak as EnergyMetricWithValue | null ?? null,
+    format: 'number',
+    decimals: 4,  // 4 decimals for $/kWh precision
+    group: 'pce',
+    metadata: {
+      fieldName: 'pce_energy_rates',
+      touComponent: 'off_peak',
+    },
+  },
+  {
+    id: 'adu_pce_rates_peak',
+    headers: {
+      unit: 'adu',
+      category: 'pce_energy_rates',
+      subheader: 'peak',
+    },
+    accessor: (month) => month.adu?.pce_energy_rates?.peak as EnergyMetricWithValue | null ?? null,
+    format: 'number',
+    decimals: 4,  // 4 decimals for $/kWh precision
+    group: 'pce',
+    metadata: {
+      fieldName: 'pce_energy_rates',
+      touComponent: 'peak',
     },
   },
 

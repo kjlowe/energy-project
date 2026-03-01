@@ -188,6 +188,7 @@ def _serialize_meter(meter: MeterBillingMonth) -> dict:
 
         # PCE TOU cost
         'pce_energy_cost': _serialize_tou_metric(meter.pce_energy_cost),
+        'pce_energy_rates': _serialize_tou_metric(meter.pce_energy_rates),
 
         # PCE Simple Metrics (5 fields)
         'pce_net_generation_bonus': _serialize_metric(meter.pce_net_generation_bonus),

@@ -7,6 +7,8 @@ from billing_calculations import (
     calculate_generation_energy_export_peak,
     calculate_generation_energy_export_off_peak,
     calculate_pce_energy_cost_total,
+    calculate_pce_energy_rates_peak,
+    calculate_pce_energy_rates_off_peak,
     calculate_pce_total_energy_charges,
     calculate_total_bill_in_mail,
     calculate_benefit_allocated_export_peak,
@@ -306,3 +308,111 @@ class TestEdgeCases:
         """Negative allocation percentage (unusual but possible)"""
         result = calculate_main_allocation_credits_percentage(-500.0, -1000.0)
         assert result == 0.5  # -500/-1000 = 0.5
+
+
+class TestPCEEnergyRatesCalculations:
+    """Tests for PCE energy rates calculation functions."""
+
+    # Peak rate tests
+    def test_pce_rates_peak_normal(self):
+        """Normal case: $100 / 500 kWh = $0.20/kWh"""
+        result = calculate_pce_energy_rates_peak(100.0, 500.0)
+        assert result == 0.20
+
+    def test_pce_rates_peak_high_rate(self):
+        """High rate: $250 / 1000 kWh = $0.25/kWh"""
+        result = calculate_pce_energy_rates_peak(250.0, 1000.0)
+        assert result == 0.25
+
+    def test_pce_rates_peak_zero_cost(self):
+        """Zero cost: $0 / 500 kWh = $0/kWh"""
+        result = calculate_pce_energy_rates_peak(0.0, 500.0)
+        assert result == 0.0
+
+    def test_pce_rates_peak_zero_usage(self):
+        """Division by zero: should return None"""
+        result = calculate_pce_energy_rates_peak(100.0, 0.0)
+        assert result is None
+
+    def test_pce_rates_peak_none_cost(self):
+        """None cost returns None"""
+        result = calculate_pce_energy_rates_peak(None, 500.0)
+        assert result is None
+
+    def test_pce_rates_peak_none_usage(self):
+        """None usage returns None"""
+        result = calculate_pce_energy_rates_peak(100.0, None)
+        assert result is None
+
+    def test_pce_rates_peak_both_none(self):
+        """Both None returns None"""
+        result = calculate_pce_energy_rates_peak(None, None)
+        assert result is None
+
+    def test_pce_rates_peak_negative_cost(self):
+        """Negative cost (credit): -$50 / 500 kWh = -$0.10/kWh"""
+        result = calculate_pce_energy_rates_peak(-50.0, 500.0)
+        assert result == -0.10
+
+    # Off-peak rate tests
+    def test_pce_rates_off_peak_normal(self):
+        """Normal case: $75 / 750 kWh = $0.10/kWh"""
+        result = calculate_pce_energy_rates_off_peak(75.0, 750.0)
+        assert result == 0.10
+
+    def test_pce_rates_off_peak_zero_cost(self):
+        """Zero cost: $0 / 750 kWh = $0/kWh"""
+        result = calculate_pce_energy_rates_off_peak(0.0, 750.0)
+        assert result == 0.0
+
+    def test_pce_rates_off_peak_zero_usage(self):
+        """Division by zero: should return None"""
+        result = calculate_pce_energy_rates_off_peak(75.0, 0.0)
+        assert result is None
+
+    def test_pce_rates_off_peak_none_cost(self):
+        """None cost returns None"""
+        result = calculate_pce_energy_rates_off_peak(None, 750.0)
+        assert result is None
+
+    def test_pce_rates_off_peak_none_usage(self):
+        """None usage returns None"""
+        result = calculate_pce_energy_rates_off_peak(75.0, None)
+        assert result is None
+
+    def test_pce_rates_off_peak_both_none(self):
+        """Both None returns None"""
+        result = calculate_pce_energy_rates_off_peak(None, None)
+        assert result is None
+
+    # Precision tests
+    def test_pce_rates_peak_precision(self):
+        """Test floating point precision: $123.45 / 567.89 kWh"""
+        result = calculate_pce_energy_rates_peak(123.45, 567.89)
+        assert abs(result - 0.2174) < 0.0001  # Approximately $0.2174/kWh
+
+    def test_pce_rates_off_peak_precision(self):
+        """Test floating point precision: $234.56 / 890.12 kWh"""
+        result = calculate_pce_energy_rates_off_peak(234.56, 890.12)
+        assert abs(result - 0.2635) < 0.0001  # Approximately $0.2635/kWh
+
+    # Realistic scenarios
+    def test_generation_meter_scenario(self):
+        """Realistic generation meter: rates from net energy usage"""
+        # Peak: $150 / 600 kWh net usage = $0.25/kWh
+        # Off-peak: $200 / 1000 kWh net usage = $0.20/kWh
+        peak_rate = calculate_pce_energy_rates_peak(150.0, 600.0)
+        off_peak_rate = calculate_pce_energy_rates_off_peak(200.0, 1000.0)
+
+        assert peak_rate == 0.25
+        assert off_peak_rate == 0.20
+
+    def test_benefit_meter_scenario(self):
+        """Realistic benefit meter: rates from net energy usage"""
+        # Peak: $80 / 400 kWh net usage = $0.20/kWh
+        # Off-peak: $120 / 800 kWh net usage = $0.15/kWh
+        peak_rate = calculate_pce_energy_rates_peak(80.0, 400.0)
+        off_peak_rate = calculate_pce_energy_rates_off_peak(120.0, 800.0)
+
+        assert peak_rate == 0.20
+        assert off_peak_rate == 0.15

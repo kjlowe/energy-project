@@ -191,6 +191,58 @@ def calculate_pce_energy_cost_total(
     return peak + off_peak
 
 
+def calculate_pce_energy_rates_peak(
+    pce_energy_cost_peak: Optional[float],
+    net_energy_usage_peak: Optional[float]
+) -> Optional[float]:
+    """
+    Calculate pce_energy_rates.peak ($/kWh).
+
+    Formula: pce_energy_cost.peak / net_energy_usage_after_credits.peak
+
+    Args:
+        pce_energy_cost_peak: PCE energy cost for peak hours ($)
+        net_energy_usage_peak: Net energy usage after credits for peak hours (kWh)
+            - Uses net_energy_usage_after_credits.peak for both generation and benefit meters
+
+    Returns:
+        Energy rate for peak hours ($/kWh), or None if calculation cannot be performed
+    """
+    if pce_energy_cost_peak is None or net_energy_usage_peak is None:
+        return None
+
+    if net_energy_usage_peak == 0:
+        return None  # Avoid division by zero
+
+    return pce_energy_cost_peak / net_energy_usage_peak
+
+
+def calculate_pce_energy_rates_off_peak(
+    pce_energy_cost_off_peak: Optional[float],
+    net_energy_usage_off_peak: Optional[float]
+) -> Optional[float]:
+    """
+    Calculate pce_energy_rates.off_peak ($/kWh).
+
+    Formula: pce_energy_cost.off_peak / net_energy_usage_after_credits.off_peak
+
+    Args:
+        pce_energy_cost_off_peak: PCE energy cost for off-peak hours ($)
+        net_energy_usage_off_peak: Net energy usage after credits for off-peak hours (kWh)
+            - Uses net_energy_usage_after_credits.off_peak for both generation and benefit meters
+
+    Returns:
+        Energy rate for off-peak hours ($/kWh), or None if calculation cannot be performed
+    """
+    if pce_energy_cost_off_peak is None or net_energy_usage_off_peak is None:
+        return None
+
+    if net_energy_usage_off_peak == 0:
+        return None  # Avoid division by zero
+
+    return pce_energy_cost_off_peak / net_energy_usage_off_peak
+
+
 def calculate_pce_total_energy_charges(
     pce_energy_cost_total: Optional[float],
     pce_net_generation_bonus: Optional[float],
@@ -442,6 +494,24 @@ def _calculate_generation_meter(meter_data: Dict[str, Any]) -> Dict[str, Any]:
     if pce_cost_total is not None:
         calculated['pce_energy_cost'] = {'total': {'value': pce_cost_total}}
 
+    # Step 3.5: Calculate pce_energy_rates.peak and off_peak for generation meter
+    net_energy = meter_data.get('net_energy_usage_after_credits', {})
+    pce_rates_peak = calculate_pce_energy_rates_peak(
+        _get_value(pce_energy_cost, 'peak'),
+        _get_value(net_energy, 'peak')
+    )
+    pce_rates_off_peak = calculate_pce_energy_rates_off_peak(
+        _get_value(pce_energy_cost, 'off_peak'),
+        _get_value(net_energy, 'off_peak')
+    )
+
+    if pce_rates_peak is not None or pce_rates_off_peak is not None:
+        calculated['pce_energy_rates'] = {}
+        if pce_rates_peak is not None:
+            calculated['pce_energy_rates']['peak'] = {'value': pce_rates_peak}
+        if pce_rates_off_peak is not None:
+            calculated['pce_energy_rates']['off_peak'] = {'value': pce_rates_off_peak}
+
     # Step 4: Calculate pce_total_energy_charges
     pce_total = calculate_pce_total_energy_charges(
         pce_cost_total,
@@ -524,6 +594,23 @@ def _calculate_benefit_meter(meter_data: Dict[str, Any], generation_meter_data: 
 
     if pce_cost_total is not None:
         calculated['pce_energy_cost'] = {'total': {'value': pce_cost_total}}
+
+    # Step 3.5: Calculate pce_energy_rates.peak and off_peak for benefit meter
+    pce_rates_peak = calculate_pce_energy_rates_peak(
+        _get_value(pce_energy_cost, 'peak'),
+        _get_value(net_energy, 'peak')
+    )
+    pce_rates_off_peak = calculate_pce_energy_rates_off_peak(
+        _get_value(pce_energy_cost, 'off_peak'),
+        _get_value(net_energy, 'off_peak')
+    )
+
+    if pce_rates_peak is not None or pce_rates_off_peak is not None:
+        calculated['pce_energy_rates'] = {}
+        if pce_rates_peak is not None:
+            calculated['pce_energy_rates']['peak'] = {'value': pce_rates_peak}
+        if pce_rates_off_peak is not None:
+            calculated['pce_energy_rates']['off_peak'] = {'value': pce_rates_off_peak}
 
     # Step 4: Calculate pce_total_energy_charges (same as generation)
     pce_total = calculate_pce_total_energy_charges(

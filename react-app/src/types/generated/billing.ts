@@ -60,7 +60,11 @@ export interface MeterBillingMonth {
     | EnergyMetric
     | undefined;
   /** PCE values */
-  pce_energy_cost?: EnergyMetricTOU | undefined;
+  pce_energy_cost?:
+    | EnergyMetricTOU
+    | undefined;
+  /** rates back calculated from the cost and usage */
+  pce_energy_rates?: EnergyMetricTOU | undefined;
   pce_net_generation_bonus?: EnergyMetric | undefined;
   pce_energy_commission_surcharge?: EnergyMetric | undefined;
   pce_total_energy_charges?: EnergyMetric | undefined;
@@ -300,6 +304,7 @@ function createBaseMeterBillingMonth(): MeterBillingMonth {
     allocation_cumulative_energy: undefined,
     allocation_cumulative_percentage: undefined,
     pce_energy_cost: undefined,
+    pce_energy_rates: undefined,
     pce_net_generation_bonus: undefined,
     pce_energy_commission_surcharge: undefined,
     pce_total_energy_charges: undefined,
@@ -355,6 +360,9 @@ export const MeterBillingMonth = {
     }
     if (message.pce_energy_cost !== undefined) {
       EnergyMetricTOU.encode(message.pce_energy_cost, writer.uint32(66).fork()).ldelim();
+    }
+    if (message.pce_energy_rates !== undefined) {
+      EnergyMetricTOU.encode(message.pce_energy_rates, writer.uint32(226).fork()).ldelim();
     }
     if (message.pce_net_generation_bonus !== undefined) {
       EnergyMetric.encode(message.pce_net_generation_bonus, writer.uint32(74).fork()).ldelim();
@@ -494,6 +502,13 @@ export const MeterBillingMonth = {
           }
 
           message.pce_energy_cost = EnergyMetricTOU.decode(reader, reader.uint32());
+          continue;
+        case 28:
+          if (tag !== 226) {
+            break;
+          }
+
+          message.pce_energy_rates = EnergyMetricTOU.decode(reader, reader.uint32());
           continue;
         case 9:
           if (tag !== 74) {
@@ -655,6 +670,9 @@ export const MeterBillingMonth = {
         : undefined;
     message.pce_energy_cost = (object.pce_energy_cost !== undefined && object.pce_energy_cost !== null)
       ? EnergyMetricTOU.fromPartial(object.pce_energy_cost)
+      : undefined;
+    message.pce_energy_rates = (object.pce_energy_rates !== undefined && object.pce_energy_rates !== null)
+      ? EnergyMetricTOU.fromPartial(object.pce_energy_rates)
       : undefined;
     message.pce_net_generation_bonus =
       (object.pce_net_generation_bonus !== undefined && object.pce_net_generation_bonus !== null)

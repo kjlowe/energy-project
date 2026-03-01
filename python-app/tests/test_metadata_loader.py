@@ -179,9 +179,9 @@ class TestMetadataLoader:
         gen_count = len(metadata.generation_meter.fields)
         ben_count = len(metadata.benefit_meter.fields)
 
-        # Both should have 26 fields (as per proto, includes 4 allocation fields)
+        # Both should have 27 fields (as per proto, includes 4 allocation fields + pce_energy_rates)
         assert gen_count == ben_count
-        assert gen_count == 26
+        assert gen_count == 27
 
     def test_field_validation_against_billing_proto(self):
         """Verify fields are validated against billing.proto."""
@@ -191,8 +191,8 @@ class TestMetadataLoader:
 
         # Should have successfully loaded
         assert metadata is not None
-        assert len(metadata.generation_meter.fields) == 26
-        assert len(metadata.benefit_meter.fields) == 26
+        assert len(metadata.generation_meter.fields) == 27
+        assert len(metadata.benefit_meter.fields) == 27
 
     def test_energy_fields_have_kwh_unit(self):
         """Verify energy fields have KILOWATT_HOURS unit."""

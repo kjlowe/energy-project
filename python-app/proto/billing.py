@@ -61,6 +61,7 @@ class MeterBillingMonth(betterproto.Message):
     allocation_cumulative_percentage: "EnergyMetric" = betterproto.message_field(27)
     # PCE values
     pce_energy_cost: "EnergyMetricTOU" = betterproto.message_field(8)
+    pce_energy_rates: "EnergyMetricTOU" = betterproto.message_field(28)
     pce_net_generation_bonus: "EnergyMetric" = betterproto.message_field(9)
     pce_energy_commission_surcharge: "EnergyMetric" = betterproto.message_field(10)
     pce_total_energy_charges: "EnergyMetric" = betterproto.message_field(11)

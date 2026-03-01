@@ -34,6 +34,8 @@ export enum Unit {
   KILOWATT_HOURS = 2,
   /** PERCENTAGE - % (stored as 0-1 ratio, displayed as 0-100%) */
   PERCENTAGE = 3,
+  /** DOLLARS_PER_KWH - $/kWh (rate) */
+  DOLLARS_PER_KWH = 4,
   UNRECOGNIZED = -1,
 }
 

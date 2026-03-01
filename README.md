@@ -133,7 +133,7 @@ http://localhost:6006/
 
 3. (DONE) Got the calculated values to be actually calculated at runtime. 
 
-4. Need the app to have more information about allocation percentage. The cummulative allocation percentage for example. 
+4. (DONE) Need the app to have more information about allocation percentage. The cummulative allocation percentage for example. 
 
 5. Need to understand more about how the total bill it calculated. Like the delivery charges that come in at the end of the year. This is needed to back calculate what the delivery charges would be for energy use.
 

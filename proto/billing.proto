@@ -47,6 +47,7 @@ message MeterBillingMonth {
 
   // PCE values
   EnergyMetricTOU pce_energy_cost = 8;  // cost is always TOU based
+  EnergyMetricTOU pce_energy_rates = 28; // rates back calculated from the cost and usage
   EnergyMetric pce_net_generation_bonus = 9;
   EnergyMetric pce_energy_commission_surcharge = 10;
   EnergyMetric pce_total_energy_charges = 11;

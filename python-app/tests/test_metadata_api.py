@@ -239,6 +239,6 @@ class TestMetadataAPI:
         response = client.get('/api/billing-metadata')
         data = json.loads(response.data)
 
-        # Should have 26 fields for each meter type (includes 4 allocation fields)
-        assert len(data['generation_meter']['fields']) == 26
-        assert len(data['benefit_meter']['fields']) == 26
+        # Should have 27 fields for each meter type (includes 4 allocation fields + pce_energy_rates)
+        assert len(data['generation_meter']['fields']) == 27
+        assert len(data['benefit_meter']['fields']) == 27

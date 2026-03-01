@@ -222,11 +222,13 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data, metadata })
       'dates',
       'energy_export_meter_channel_2',
       'net_energy_usage_after_credits',
+      'pce_energy_rates', // for rate columns ($/kWh)
       'allocation', // for allocation columns
       'totals', // for total_bill_in_mail
     ]),
     adu: new Set([
       'net_energy_usage_after_credits',
+      'pce_energy_rates', // for rate columns ($/kWh)
       'allocation', // for allocation columns
       'totals', // for total_bill_in_mail
     ]),
@@ -258,7 +260,12 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data, metadata })
           return subheader === 'cumulative %';
         }
 
-        // For TOU fields (energy_export, energy_cost, net_energy), only show 'total' in dense view
+        // For pce_energy_rates, show peak and off_peak (no total exists)
+        if (category === 'pce_energy_rates') {
+          return subheader === 'peak' || subheader === 'off_peak';
+        }
+
+        // For other TOU fields (energy_export, energy_cost, net_energy), only show 'total' in dense view
         if (subheader === 'peak' || subheader === 'off_peak') {
           return false;
         }

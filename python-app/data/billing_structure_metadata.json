@@ -193,6 +193,38 @@
         ]
       }
     },
+    "pce_energy_rates": {
+      "peak": {
+        "unit": "DOLLARS_PER_KWH",
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": "",
+            "kevins_number_code": null
+          }
+        ]
+      },
+      "off_peak": {
+        "unit": "DOLLARS_PER_KWH",
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": "",
+            "kevins_number_code": null
+          }
+        ]
+      },
+      "total": {
+        "unit": "DOLLARS_PER_KWH",
+        "where_found": [
+          {
+            "where_from": "NOT_PROVIDED",
+            "where_on_pdf": "",
+            "kevins_number_code": null
+          }
+        ]
+      }
+    },
     "pce_net_generation_bonus": {
       "unit": "DOLLARS",
       "where_found": [
@@ -567,6 +599,38 @@
         "where_found": [
           {
             "where_from": "CALCULATED",
+            "where_on_pdf": "",
+            "kevins_number_code": null
+          }
+        ]
+      }
+    },
+    "pce_energy_rates": {
+      "peak": {
+        "unit": "DOLLARS_PER_KWH",
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": "",
+            "kevins_number_code": null
+          }
+        ]
+      },
+      "off_peak": {
+        "unit": "DOLLARS_PER_KWH",
+        "where_found": [
+          {
+            "where_from": "CALCULATED",
+            "where_on_pdf": "",
+            "kevins_number_code": null
+          }
+        ]
+      },
+      "total": {
+        "unit": "DOLLARS_PER_KWH",
+        "where_found": [
+          {
+            "where_from": "NOT_PROVIDED",
             "where_on_pdf": "",
             "kevins_number_code": null
           }
