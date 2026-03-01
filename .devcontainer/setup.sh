@@ -22,32 +22,32 @@ echo "Setting up Python app virtual environment..."
 cd /workspace/python-app
 
 # Create virtual environment if it doesn't exist
-if [ ! -d ".venv" ]; then
-    python -m venv .venv
+if [ ! -d ".venv-app" ]; then
+    python -m venv .venv-app
     echo "✅ Virtual environment created"
 fi
 
 # Install Python app dependencies from requirements.txt
-.venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt
+.venv-app/bin/pip install --upgrade pip
+.venv-app/bin/pip install -r requirements.txt
 
 echo "✅ Python app dependencies installed"
 
-###### PYTHON APP VENV #########################################
+###### PYTHON NOTEBOOKS VENV ###################################
 
 # Setup Python notebooks virtual environment
 echo "Setting up Python notebooks virtual environment..."
 cd /workspace/python-notebooks
 
 # Create virtual environment if it doesn't exist
-if [ ! -d ".venv" ]; then
-    python -m venv .venv
+if [ ! -d ".venv-notebook" ]; then
+    python -m venv .venv-notebook
     echo "✅ Notebooks virtual environment created"
 fi
 
 # Install Python notebook dependencies
-.venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt
+.venv-notebook/bin/pip install --upgrade pip
+.venv-notebook/bin/pip install -r requirements.txt
 
 echo "✅ Python notebook dependencies installed"
 

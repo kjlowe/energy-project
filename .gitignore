@@ -2,6 +2,8 @@
 # Virtual environment
 .venv/
 venv/
+.venv-notebook/
+.venv-app/
 env/
 
 # Jupyter Notebook checkpoints
