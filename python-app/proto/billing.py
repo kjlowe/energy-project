@@ -54,6 +54,11 @@ class MeterBillingMonth(betterproto.Message):
     energy_import_meter_channel_1: "EnergyMetricTOU" = betterproto.message_field(5)
     allocated_export_energy_credits: "EnergyMetricTOU" = betterproto.message_field(6)
     net_energy_usage_after_credits: "EnergyMetricTOU" = betterproto.message_field(7)
+    # Allocation percentage (calculated)
+    allocation_import_percentage: "EnergyMetric" = betterproto.message_field(24)
+    allocation_credits_percentage: "EnergyMetric" = betterproto.message_field(25)
+    allocation_cumulative_energy: "EnergyMetric" = betterproto.message_field(26)
+    allocation_cumulative_percentage: "EnergyMetric" = betterproto.message_field(27)
     # PCE values
     pce_energy_cost: "EnergyMetricTOU" = betterproto.message_field(8)
     pce_net_generation_bonus: "EnergyMetric" = betterproto.message_field(9)

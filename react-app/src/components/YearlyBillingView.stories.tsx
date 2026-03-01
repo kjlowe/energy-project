@@ -135,16 +135,18 @@ export const DenseViewToggle: Story = {
     const toggleButton = canvas.getByRole('button', { name: /Show All Columns/i });
     await expect(toggleButton).toBeInTheDocument();
 
-    // Dense view should have dates, energy_export_meter_channel_2, energy_import_meter_channel_1,
-    // pce_energy_cost, pce_nem_credit, pge_electric_delivery_charges, total_bill_in_mail for main
+    // Dense view should have dates, energy_export_meter_channel_2, net_energy_usage_after_credits,
+    // allocation (cumulative % only), and total_bill_in_mail for main
     await expect(canvas.getByText('energy_export_meter_channel_2')).toBeInTheDocument();
 
-    // energy_import_meter_channel_1 appears in both main and adu in dense view
-    const energyImportHeaders = canvas.getAllByText('energy_import_meter_channel_1');
-    await expect(energyImportHeaders.length).toBeGreaterThanOrEqual(2);
+    // net_energy_usage_after_credits appears in both main and adu in dense view
+    const netEnergyHeaders = canvas.getAllByText('net_energy_usage_after_credits');
+    await expect(netEnergyHeaders.length).toBeGreaterThanOrEqual(2);
 
-    // Dense view should NOT have allocated_export_energy_credits (not in dense list)
+    // Dense view should NOT have allocated_export_energy_credits, pce, or pge columns (not in dense list)
     await expect(canvas.queryByText('allocated_export_energy_credits')).not.toBeInTheDocument();
+    await expect(canvas.queryByText('pce_energy_cost')).not.toBeInTheDocument();
+    await expect(canvas.queryByText('energy_import_meter_channel_1')).not.toBeInTheDocument();
 
     // Click to expand to full view
     await user.click(toggleButton);
@@ -391,6 +393,16 @@ export const WithMetadataHeaders: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    // Expand to full view to see all metadata
+    const toggleButton = canvas.getByRole('button', { name: /Show All Columns/i });
+    await user.click(toggleButton);
+
+    // Wait for full view
+    await waitFor(() => {
+      expect(canvas.getByRole('button', { name: /Show Fewer Columns/i })).toBeInTheDocument();
+    });
 
     // Verify 7 header rows exist (4 metadata + 3 existing)
     const headerRows = canvasElement.querySelectorAll('thead tr');
@@ -400,12 +412,12 @@ export const WithMetadataHeaders: Story = {
     const allCells = canvasElement.querySelectorAll('thead th');
     const cellTexts = Array.from(allCells).map(c => c.textContent || '');
 
-    // Should have kWh units
-    const hasKwh = cellTexts.some(text => text === 'kWh');
+    // Should have KILOWATT_HOURS units
+    const hasKwh = cellTexts.some(text => text === 'KILOWATT_HOURS');
     expect(hasKwh).toBe(true);
 
-    // Should have $ units
-    const hasDollar = cellTexts.some(text => text === '$');
+    // Should have DOLLARS units
+    const hasDollar = cellTexts.some(text => text === 'DOLLARS');
     expect(hasDollar).toBe(true);
 
     // Verify where_from values appear (should have at least one)

@@ -79,22 +79,7 @@ export function formatUnit(unit: Unit | undefined): string {
 
   // Handle string enum names (from mock data)
   const unitStr = unit as unknown as string;
-  if (unitStr === 'DOLLARS' || unitStr === '1') {
-    return '$';
-  }
-  if (unitStr === 'KILOWATT_HOURS' || unitStr === '2') {
-    return 'kWh';
-  }
-
-  // Handle numeric enum values
-  switch (unit) {
-    case 1: // Unit.DOLLARS
-      return '$';
-    case 2: // Unit.KILOWATT_HOURS
-      return 'kWh';
-    default:
-      return '—';
-  }
+  return unitStr;
 }
 
 /**

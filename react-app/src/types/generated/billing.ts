@@ -52,6 +52,13 @@ export interface MeterBillingMonth {
   net_energy_usage_after_credits?:
     | EnergyMetricTOU
     | undefined;
+  /** Allocation percentage (calculated) */
+  allocation_import_percentage?: EnergyMetric | undefined;
+  allocation_credits_percentage?: EnergyMetric | undefined;
+  allocation_cumulative_energy?: EnergyMetric | undefined;
+  allocation_cumulative_percentage?:
+    | EnergyMetric
+    | undefined;
   /** PCE values */
   pce_energy_cost?: EnergyMetricTOU | undefined;
   pce_net_generation_bonus?: EnergyMetric | undefined;
@@ -288,6 +295,10 @@ function createBaseMeterBillingMonth(): MeterBillingMonth {
     energy_import_meter_channel_1: undefined,
     allocated_export_energy_credits: undefined,
     net_energy_usage_after_credits: undefined,
+    allocation_import_percentage: undefined,
+    allocation_credits_percentage: undefined,
+    allocation_cumulative_energy: undefined,
+    allocation_cumulative_percentage: undefined,
     pce_energy_cost: undefined,
     pce_net_generation_bonus: undefined,
     pce_energy_commission_surcharge: undefined,
@@ -329,6 +340,18 @@ export const MeterBillingMonth = {
     }
     if (message.net_energy_usage_after_credits !== undefined) {
       EnergyMetricTOU.encode(message.net_energy_usage_after_credits, writer.uint32(58).fork()).ldelim();
+    }
+    if (message.allocation_import_percentage !== undefined) {
+      EnergyMetric.encode(message.allocation_import_percentage, writer.uint32(194).fork()).ldelim();
+    }
+    if (message.allocation_credits_percentage !== undefined) {
+      EnergyMetric.encode(message.allocation_credits_percentage, writer.uint32(202).fork()).ldelim();
+    }
+    if (message.allocation_cumulative_energy !== undefined) {
+      EnergyMetric.encode(message.allocation_cumulative_energy, writer.uint32(210).fork()).ldelim();
+    }
+    if (message.allocation_cumulative_percentage !== undefined) {
+      EnergyMetric.encode(message.allocation_cumulative_percentage, writer.uint32(218).fork()).ldelim();
     }
     if (message.pce_energy_cost !== undefined) {
       EnergyMetricTOU.encode(message.pce_energy_cost, writer.uint32(66).fork()).ldelim();
@@ -436,6 +459,34 @@ export const MeterBillingMonth = {
           }
 
           message.net_energy_usage_after_credits = EnergyMetricTOU.decode(reader, reader.uint32());
+          continue;
+        case 24:
+          if (tag !== 194) {
+            break;
+          }
+
+          message.allocation_import_percentage = EnergyMetric.decode(reader, reader.uint32());
+          continue;
+        case 25:
+          if (tag !== 202) {
+            break;
+          }
+
+          message.allocation_credits_percentage = EnergyMetric.decode(reader, reader.uint32());
+          continue;
+        case 26:
+          if (tag !== 210) {
+            break;
+          }
+
+          message.allocation_cumulative_energy = EnergyMetric.decode(reader, reader.uint32());
+          continue;
+        case 27:
+          if (tag !== 218) {
+            break;
+          }
+
+          message.allocation_cumulative_percentage = EnergyMetric.decode(reader, reader.uint32());
           continue;
         case 8:
           if (tag !== 66) {
@@ -585,6 +636,22 @@ export const MeterBillingMonth = {
     message.net_energy_usage_after_credits =
       (object.net_energy_usage_after_credits !== undefined && object.net_energy_usage_after_credits !== null)
         ? EnergyMetricTOU.fromPartial(object.net_energy_usage_after_credits)
+        : undefined;
+    message.allocation_import_percentage =
+      (object.allocation_import_percentage !== undefined && object.allocation_import_percentage !== null)
+        ? EnergyMetric.fromPartial(object.allocation_import_percentage)
+        : undefined;
+    message.allocation_credits_percentage =
+      (object.allocation_credits_percentage !== undefined && object.allocation_credits_percentage !== null)
+        ? EnergyMetric.fromPartial(object.allocation_credits_percentage)
+        : undefined;
+    message.allocation_cumulative_energy =
+      (object.allocation_cumulative_energy !== undefined && object.allocation_cumulative_energy !== null)
+        ? EnergyMetric.fromPartial(object.allocation_cumulative_energy)
+        : undefined;
+    message.allocation_cumulative_percentage =
+      (object.allocation_cumulative_percentage !== undefined && object.allocation_cumulative_percentage !== null)
+        ? EnergyMetric.fromPartial(object.allocation_cumulative_percentage)
         : undefined;
     message.pce_energy_cost = (object.pce_energy_cost !== undefined && object.pce_energy_cost !== null)
       ? EnergyMetricTOU.fromPartial(object.pce_energy_cost)

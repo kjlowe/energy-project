@@ -24,6 +24,7 @@ class Unit(betterproto.Enum):
     UNIT_UNSPECIFIED = 0
     DOLLARS = 1
     KILOWATT_HOURS = 2
+    PERCENTAGE = 3
 
 
 @dataclass

@@ -183,6 +183,7 @@ function getColumnStyle(group: string, isUnitBoundary: boolean): CSSProperties {
     dates: '#f8f9fa',
     energy_export: '#fff9c4',      // Yellowy color
     energy_import: '#e3f2fd',       // Light blue
+    allocation: '#d0e8ff',          // Light-medium blue (new variant)
     allocated_credits: '#bbdefb',   // Medium blue
     net_energy: '#90caf9',          // Darker blue
     pce: '#f3e5f5',
@@ -220,28 +221,20 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data, metadata })
     main: new Set([
       'dates',
       'energy_export_meter_channel_2',
-      'energy_import_meter_channel_1',
-      'pce_energy_cost',
-      'pce', // for pce_nem_credit
-      'pge', // for pge_electric_delivery_charges
+      'net_energy_usage_after_credits',
+      'allocation', // for allocation columns
       'totals', // for total_bill_in_mail
     ]),
     adu: new Set([
-      'energy_import_meter_channel_1',
-      'pce_energy_cost',
-      'pce', // for pce_nem_credit
-      'pge', // for pge_electric_delivery_charges
+      'net_energy_usage_after_credits',
+      'allocation', // for allocation columns
       'totals', // for total_bill_in_mail
     ]),
   };
 
-  // Dense view specific column IDs to include (for columns in pce/pge/totals groups)
+  // Dense view specific column IDs to include (for columns in totals group)
   const denseViewColumnIds = new Set([
-    'main_pce_nem_credit',
-    'main_pge_electric_delivery_charges',
     'main_total_bill_in_mail',
-    'adu_pce_nem_credit',
-    'adu_pge_electric_delivery_charges',
     'adu_total_bill_in_mail',
   ]);
 
@@ -251,6 +244,7 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data, metadata })
 
     return columns.filter((col) => {
       const category = col.headers.category || '';
+      const subheader = col.headers.subheader || '';
 
       // If it's in the allowed categories for this unit
       if (denseViewCategories[unit].has(category)) {
@@ -258,6 +252,17 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data, metadata })
         if (category === 'pce' || category === 'pge' || category === 'totals') {
           return denseViewColumnIds.has(col.id);
         }
+
+        // For allocation, only show 'cumulative %' in dense view
+        if (category === 'allocation') {
+          return subheader === 'cumulative %';
+        }
+
+        // For TOU fields (energy_export, energy_cost, net_energy), only show 'total' in dense view
+        if (subheader === 'peak' || subheader === 'off_peak') {
+          return false;
+        }
+
         return true;
       }
       return false;

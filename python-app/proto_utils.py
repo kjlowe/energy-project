@@ -10,7 +10,11 @@ from proto.billing import (
     EnergyDate,
     MonthLabel
 )
-from billing_calculations import calculate_meter_values
+from billing_calculations import (
+    calculate_meter_values,
+    calculate_allocation_import_percentage,
+    calculate_allocation_cumulative_percentage
+)
 
 
 def proto_to_dict(billing_year: BillingYear) -> dict:
@@ -22,6 +26,7 @@ def proto_to_dict(billing_year: BillingYear) -> dict:
     - Adds 'value' field to each metric (sum of subcomponent_values)
     - Converts enums to string names
     - Recursively serializes all nested messages
+    - Calculates yearly cumulative allocation percentages
 
     Args:
         billing_year: BillingYear protobuf message
@@ -32,12 +37,18 @@ def proto_to_dict(billing_year: BillingYear) -> dict:
     if not billing_year:
         return {}
 
+    # Serialize all billing months
+    billing_months = [_serialize_billing_month(bm) for bm in billing_year.billing_months]
+
+    # Calculate cumulative allocation percentages for the year
+    _add_cumulative_allocation_percentages(billing_months)
+
     result = {
         'start_month': billing_year.start_month,
         'start_year': billing_year.start_year,
         'num_months': billing_year.num_months,
         'months': [_serialize_month_label(m) for m in billing_year.months],
-        'billing_months': [_serialize_billing_month(bm) for bm in billing_year.billing_months]
+        'billing_months': billing_months
     }
 
     return result
@@ -72,6 +83,25 @@ def _serialize_billing_month(billing_month: NEM2AAggregationBillingMonth) -> dic
     if adu_serialized and main_serialized:
         calculated_values = calculate_meter_values(adu_serialized, generation_meter_data=main_serialized)
         adu_serialized = _merge_calculated_values(adu_serialized, calculated_values)
+
+    # Calculate monthly allocation_import_percentage for both meters
+    if main_serialized and adu_serialized:
+        main_import_total = _get_nested_value(main_serialized, 'energy_import_meter_channel_1', 'total', 'value')
+        adu_import_total = _get_nested_value(adu_serialized, 'energy_import_meter_channel_1', 'total', 'value')
+
+        # Calculate for main meter
+        main_import_pct = calculate_allocation_import_percentage(
+            main_import_total, main_import_total, adu_import_total
+        )
+        if main_import_pct is not None:
+            main_serialized['allocation_import_percentage'] = {'value': main_import_pct}
+
+        # Calculate for adu meter
+        adu_import_pct = calculate_allocation_import_percentage(
+            adu_import_total, main_import_total, adu_import_total
+        )
+        if adu_import_pct is not None:
+            adu_serialized['allocation_import_percentage'] = {'value': adu_import_pct}
 
     return {
         'year': billing_month.year,
@@ -179,6 +209,12 @@ def _serialize_meter(meter: MeterBillingMonth) -> dict:
         # Totals (2 fields)
         'california_climate_credit': _serialize_metric(meter.california_climate_credit),
         'total_bill_in_mail': _serialize_metric(meter.total_bill_in_mail),
+
+        # Allocation fields (4 fields)
+        'allocation_import_percentage': _serialize_metric(meter.allocation_import_percentage),
+        'allocation_credits_percentage': _serialize_metric(meter.allocation_credits_percentage),
+        'allocation_cumulative_energy': _serialize_metric(meter.allocation_cumulative_energy),
+        'allocation_cumulative_percentage': _serialize_metric(meter.allocation_cumulative_percentage),
     }
 
 
@@ -231,3 +267,69 @@ def _serialize_metric(metric: EnergyMetric) -> dict:
         'subcomponent_values': subcomponents,
         'value': value
     }
+
+
+def _get_nested_value(data: dict, *keys) -> float | None:
+    """
+    Get a nested value from a dict using a path of keys.
+
+    Example: _get_nested_value(meter, 'energy_import_meter_channel_1', 'total', 'value')
+
+    Args:
+        data: Dictionary to traverse
+        *keys: Sequence of keys to traverse
+
+    Returns:
+        The value at the end of the path, or None if any key is missing
+    """
+    current = data
+    for key in keys:
+        if not isinstance(current, dict) or key not in current:
+            return None
+        current = current[key]
+    return current
+
+
+def _add_cumulative_allocation_percentages(billing_months: list[dict]) -> None:
+    """
+    Calculate and add allocation_cumulative_energy and allocation_cumulative_percentage to all months.
+
+    This calculates running cumulative totals month by month. Each month shows the cumulative
+    total up to and including that month.
+
+    Args:
+        billing_months: List of serialized billing month dicts (modified in place)
+    """
+    if not billing_months:
+        return
+
+    # Track running cumulative totals
+    main_cumulative = 0.0
+    adu_cumulative = 0.0
+
+    for month in billing_months:
+        # Get this month's import energy
+        main_import = _get_nested_value(month, 'main', 'energy_import_meter_channel_1', 'total', 'value')
+        adu_import = _get_nested_value(month, 'adu', 'energy_import_meter_channel_1', 'total', 'value')
+
+        # Add to running totals
+        if main_import is not None:
+            main_cumulative += main_import
+        if adu_import is not None:
+            adu_cumulative += adu_import
+
+        # Calculate cumulative total and percentages for this month
+        total_cumulative = main_cumulative + adu_cumulative
+        main_cumulative_pct = calculate_allocation_cumulative_percentage(main_cumulative, total_cumulative)
+        adu_cumulative_pct = calculate_allocation_cumulative_percentage(adu_cumulative, total_cumulative)
+
+        # Add running cumulative values to this month
+        if month.get('main'):
+            month['main']['allocation_cumulative_energy'] = {'value': main_cumulative}
+            if main_cumulative_pct is not None:
+                month['main']['allocation_cumulative_percentage'] = {'value': main_cumulative_pct}
+
+        if month.get('adu'):
+            month['adu']['allocation_cumulative_energy'] = {'value': adu_cumulative}
+            if adu_cumulative_pct is not None:
+                month['adu']['allocation_cumulative_percentage'] = {'value': adu_cumulative_pct}

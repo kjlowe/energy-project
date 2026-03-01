@@ -32,6 +32,8 @@ export enum Unit {
   DOLLARS = 1,
   /** KILOWATT_HOURS - kWh */
   KILOWATT_HOURS = 2,
+  /** PERCENTAGE - % (stored as 0-1 ratio, displayed as 0-100%) */
+  PERCENTAGE = 3,
   UNRECOGNIZED = -1,
 }
 

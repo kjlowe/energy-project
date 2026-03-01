@@ -17,6 +17,7 @@ enum Unit {
   UNIT_UNSPECIFIED = 0;
   DOLLARS = 1;                // $
   KILOWATT_HOURS = 2;         // kWh
+  PERCENTAGE = 3;             // % (stored as 0-1 ratio, displayed as 0-100%)
 }
 
 // ===== SOURCE INFORMATION =====

@@ -34,7 +34,7 @@ export interface ColumnConfig {
   decimals?: number;
 
   /** Visual grouping for styling */
-  group: 'dates' | 'energy_export' | 'energy_import' | 'allocated_credits' | 'net_energy' | 'pce' | 'pge' | 'totals';
+  group: 'dates' | 'energy_export' | 'energy_import' | 'allocation' | 'allocated_credits' | 'net_energy' | 'pce' | 'pge' | 'totals';
 
   /** Metadata lookup information for header rows */
   metadata?: {
@@ -184,6 +184,68 @@ export const mainColumns: ColumnConfig[] = [
     metadata: {
       fieldName: 'energy_import_meter_channel_1',
       touComponent: 'total',
+    },
+  },
+
+  // allocation
+  {
+    id: 'main_allocation_import_percentage',
+    headers: {
+      unit: 'main',
+      category: 'allocation',
+      subheader: 'import %',
+    },
+    accessor: (month) => month.main?.allocation_import_percentage as EnergyMetricWithValue | null ?? null,
+    format: 'percentage',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_import_percentage',
+    },
+  },
+  {
+    id: 'main_allocation_credits_percentage',
+    headers: {
+      unit: 'main',
+      category: 'allocation',
+      subheader: 'credits %',
+    },
+    accessor: (month) => month.main?.allocation_credits_percentage as EnergyMetricWithValue | null ?? null,
+    format: 'percentage',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_credits_percentage',
+    },
+  },
+  {
+    id: 'main_allocation_cumulative_energy',
+    headers: {
+      unit: 'main',
+      category: 'allocation',
+      subheader: 'cumulative kWh',
+    },
+    accessor: (month) => month.main?.allocation_cumulative_energy as EnergyMetricWithValue | null ?? null,
+    format: 'number',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_cumulative_energy',
+    },
+  },
+  {
+    id: 'main_allocation_cumulative_percentage',
+    headers: {
+      unit: 'main',
+      category: 'allocation',
+      subheader: 'cumulative %',
+    },
+    accessor: (month) => month.main?.allocation_cumulative_percentage as EnergyMetricWithValue | null ?? null,
+    format: 'percentage',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_cumulative_percentage',
     },
   },
 
@@ -700,6 +762,68 @@ export const aduColumns: ColumnConfig[] = [
     metadata: {
       fieldName: 'energy_import_meter_channel_1',
       touComponent: 'total',
+    },
+  },
+
+  // allocation
+  {
+    id: 'adu_allocation_import_percentage',
+    headers: {
+      unit: 'adu',
+      category: 'allocation',
+      subheader: 'import %',
+    },
+    accessor: (month) => month.adu?.allocation_import_percentage as EnergyMetricWithValue | null ?? null,
+    format: 'percentage',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_import_percentage',
+    },
+  },
+  {
+    id: 'adu_benefit_allocation_credits_percentage',
+    headers: {
+      unit: 'adu',
+      category: 'allocation',
+      subheader: 'credits %',
+    },
+    accessor: (month) => month.adu?.allocation_credits_percentage as EnergyMetricWithValue | null ?? null,
+    format: 'percentage',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_credits_percentage',
+    },
+  },
+  {
+    id: 'adu_allocation_cumulative_energy',
+    headers: {
+      unit: 'adu',
+      category: 'allocation',
+      subheader: 'cumulative kWh',
+    },
+    accessor: (month) => month.adu?.allocation_cumulative_energy as EnergyMetricWithValue | null ?? null,
+    format: 'number',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_cumulative_energy',
+    },
+  },
+  {
+    id: 'adu_allocation_cumulative_percentage',
+    headers: {
+      unit: 'adu',
+      category: 'allocation',
+      subheader: 'cumulative %',
+    },
+    accessor: (month) => month.adu?.allocation_cumulative_percentage as EnergyMetricWithValue | null ?? null,
+    format: 'percentage',
+    decimals: 2,
+    group: 'allocation',
+    metadata: {
+      fieldName: 'allocation_cumulative_percentage',
     },
   },
 

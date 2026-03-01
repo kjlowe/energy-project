@@ -39,6 +39,12 @@ message MeterBillingMonth {
   EnergyMetricTOU allocated_export_energy_credits = 6;
   EnergyMetricTOU net_energy_usage_after_credits = 7;
   
+  // Allocation percentage (calculated)
+  EnergyMetric allocation_import_percentage = 24;
+  EnergyMetric allocation_credits_percentage = 25;
+  EnergyMetric allocation_cumulative_energy = 26;
+  EnergyMetric allocation_cumulative_percentage = 27;
+
   // PCE values
   EnergyMetricTOU pce_energy_cost = 8;  // cost is always TOU based
   EnergyMetric pce_net_generation_bonus = 9;

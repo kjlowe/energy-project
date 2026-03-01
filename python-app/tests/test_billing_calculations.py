@@ -2,7 +2,8 @@
 
 import pytest
 from billing_calculations import (
-    calculate_main_allocation_percentage,
+    calculate_main_allocation_credits_percentage,
+    calculate_benefit_allocation_credits_percentage,
     calculate_generation_energy_export_peak,
     calculate_generation_energy_export_off_peak,
     calculate_pce_energy_cost_total,
@@ -18,35 +19,68 @@ from billing_calculations import (
 class TestHelperCalculations:
     """Tests for helper functions."""
 
-    def test_main_allocation_percentage_normal(self):
+    def test_main_allocation_credits_percentage_normal(self):
         """500 / 1000 = 0.5"""
-        result = calculate_main_allocation_percentage(500.0, 1000.0)
+        result = calculate_main_allocation_credits_percentage(500.0, 1000.0)
         assert result == 0.5
 
-    def test_main_allocation_percentage_full_allocation(self):
+    def test_main_allocation_credits_percentage_full_allocation(self):
         """1000 / 1000 = 1.0"""
-        result = calculate_main_allocation_percentage(1000.0, 1000.0)
+        result = calculate_main_allocation_credits_percentage(1000.0, 1000.0)
         assert result == 1.0
 
-    def test_main_allocation_percentage_zero_denominator(self):
+    def test_main_allocation_credits_percentage_zero_denominator(self):
         """Division by zero returns None"""
-        result = calculate_main_allocation_percentage(500.0, 0.0)
+        result = calculate_main_allocation_credits_percentage(500.0, 0.0)
         assert result is None
 
-    def test_main_allocation_percentage_none_allocated(self):
+    def test_main_allocation_credits_percentage_none_allocated(self):
         """None allocated returns None"""
-        result = calculate_main_allocation_percentage(None, 1000.0)
+        result = calculate_main_allocation_credits_percentage(None, 1000.0)
         assert result is None
 
-    def test_main_allocation_percentage_none_export(self):
+    def test_main_allocation_credits_percentage_none_export(self):
         """None export returns None"""
-        result = calculate_main_allocation_percentage(500.0, None)
+        result = calculate_main_allocation_credits_percentage(500.0, None)
         assert result is None
 
-    def test_main_allocation_percentage_both_none(self):
+    def test_main_allocation_credits_percentage_both_none(self):
         """Both None returns None"""
-        result = calculate_main_allocation_percentage(None, None)
+        result = calculate_main_allocation_credits_percentage(None, None)
         assert result is None
+
+
+class TestAllocationPercentageCalculations:
+    """Tests for allocation percentage calculations."""
+
+    def test_benefit_allocation_normal(self):
+        """Benefit allocation: 1.0 - 0.6 = 0.4"""
+        result = calculate_benefit_allocation_credits_percentage(0.6)
+        assert result == 0.4
+
+    def test_benefit_allocation_full_main(self):
+        """Benefit allocation when main has 100%: 1.0 - 1.0 = 0.0"""
+        result = calculate_benefit_allocation_credits_percentage(1.0)
+        assert result == 0.0
+
+    def test_benefit_allocation_zero_main(self):
+        """Benefit allocation when main has 0%: 1.0 - 0.0 = 1.0"""
+        result = calculate_benefit_allocation_credits_percentage(0.0)
+        assert result == 1.0
+
+    def test_benefit_allocation_none_input(self):
+        """None input returns None"""
+        result = calculate_benefit_allocation_credits_percentage(None)
+        assert result is None
+
+    def test_allocation_credits_percentages_sum_to_one(self):
+        """Main and benefit percentages should sum to 1.0"""
+        main = calculate_main_allocation_credits_percentage(500.0, 1000.0)
+        benefit = calculate_benefit_allocation_credits_percentage(main)
+
+        assert main is not None
+        assert benefit is not None
+        assert abs((main + benefit) - 1.0) < 0.0001
 
 
 class TestGenerationMeterCalculations:
@@ -268,7 +302,7 @@ class TestEdgeCases:
         result = calculate_pce_energy_cost_total(0.1, 0.2)
         assert abs(result - 0.3) < 0.0001  # Allow small floating point error
 
-    def test_negative_allocation_percentage(self):
+    def test_negative_allocation_credits_percentage(self):
         """Negative allocation percentage (unusual but possible)"""
-        result = calculate_main_allocation_percentage(-500.0, -1000.0)
+        result = calculate_main_allocation_credits_percentage(-500.0, -1000.0)
         assert result == 0.5  # -500/-1000 = 0.5

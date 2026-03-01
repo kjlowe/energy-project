@@ -347,6 +347,46 @@
           "kevins_number_code": null
         }
       ]
+    },
+    "allocation_import_percentage": {
+      "unit": "PERCENTAGE",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
+    },
+    "allocation_credits_percentage": {
+      "unit": "PERCENTAGE",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
+    },
+    "allocation_cumulative_energy": {
+      "unit": "KILOWATT_HOURS",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
+    },
+    "allocation_cumulative_percentage": {
+      "unit": "PERCENTAGE",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
     }
   },
   "benefit_meter": {
@@ -675,6 +715,46 @@
     },
     "total_bill_in_mail": {
       "unit": "DOLLARS",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
+    },
+    "allocation_import_percentage": {
+      "unit": "PERCENTAGE",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
+    },
+    "allocation_credits_percentage": {
+      "unit": "PERCENTAGE",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
+    },
+    "allocation_cumulative_energy": {
+      "unit": "KILOWATT_HOURS",
+      "where_found": [
+        {
+          "where_from": "CALCULATED",
+          "where_on_pdf": "",
+          "kevins_number_code": null
+        }
+      ]
+    },
+    "allocation_cumulative_percentage": {
+      "unit": "PERCENTAGE",
       "where_found": [
         {
           "where_from": "CALCULATED",

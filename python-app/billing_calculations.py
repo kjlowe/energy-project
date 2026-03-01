@@ -17,12 +17,12 @@ from typing import Optional, Dict, Any
 # HELPER CALCULATIONS
 # ============================================================================
 
-def calculate_main_allocation_percentage(
+def calculate_main_allocation_credits_percentage(
     allocated_export_total: Optional[float],
     energy_export_total: Optional[float]
 ) -> Optional[float]:
     """
-    Calculate main_allocation_percentage.
+    Calculate main_allocation_credits_percentage.
 
     Formula: allocated_export_energy_credits.total / energy_export_meter_channel_2.total
 
@@ -42,58 +42,128 @@ def calculate_main_allocation_percentage(
     return allocated_export_total / energy_export_total
 
 
+def calculate_benefit_allocation_credits_percentage(
+    main_allocation_credits_percentage: Optional[float]
+) -> Optional[float]:
+    """
+    Calculate benefit_allocation_credits_percentage.
+
+    Formula: 1.0 - main_allocation_credits_percentage
+
+    Args:
+        main_allocation_credits_percentage: Main meter allocation percentage (0-1 ratio)
+
+    Returns:
+        Benefit allocation percentage (0-1 ratio), or None if input is None
+    """
+    if main_allocation_credits_percentage is None:
+        return None
+
+    return 1.0 - main_allocation_credits_percentage
+
+
+def calculate_allocation_import_percentage(
+    meter_import_total: Optional[float],
+    main_import_total: Optional[float],
+    adu_import_total: Optional[float]
+) -> Optional[float]:
+    """
+    Calculate monthly allocation_import_percentage.
+
+    Formula: meter_import_total / (main_import_total + adu_import_total)
+
+    Args:
+        meter_import_total: This meter's energy_import_meter_channel_1.total
+        main_import_total: Main meter's energy_import_meter_channel_1.total
+        adu_import_total: ADU meter's energy_import_meter_channel_1.total
+
+    Returns:
+        Import allocation percentage (0-1 ratio), or None if inputs are invalid
+    """
+    if meter_import_total is None or main_import_total is None or adu_import_total is None:
+        return None
+
+    total_import = main_import_total + adu_import_total
+    if total_import == 0:
+        return None  # Avoid division by zero
+
+    return meter_import_total / total_import
+
+
+def calculate_allocation_cumulative_percentage(
+    meter_cumulative_import: float,
+    total_cumulative_import: float
+) -> Optional[float]:
+    """
+    Calculate yearly cumulative allocation_cumulative_percentage.
+
+    Formula: meter_cumulative_import / total_cumulative_import
+
+    Args:
+        meter_cumulative_import: Sum of this meter's energy_import_channel_1.total for all months
+        total_cumulative_import: Sum of both meters' energy_import_channel_1.total for all months
+
+    Returns:
+        Cumulative import allocation percentage (0-1 ratio), or None if division by zero
+    """
+    if total_cumulative_import == 0:
+        return None  # Avoid division by zero
+
+    return meter_cumulative_import / total_cumulative_import
+
+
 # ============================================================================
 # GENERATION METER CALCULATIONS
 # ============================================================================
 
 def calculate_generation_energy_export_peak(
     allocated_export_credits_peak: Optional[float],
-    main_allocation_percentage: Optional[float]
+    main_allocation_credits_percentage: Optional[float]
 ) -> Optional[float]:
     """
     Calculate energy_export_meter_channel_2.peak for Generation Meter.
 
-    Formula: allocated_export_energy_credits.peak / main_allocation_percentage
+    Formula: allocated_export_energy_credits.peak / main_allocation_credits_percentage
 
     Args:
         allocated_export_credits_peak: Peak export credits allocated
-        main_allocation_percentage: Main meter allocation percentage
+        main_allocation_credits_percentage: Main meter allocation percentage
 
     Returns:
         Calculated peak export energy, or None if inputs are None or percentage is 0
     """
-    if allocated_export_credits_peak is None or main_allocation_percentage is None:
+    if allocated_export_credits_peak is None or main_allocation_credits_percentage is None:
         return None
 
-    if main_allocation_percentage == 0:
+    if main_allocation_credits_percentage == 0:
         return None  # Avoid division by zero
 
-    return allocated_export_credits_peak / main_allocation_percentage
+    return allocated_export_credits_peak / main_allocation_credits_percentage
 
 
 def calculate_generation_energy_export_off_peak(
     allocated_export_credits_off_peak: Optional[float],
-    main_allocation_percentage: Optional[float]
+    main_allocation_credits_percentage: Optional[float]
 ) -> Optional[float]:
     """
     Calculate energy_export_meter_channel_2.off_peak for Generation Meter.
 
-    Formula: allocated_export_energy_credits.off_peak / main_allocation_percentage
+    Formula: allocated_export_energy_credits.off_peak / main_allocation_credits_percentage
 
     Args:
         allocated_export_credits_off_peak: Off-peak export credits allocated
-        main_allocation_percentage: Main meter allocation percentage
+        main_allocation_credits_percentage: Main meter allocation percentage
 
     Returns:
         Calculated off-peak export energy, or None if inputs are None or percentage is 0
     """
-    if allocated_export_credits_off_peak is None or main_allocation_percentage is None:
+    if allocated_export_credits_off_peak is None or main_allocation_credits_percentage is None:
         return None
 
-    if main_allocation_percentage == 0:
+    if main_allocation_credits_percentage == 0:
         return None  # Avoid division by zero
 
-    return allocated_export_credits_off_peak / main_allocation_percentage
+    return allocated_export_credits_off_peak / main_allocation_credits_percentage
 
 
 def calculate_pce_energy_cost_total(
@@ -340,8 +410,8 @@ def _calculate_generation_meter(meter_data: Dict[str, Any]) -> Dict[str, Any]:
     energy_export = meter_data.get('energy_export_meter_channel_2', {})
     pce_energy_cost = meter_data.get('pce_energy_cost', {})
 
-    # Step 1: Calculate main_allocation_percentage
-    main_allocation_pct = calculate_main_allocation_percentage(
+    # Step 1: Calculate main_allocation_credits_percentage
+    main_allocation_pct = calculate_main_allocation_credits_percentage(
         _get_value(allocated_export, 'total'),
         _get_value(energy_export, 'total')
     )
@@ -391,6 +461,10 @@ def _calculate_generation_meter(meter_data: Dict[str, Any]) -> Dict[str, Any]:
 
     if total_bill is not None:
         calculated['total_bill_in_mail'] = {'value': total_bill}
+
+    # Step 6: Store allocation_credits_percentage as a field
+    if main_allocation_pct is not None:
+        calculated['allocation_credits_percentage'] = {'value': main_allocation_pct}
 
     return calculated
 
@@ -470,6 +544,13 @@ def _calculate_benefit_meter(meter_data: Dict[str, Any], generation_meter_data: 
 
     if total_bill is not None:
         calculated['total_bill_in_mail'] = {'value': total_bill}
+
+    # Step 6: Calculate allocation_credits_percentage from generation meter
+    main_alloc_pct = _get_value(generation_meter_data.get('allocation_credits_percentage'))
+    benefit_alloc_pct = calculate_benefit_allocation_credits_percentage(main_alloc_pct)
+
+    if benefit_alloc_pct is not None:
+        calculated['allocation_credits_percentage'] = {'value': benefit_alloc_pct}
 
     return calculated
 
