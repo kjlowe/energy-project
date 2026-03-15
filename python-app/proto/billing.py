@@ -111,3 +111,4 @@ class BillingYear(betterproto.Message):
     num_months: int = betterproto.int32_field(3)
     months: List["MonthLabel"] = betterproto.message_field(4)
     billing_months: List["NEM2AAggregationBillingMonth"] = betterproto.message_field(5)
+    totals: "NEM2AAggregationBillingMonth" = betterproto.message_field(6)

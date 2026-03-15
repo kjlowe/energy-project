@@ -43,12 +43,16 @@ def proto_to_dict(billing_year: BillingYear) -> dict:
     # Calculate cumulative allocation percentages for the year
     _add_cumulative_allocation_percentages(billing_months)
 
+    # Calculate yearly totals
+    totals = _calculate_yearly_totals(billing_months)
+
     result = {
         'start_month': billing_year.start_month,
         'start_year': billing_year.start_year,
         'num_months': billing_year.num_months,
         'months': [_serialize_month_label(m) for m in billing_year.months],
-        'billing_months': billing_months
+        'billing_months': billing_months,
+        'totals': totals
     }
 
     return result
@@ -334,3 +338,127 @@ def _add_cumulative_allocation_percentages(billing_months: list[dict]) -> None:
             month['adu']['allocation_cumulative_energy'] = {'value': adu_cumulative}
             if adu_cumulative_pct is not None:
                 month['adu']['allocation_cumulative_percentage'] = {'value': adu_cumulative_pct}
+
+
+def _calculate_yearly_totals(billing_months: list[dict]) -> dict:
+    """
+    Calculate yearly totals across all billing months.
+
+    Fields excluded from totaling (return None for em dash display):
+    - billing_date, service_end_date (dates)
+    - allocation_import_percentage, allocation_credits_percentage (monthly %)
+    - pce_energy_rates ($/kWh rates vary by month; summing rates is meaningless)
+    - pce_nem_credit (credit, not additive)
+    - allocation_cumulative_percentage, allocation_cumulative_energy (already cumulative)
+    - pge_nem_true_up_adjustment (one-time adjustment)
+
+    Note: pce_energy_cost (actual dollar costs) IS totaled - only rates are excluded.
+
+    Args:
+        billing_months: List of serialized billing month dicts
+
+    Returns:
+        Dictionary structured like NEM2AAggregationBillingMonth with summed values
+    """
+    EXCLUDED_FIELDS = {
+        'billing_date',
+        'service_end_date',
+        'allocation_import_percentage',
+        'allocation_credits_percentage',
+        'pce_energy_rates',
+        'pce_nem_credit',
+        'allocation_cumulative_percentage',
+        'allocation_cumulative_energy',
+        'pge_nem_true_up_adjustment',
+    }
+
+    if not billing_months:
+        return {
+            'year': None,
+            'month': None,
+            'month_label': {'month_name': 'TOTAL', 'year': None},
+            'main': {},
+            'adu': {}
+        }
+
+    # Initialize totals structure
+    totals = {
+        'year': billing_months[0]['year'],
+        'month': None,  # No specific month for totals
+        'month_label': {
+            'month_name': 'TOTAL',
+            'year': billing_months[0]['year']
+        },
+        'main': {},
+        'adu': {}
+    }
+
+    def sum_simple_metric(values):
+        """Sum simple metric values, ignoring None."""
+        total = sum(v for v in values if v is not None)
+        return {'value': total, 'subcomponent_values': []}
+
+    def sum_tou_metric(values_peak, values_off_peak, values_total):
+        """Sum TOU metric values for peak, off_peak, and total."""
+        return {
+            'peak': sum_simple_metric(values_peak),
+            'off_peak': sum_simple_metric(values_off_peak),
+            'total': sum_simple_metric(values_total)
+        }
+
+    # Process each unit (main, adu)
+    for unit in ['main', 'adu']:
+        # Check if unit exists in first month
+        if not billing_months or unit not in billing_months[0] or not billing_months[0][unit]:
+            continue
+
+        sample_month = billing_months[0][unit]
+
+        for field_name in sample_month.keys():
+            # Preserve meter type
+            if field_name == 'nem2a_meter_type':
+                totals[unit][field_name] = sample_month[field_name]
+                continue
+
+            # Excluded fields get None
+            if field_name in EXCLUDED_FIELDS:
+                totals[unit][field_name] = None
+                continue
+
+            # Collect values across all months for this field
+            field_values = []
+            for month in billing_months:
+                if unit in month and month[unit] and field_name in month[unit]:
+                    field_values.append(month[unit][field_name])
+
+            if not field_values:
+                totals[unit][field_name] = None
+                continue
+
+            # Check if TOU metric (has peak/off_peak/total keys)
+            if isinstance(field_values[0], dict) and 'peak' in field_values[0]:
+                # TOU metric - sum each component separately
+                peaks = []
+                off_peaks = []
+                totals_vals = []
+
+                for v in field_values:
+                    if v and isinstance(v, dict):
+                        if 'peak' in v and v['peak'] and 'value' in v['peak']:
+                            peaks.append(v['peak']['value'])
+                        if 'off_peak' in v and v['off_peak'] and 'value' in v['off_peak']:
+                            off_peaks.append(v['off_peak']['value'])
+                        if 'total' in v and v['total'] and 'value' in v['total']:
+                            totals_vals.append(v['total']['value'])
+
+                totals[unit][field_name] = sum_tou_metric(peaks, off_peaks, totals_vals)
+            else:
+                # Simple metric - sum values
+                values = []
+                for v in field_values:
+                    if v and isinstance(v, dict) and 'value' in v and v['value'] is not None:
+                        values.append(v['value'])
+
+                totals[unit][field_name] = sum_simple_metric(values)
+
+    return totals

@@ -113,6 +113,8 @@ export interface BillingYear {
   /** List of tuples (month_name, year) */
   months: MonthLabel[];
   billing_months: NEM2AAggregationBillingMonth[];
+  /** Yearly totals across all months */
+  totals?: NEM2AAggregationBillingMonth | undefined;
 }
 
 function createBaseEnergyDate(): EnergyDate {
@@ -885,7 +887,7 @@ export const NEM2AAggregationBillingMonth = {
 };
 
 function createBaseBillingYear(): BillingYear {
-  return { start_month: 0, start_year: 0, num_months: 0, months: [], billing_months: [] };
+  return { start_month: 0, start_year: 0, num_months: 0, months: [], billing_months: [], totals: undefined };
 }
 
 export const BillingYear = {
@@ -904,6 +906,9 @@ export const BillingYear = {
     }
     for (const v of message.billing_months) {
       NEM2AAggregationBillingMonth.encode(v!, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.totals !== undefined) {
+      NEM2AAggregationBillingMonth.encode(message.totals, writer.uint32(50).fork()).ldelim();
     }
     return writer;
   },
@@ -950,6 +955,13 @@ export const BillingYear = {
 
           message.billing_months.push(NEM2AAggregationBillingMonth.decode(reader, reader.uint32()));
           continue;
+        case 6:
+          if (tag !== 50) {
+            break;
+          }
+
+          message.totals = NEM2AAggregationBillingMonth.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -969,6 +981,9 @@ export const BillingYear = {
     message.num_months = object.num_months ?? 0;
     message.months = object.months?.map((e) => MonthLabel.fromPartial(e)) || [];
     message.billing_months = object.billing_months?.map((e) => NEM2AAggregationBillingMonth.fromPartial(e)) || [];
+    message.totals = (object.totals !== undefined && object.totals !== null)
+      ? NEM2AAggregationBillingMonth.fromPartial(object.totals)
+      : undefined;
     return message;
   },
 };

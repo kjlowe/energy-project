@@ -108,7 +108,7 @@ Things I woud want to do are:
 # API: Running Tests + App Locally
 
 cd /workspace/python-app
-source .venv/bin/activate
+source .venv-app/bin/activate
 pytest tests/ -v
 python app.py
 
@@ -134,6 +134,9 @@ http://localhost:6006/
 3. (DONE) Got the calculated values to be actually calculated at runtime. 
 
 4. (DONE) Need the app to have more information about allocation percentage. The cummulative allocation percentage for example. 
+
+4.5 (DONE) TOTALS ROW. IS IT ACCURATE? net_energy_usage_after_credits are wrong for September 2024. Need to repull from billing_year_2024_complete.json
+Need to check all the total rows to make sure they match what is in excel.
 
 5. Need to understand more about how the total bill it calculated. Like the delivery charges that come in at the end of the year. This is needed to back calculate what the delivery charges would be for energy use.
 

@@ -489,6 +489,54 @@ const YearlyBillingView: React.FC<YearlyBillingViewProps> = ({ data, metadata })
                 {expandedRows.has(rowIdx) && hasMultipleSubcomponents(month) && renderSubcomponentRows(month, rowIdx, allColumns, unitBoundaries)}
               </React.Fragment>
             ))}
+
+            {/* Totals row */}
+            {data.totals && (
+              <tr
+                style={{
+                  backgroundColor: '#e8e8e8',
+                  fontWeight: 'bold',
+                  borderTop: '3px solid #000',
+                }}
+              >
+                {/* Sticky month label column */}
+                <td
+                  style={{
+                    position: 'sticky',
+                    left: 0,
+                    backgroundColor: '#e8e8e8',
+                    border: '1px solid #dee2e6',
+                    borderRight: '2px solid #000',
+                    padding: '8px',
+                    fontWeight: 'bold',
+                    whiteSpace: 'nowrap',
+                    zIndex: 1,
+                  }}
+                >
+                  TOTAL
+                </td>
+
+                {/* Data columns */}
+                {allColumns.map((col, colIdx) => {
+                  const cellData = col.accessor(data.totals!);
+                  const value = (cellData as EnergyMetricWithValue)?.value ?? (cellData as { value: string })?.value ?? null;
+                  const formatted = formatValue(value, col.format, col.decimals);
+
+                  return (
+                    <td
+                      key={colIdx}
+                      style={{
+                        ...getColumnStyle(col.group, unitBoundaries[colIdx] ?? false),
+                        backgroundColor: '#e8e8e8',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {formatted}
+                    </td>
+                  );
+                })}
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -138,7 +138,7 @@ def calculate_generation_energy_export_peak(
     if main_allocation_credits_percentage == 0:
         return None  # Avoid division by zero
 
-    return allocated_export_credits_peak / main_allocation_credits_percentage
+    return round(allocated_export_credits_peak / main_allocation_credits_percentage, 0)
 
 
 def calculate_generation_energy_export_off_peak(
@@ -163,7 +163,7 @@ def calculate_generation_energy_export_off_peak(
     if main_allocation_credits_percentage == 0:
         return None  # Avoid division by zero
 
-    return allocated_export_credits_off_peak / main_allocation_credits_percentage
+    return round(allocated_export_credits_off_peak / main_allocation_credits_percentage, 0)
 
 
 def calculate_pce_energy_cost_total(

@@ -91,5 +91,6 @@ message BillingYear {
   int32 num_months = 3;
   repeated MonthLabel months = 4;  // List of tuples (month_name, year)
   repeated NEM2AAggregationBillingMonth billing_months = 5;
+  NEM2AAggregationBillingMonth totals = 6;  // Yearly totals across all months
 }
 
