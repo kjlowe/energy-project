@@ -1,6 +1,7 @@
 from config import *
 from models import DatabaseManager
 from metadata_loader import load_metadata
+from tariff_loader import load_tariff_schedule
 
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
@@ -19,6 +20,12 @@ from proto.metadata import (
     OptionalInt32,
     Unit,
     WhereFrom,
+)
+
+from proto.tariff import (
+    TariffSchedule,
+    TariffPeriod,
+    OptionalDouble,
 )
 
 app = Flask(__name__)
@@ -122,6 +129,58 @@ def _source_to_dict(source: FieldSource) -> dict:
     }
 
 
+# ===== Tariff Serialization Helpers =====
+
+def _optional_double_to_value(opt_double: OptionalDouble | None) -> float | None:
+    """Convert OptionalDouble to plain value or None."""
+    return opt_double.value if opt_double is not None else None
+
+
+def _tariff_schedule_to_dict(schedule: TariffSchedule) -> dict:
+    """Convert TariffSchedule proto to JSON-serializable dict."""
+    return {
+        'tariff_name': schedule.tariff_name,
+        'description': schedule.description,
+        'periods': [_tariff_period_to_dict(p) for p in schedule.periods]
+    }
+
+
+def _tariff_period_to_dict(period: TariffPeriod) -> dict:
+    """Serialize TariffPeriod to dict."""
+    return {
+        'source_file': period.source_file,
+        'effective_start': period.effective_start,
+        'effective_end': period.effective_end,
+        'rates': {
+            'delivery_minimum': _optional_double_to_value(period.delivery_minimum),
+            'total_meter_charge': _optional_double_to_value(period.total_meter_charge),
+            'baseline_credit': _optional_double_to_value(period.baseline_credit),
+            'ca_climate_credit': _optional_double_to_value(period.ca_climate_credit),
+            'summer': {
+                'peak': _optional_double_to_value(period.tou_rates.summer.peak),
+                'off_peak': _optional_double_to_value(period.tou_rates.summer.off_peak)
+            },
+            'winter': {
+                'peak': _optional_double_to_value(period.tou_rates.winter.peak),
+                'off_peak': _optional_double_to_value(period.tou_rates.winter.off_peak)
+            }
+        },
+        'baseline_quantities': {
+            'winter': period.baseline_quantities.winter.territory_t_individually_metered,
+            'summer': period.baseline_quantities.summer.territory_t_individually_metered,
+            'note': period.baseline_quantities.note
+        },
+        'tou_periods': {
+            'peak_hours': period.tou_periods.peak_hours,
+            'peak_days': period.tou_periods.peak_days,
+            'off_peak_hours': period.tou_periods.off_peak_hours,
+            'summer_season': period.tou_periods.summer_season,
+            'winter_season': period.tou_periods.winter_season
+        },
+        'note': period.note
+    }
+
+
 # ===== API Endpoints =====
 
 # Billing year endpoints
@@ -179,6 +238,90 @@ def get_billing_metadata():
     except Exception as e:
         app.logger.error(f"Error loading metadata: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+# Tariff schedule endpoint
+@app.route('/api/tariff-schedule', methods=['GET'])
+def get_tariff_schedule():
+    """
+    Get PG&E E-TOU-C tariff rate schedule.
+
+    Query Parameters:
+        date (str, optional): Filter by date (YYYY-MM-DD) - returns period effective on that date
+        effective_start (str, optional): Filter by exact effective_start date
+
+    Returns:
+        JSON: Complete tariff schedule or filtered period(s)
+
+    Examples:
+        GET /api/tariff-schedule
+        GET /api/tariff-schedule?date=2024-06-15
+        GET /api/tariff-schedule?effective_start=2024-04-01
+    """
+    try:
+        schedule = load_tariff_schedule()
+        schedule_dict = _tariff_schedule_to_dict(schedule)
+
+        # Optional filtering
+        date_filter = request.args.get('date')
+        effective_start_filter = request.args.get('effective_start')
+
+        if date_filter:
+            # Find period that covers this date
+            from datetime import datetime
+            try:
+                filter_date = datetime.strptime(date_filter, '%Y-%m-%d')
+            except ValueError:
+                return jsonify({"error": f"Invalid date format: {date_filter}. Expected YYYY-MM-DD"}), 400
+
+            matching_period = None
+            for period_dict in schedule_dict['periods']:
+                start = period_dict['effective_start']
+                end = period_dict['effective_end']
+
+                # Skip "current" periods for date filtering
+                if start == 'current' or end == 'current':
+                    continue
+
+                start_date = datetime.strptime(start, '%Y-%m-%d')
+                end_date = datetime.strptime(end, '%Y-%m-%d')
+
+                if start_date <= filter_date <= end_date:
+                    matching_period = period_dict
+                    break
+
+            if not matching_period:
+                return jsonify({"error": f"No tariff period found for date: {date_filter}"}), 404
+
+            return jsonify({
+                'tariff_name': schedule_dict['tariff_name'],
+                'description': schedule_dict['description'],
+                'period': matching_period
+            })
+
+        elif effective_start_filter:
+            # Filter by exact effective_start
+            matching_periods = [
+                p for p in schedule_dict['periods']
+                if p['effective_start'] == effective_start_filter
+            ]
+
+            if not matching_periods:
+                return jsonify({"error": f"No tariff period found with effective_start: {effective_start_filter}"}), 404
+
+            return jsonify({
+                'tariff_name': schedule_dict['tariff_name'],
+                'description': schedule_dict['description'],
+                'periods': matching_periods
+            })
+
+        # Return full schedule
+        return jsonify(schedule_dict)
+
+    except Exception as e:
+        app.logger.error(f"Error loading tariff schedule: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

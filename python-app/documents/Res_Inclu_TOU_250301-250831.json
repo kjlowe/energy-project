@@ -1,0 +1,35 @@
+{
+  "source_file": "Res_Inclu_TOU_250301-250831.xlsx",
+  "effective_start": "2025-03-01",
+  "effective_end": "2025-08-31",
+  "rates": {
+    "delivery_minimum": 0.40317,
+    "total_meter_charge": 0.25298,
+    "baseline_credit": -0.10301,
+    "ca_climate_credit": -58.22663,
+    "summer": {
+      "peak": 0.62569,
+      "off_peak": 0.50269
+    },
+    "winter": {
+      "peak": 0.50086,
+      "off_peak": 0.47086
+    }
+  },
+  "baseline_quantities": {
+    "winter": {
+      "T": 12.9
+    },
+    "summer": {
+      "T": 7.1
+    },
+    "note": "E-TOU-C Territory T individually metered only"
+  },
+  "tou_periods": {
+    "peak_hours": "4:00 PM to 9:00 PM",
+    "peak_days": "Every day (including weekends and holidays)",
+    "off_peak_hours": "All other times",
+    "summer_season": "June - September",
+    "winter_season": "October - May"
+  }
+}

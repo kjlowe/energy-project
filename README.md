@@ -135,10 +135,13 @@ http://localhost:6006/
 
 4. (DONE) Need the app to have more information about allocation percentage. The cummulative allocation percentage for example. 
 
-4.5 (DONE) TOTALS ROW. IS IT ACCURATE? net_energy_usage_after_credits are wrong for September 2024. Need to repull from billing_year_2024_complete.json
-Need to check all the total rows to make sure they match what is in excel.
+5. (DONE) Make sure totals row is accurate. net_energy_usage_after_credits are wrong for September 2024. Need to repull from billing_year_2024_complete.json. Need to check all the total rows to make sure they match what is in excel.
+
+6. Calculate what the 303 and 303A bills would have been with their current consumption without solar. use the PG&E rates from the excel files. First step is going to be to have Claude Code go through the spreadsheets and extract to TOU-C information for each period. Decide on a format for this. Maybe should be in the proto as well?
+- Example: PG&E Rates without using CCA for April 2024 are in the excel files. For the usage of 303A Humboldt the costs would have been $198.44 + $19.98 + (-$33.93) + (-$55.17) = $129.32
 
 5. Need to understand more about how the total bill it calculated. Like the delivery charges that come in at the end of the year. This is needed to back calculate what the delivery charges would be for energy use.
+- 3849 Fairfax Way - March 2026 Bill - PG&E total costs per kWh = $0.301/kWH for PG&E delivery changes (note slight difference because the new base charge was just implimented on the last day of the billing cycle. March 1st)
 
 6. UI: then make the per month view show what I have on the paper to make it really clear how allocation is being done. 
 

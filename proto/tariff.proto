@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package tariff;
+
+// This proto is specific to PG&E Territory T, E-TOU-C tariff, and individually metered customers only
+
+// ===== OPTIONAL WRAPPERS =====
+
+// Wrapper for optional double values (for nullable rate values)
+// Follows the pattern of OptionalInt32 in metadata.proto
+message OptionalDouble {
+  double value = 1;
+}
+
+// ===== ENUMERATIONS =====
+
+// Season for TOU rates (kept for potential future use)
+enum Season {
+  SEASON_UNSPECIFIED = 0;
+  SUMMER = 1;  // June 1 - September 30
+  WINTER = 2;  // October 1 - May 31
+}
+
+// ===== TIME-OF-USE RATES =====
+
+// TOU rates for a specific season
+message SeasonalTOURates {
+  OptionalDouble peak = 1;      // $/kWh peak rate (nullable for "current" file)
+  OptionalDouble off_peak = 2;  // $/kWh off-peak rate (nullable for "current" file)
+}
+
+// Complete TOU rate structure for both seasons
+message TOURates {
+  SeasonalTOURates summer = 1;  // Summer season rates (June-September)
+  SeasonalTOURates winter = 2;  // Winter season rates (October-May)
+}
+
+// ===== BASELINE QUANTITIES =====
+
+// Seasonal baseline allowance for Territory T individually metered customers only
+message SeasonalBaselineQuantities {
+  double territory_t_individually_metered = 1;  // kWh/day for Territory T individually metered customers
+}
+
+// Complete baseline quantities structure for Territory T individually metered customers
+message BaselineQuantities {
+  SeasonalBaselineQuantities winter = 1;  // Winter season baseline (October-May)
+  SeasonalBaselineQuantities summer = 2;  // Summer season baseline (June-September)
+  string note = 3;  // E.g., "E-TOU-C Territory T individually metered only"
+}
+
+// ===== TOU PERIOD DEFINITIONS =====
+
+// Human-readable TOU period information
+// These are descriptive strings that explain when peak/off-peak periods occur
+message TOUPeriodDefinitions {
+  string peak_hours = 1;      // E.g., "4:00 PM to 9:00 PM"
+  string peak_days = 2;       // E.g., "Every day (including weekends and holidays)"
+  string off_peak_hours = 3;  // E.g., "All other times"
+  string summer_season = 4;   // E.g., "June - September"
+  string winter_season = 5;   // E.g., "October - May"
+}
+
+// ===== TARIFF PERIOD =====
+
+// Single tariff rate period with effective dates
+// Represents one Excel file's worth of tariff data
+message TariffPeriod {
+  string source_file = 1;        // E.g., "Res_Inclu_TOU_240401-240531.xlsx"
+  string effective_start = 2;    // YYYY-MM-DD or "current"
+  string effective_end = 3;      // YYYY-MM-DD or "current"
+
+  // Fixed charges (per day)
+  OptionalDouble delivery_minimum = 4;      // $/day (nullable)
+  OptionalDouble total_meter_charge = 5;    // $/day (nullable)
+
+  // Credits (negative values)
+  OptionalDouble baseline_credit = 6;       // $/kWh (negative, nullable)
+  OptionalDouble ca_climate_credit = 7;     // $ (negative, nullable, applied in April/October)
+
+  // TOU rates
+  TOURates tou_rates = 8;
+
+  // Baseline quantities by territory
+  BaselineQuantities baseline_quantities = 9;
+
+  // TOU period definitions
+  TOUPeriodDefinitions tou_periods = 10;
+
+  // Optional note for special cases
+  string note = 11;  // E.g., "Current rates - check source file for exact effective dates"
+}
+
+// ===== ROOT STRUCTURE =====
+
+// Collection of all tariff periods for E-TOU-C tariff (Territory T only)
+message TariffSchedule {
+  string tariff_name = 1;           // Always "E-TOU-C" for this proto
+  string description = 2;           // E.g., "Residential Inclusive Time-of-Use"
+  repeated TariffPeriod periods = 3;  // All tariff periods, sorted by effective_start
+}
