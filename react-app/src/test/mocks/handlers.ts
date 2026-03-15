@@ -3,6 +3,7 @@ import { mockBillingYearSnakeCase } from './mockData/billingData';
 import { mockBillingYear2023 } from './mockData/billingData2023';
 import { mockBillingYear2025 } from './mockData/billingData2025';
 import { mockFullMetadata } from './mockData/metadataFixtures';
+import { mockFullTariffSchedule } from './mockData/tariffFixtures';
 
 const API_BASE = 'http://localhost:5000';
 
@@ -23,6 +24,12 @@ export const handlers = [
   http.get(`${API_BASE}/api/billing-metadata`, () => {
     return HttpResponse.json(mockFullMetadata);
   }),
+
+  // GET /api/tariff-schedule
+  // Returns PG&E E-TOU-C tariff schedule
+  http.get(`${API_BASE}/api/tariff-schedule`, () => {
+    return HttpResponse.json(mockFullTariffSchedule);
+  }),
 ];
 
 // Additional handlers for testing multi-year scenarios
@@ -30,6 +37,11 @@ export const handlers = [
 // Metadata handler (can be reused in stories)
 export const metadataHandler = http.get(`${API_BASE}/api/billing-metadata`, () => {
   return HttpResponse.json(mockFullMetadata);
+});
+
+// Tariff schedule handler (can be reused in stories)
+export const tariffScheduleHandler = http.get(`${API_BASE}/api/tariff-schedule`, () => {
+  return HttpResponse.json(mockFullTariffSchedule);
 });
 
 // Handler returning 3 billing years

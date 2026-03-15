@@ -131,9 +131,11 @@ def _source_to_dict(source: FieldSource) -> dict:
 
 # ===== Tariff Serialization Helpers =====
 
-def _optional_double_to_value(opt_double: OptionalDouble | None) -> float | None:
-    """Convert OptionalDouble to plain value or None."""
-    return opt_double.value if opt_double is not None else None
+def _optional_double_to_dict(opt_double: OptionalDouble | None) -> dict | None:
+    """Convert OptionalDouble to dict with value field, or None."""
+    if opt_double is not None:
+        return {'value': opt_double.value}
+    return None
 
 
 def _tariff_schedule_to_dict(schedule: TariffSchedule) -> dict:
@@ -151,23 +153,27 @@ def _tariff_period_to_dict(period: TariffPeriod) -> dict:
         'source_file': period.source_file,
         'effective_start': period.effective_start,
         'effective_end': period.effective_end,
-        'rates': {
-            'delivery_minimum': _optional_double_to_value(period.delivery_minimum),
-            'total_meter_charge': _optional_double_to_value(period.total_meter_charge),
-            'baseline_credit': _optional_double_to_value(period.baseline_credit),
-            'ca_climate_credit': _optional_double_to_value(period.ca_climate_credit),
+        'delivery_minimum': _optional_double_to_dict(period.delivery_minimum),
+        'total_meter_charge': _optional_double_to_dict(period.total_meter_charge),
+        'baseline_credit': _optional_double_to_dict(period.baseline_credit),
+        'ca_climate_credit': _optional_double_to_dict(period.ca_climate_credit),
+        'tou_rates': {
             'summer': {
-                'peak': _optional_double_to_value(period.tou_rates.summer.peak),
-                'off_peak': _optional_double_to_value(period.tou_rates.summer.off_peak)
+                'peak': _optional_double_to_dict(period.tou_rates.summer.peak),
+                'off_peak': _optional_double_to_dict(period.tou_rates.summer.off_peak)
             },
             'winter': {
-                'peak': _optional_double_to_value(period.tou_rates.winter.peak),
-                'off_peak': _optional_double_to_value(period.tou_rates.winter.off_peak)
+                'peak': _optional_double_to_dict(period.tou_rates.winter.peak),
+                'off_peak': _optional_double_to_dict(period.tou_rates.winter.off_peak)
             }
         },
         'baseline_quantities': {
-            'winter': period.baseline_quantities.winter.territory_t_individually_metered,
-            'summer': period.baseline_quantities.summer.territory_t_individually_metered,
+            'winter': {
+                'territory_t_individually_metered': period.baseline_quantities.winter.territory_t_individually_metered
+            },
+            'summer': {
+                'territory_t_individually_metered': period.baseline_quantities.summer.territory_t_individually_metered
+            },
             'note': period.baseline_quantities.note
         },
         'tou_periods': {
